@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+@theme {
+  --color-profit: #16a34a;
+  --color-loss: #dc2626;
+  --color-stale: #f59e0b;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  background-color: #f8fafc;
+  color: #0f172a;
+  -webkit-tap-highlight-color: transparent;
+}
