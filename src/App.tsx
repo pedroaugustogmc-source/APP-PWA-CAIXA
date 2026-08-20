@@ -2,6 +2,8 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { AuthProvider } from './hooks/useAuth'
 import { ProtectedRoute } from './components/ProtectedRoute'
 import { Layout } from './components/Layout'
+import { IosInstallBanner } from './components/IosInstallBanner'
+import { PwaUpdatePrompt } from './components/PwaUpdatePrompt'
 import { LoginPage } from './pages/LoginPage'
 import { DashboardPage } from './pages/DashboardPage'
 import { LotesPage } from './pages/LotesPage'
@@ -13,6 +15,7 @@ function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
+        <IosInstallBanner />
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route element={<ProtectedRoute />}>
@@ -25,6 +28,7 @@ function App() {
             </Route>
           </Route>
         </Routes>
+        <PwaUpdatePrompt />
       </AuthProvider>
     </BrowserRouter>
   )

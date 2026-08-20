@@ -15,6 +15,7 @@ export default defineConfig({
         name: 'Catira Control',
         short_name: 'Catira',
         description: 'Gestão de compra e venda de acessórios — lucro real, na palma da mão.',
+        lang: 'pt-BR',
         start_url: '/',
         scope: '/',
         display: 'standalone',

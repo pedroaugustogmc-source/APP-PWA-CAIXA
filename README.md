@@ -66,7 +66,7 @@ npm run lint      # oxlint
 - [x] Fase 0 — Setup do projeto
 - [x] Fase 1 — Banco de dados (migrations + RLS)
 - [x] Fase 2 — MVP funcional (CRUD, cálculos, dashboard)
-- [ ] Fase 3 — Configuração PWA (manifest, service worker, iOS)
+- [x] Fase 3 — Configuração PWA (manifest, service worker, iOS)
 - [ ] Fase 4 — KPIs avançados e gráficos
 - [ ] Fase 5 — Deploy no Vercel
 
@@ -79,6 +79,21 @@ conflito de nomes, e o RLS (`auth.uid() = user_id`) isola os dados por
 usuário normalmente. Se preferir um projeto Supabase dedicado só para este
 app, é só criar um novo projeto e reaplicar as migrations de
 `supabase/migrations` nele.
+
+## Auditoria PWA
+
+O Lighthouse 13.x removeu a categoria "PWA" do relatório padrão (o Google
+descontinuou esse score dedicado). Validação feita manualmente com o build
+de produção (`npm run build && npm run preview`):
+
+- Categorias que ainda existem no Lighthouse: **Performance 100**,
+  **Best Practices 100**, **Accessibility 96**, **SEO 91**.
+- `manifest.webmanifest` válido: name, short_name, ícones 192/512/maskable,
+  `start_url`, `display: standalone`.
+- Service worker ativo controlando a página (`sw.js`, escopo `/`).
+- Ícones (192, 512, maskable, apple-touch-icon) servidos com `200` e
+  `image/png`.
+- Zero erros de console no carregamento.
 
 ## Criar seu usuário
 
