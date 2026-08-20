@@ -2,6 +2,8 @@ import { useItens } from '../hooks/useItens'
 import { useDespesas } from '../hooks/useDespesas'
 import { useLotes } from '../hooks/useLotes'
 import { useCategorias } from '../hooks/useCategorias'
+import { useFornecedores } from '../hooks/useFornecedores'
+import { usePlataformas } from '../hooks/usePlataformas'
 import { useConfiguracoes } from '../hooks/useConfiguracoes'
 import {
   kpiAlertaEstoqueParado,
@@ -9,16 +11,26 @@ import {
   kpiFluxoCaixa,
   kpiGiroEstoqueMedio,
   kpiLucroNegocio,
+  kpiLucroPorCategoria,
+  kpiLucroPorMes,
   kpiMargemPorCategoria,
+  kpiMargemPorFornecedor,
+  kpiMargemPorPlataforma,
+  kpiPerdas,
   kpiRoiMedioGeral,
   kpiTop5MaisLucrativos,
   kpiTop5MaisParados,
+  kpiVariacaoLucroMesAnterior,
   periodoMesAtual,
 } from '../lib/dashboard'
 import { KpiCard } from '../components/KpiCard'
 import { MargemPorCategoriaList } from '../components/MargemPorCategoriaList'
 import { Top5List } from '../components/Top5List'
 import { LoadingSpinner } from '../components/LoadingSpinner'
+import { MetaMensalCard } from '../components/dashboard/MetaMensalCard'
+import { FluxoCaixaCard } from '../components/dashboard/FluxoCaixaCard'
+import { GraficosSection } from '../components/dashboard/GraficosSection'
+import { RankingsSection } from '../components/dashboard/RankingsSection'
 import { formatBRL, formatDias } from '../lib/format'
 
 export function DashboardPage() {
@@ -26,6 +38,8 @@ export function DashboardPage() {
   const { despesas, loading: loadingDespesas } = useDespesas()
   const { lotes, loading: loadingLotes } = useLotes()
   const { categorias } = useCategorias()
+  const { fornecedores } = useFornecedores()
+  const { plataformas } = usePlataformas()
   const { config } = useConfiguracoes()
 
   const loading = loadingItens || loadingDespesas || loadingLotes
@@ -42,7 +56,13 @@ export function DashboardPage() {
   const top5Parados = kpiTop5MaisParados(itens)
   const alerta = kpiAlertaEstoqueParado(itens, config.dias_estoque_parado_alerta)
   const fluxo = kpiFluxoCaixa(itens, despesas, lotes, mesAtual)
-  const progressoMeta = config.meta_mensal_lucro > 0 ? lucroMes / config.meta_mensal_lucro : null
+  const variacaoMesAnterior = kpiVariacaoLucroMesAnterior(itens, despesas)
+
+  const lucroPorMes = kpiLucroPorMes(itens, despesas)
+  const lucroPorCategoria = kpiLucroPorCategoria(itens, categorias)
+  const porPlataforma = kpiMargemPorPlataforma(itens, plataformas)
+  const porFornecedor = kpiMargemPorFornecedor(itens, fornecedores)
+  const perdas = kpiPerdas(itens, mesAtual)
 
   return (
     <div className="space-y-4">
@@ -57,43 +77,18 @@ export function DashboardPage() {
         <KpiCard label="Capital preso em estoque" value={formatBRL(capital.preso_em_estoque)} />
       </div>
 
-      {progressoMeta !== null && (
-        <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-          <p className="mb-1 text-xs font-medium text-slate-500">Meta mensal de lucro</p>
-          <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100">
-            <div
-              className={`h-full ${lucroMes >= 0 ? 'bg-profit' : 'bg-loss'}`}
-              style={{ width: `${Math.min(100, Math.max(0, progressoMeta * 100))}%` }}
-            />
-          </div>
-          <p className="mt-1 text-xs text-slate-500">
-            {formatBRL(lucroMes)} de {formatBRL(config.meta_mensal_lucro)} ({(progressoMeta * 100).toFixed(0)}%)
-          </p>
-        </div>
-      )}
+      <MetaMensalCard lucroMes={lucroMes} metaMensal={config.meta_mensal_lucro} variacaoMesAnterior={variacaoMesAnterior} />
 
-      <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-        <p className="mb-2 text-xs font-medium text-slate-500">Fluxo de caixa do mês</p>
-        <div className="grid grid-cols-3 gap-2 text-sm">
-          <div>
-            <p className="text-xs text-slate-400">Entrou</p>
-            <p className="font-semibold text-profit">{formatBRL(fluxo.entrou)}</p>
-          </div>
-          <div>
-            <p className="text-xs text-slate-400">Saiu</p>
-            <p className="font-semibold text-loss">{formatBRL(fluxo.saiu)}</p>
-          </div>
-          <div>
-            <p className="text-xs text-slate-400">Saldo</p>
-            <p className={`font-semibold ${fluxo.saldo < 0 ? 'text-loss' : 'text-profit'}`}>{formatBRL(fluxo.saldo)}</p>
-          </div>
-        </div>
-      </div>
+      <FluxoCaixaCard fluxo={fluxo} />
+
+      <GraficosSection lucroPorMes={lucroPorMes} lucroPorCategoria={lucroPorCategoria} capital={capital} />
 
       <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
         <p className="mb-2 text-xs font-medium text-slate-500">Margem média por categoria</p>
         <MargemPorCategoriaList dados={margemPorCategoria} />
       </div>
+
+      <RankingsSection porPlataforma={porPlataforma} porFornecedor={porFornecedor} perdas={perdas} />
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">

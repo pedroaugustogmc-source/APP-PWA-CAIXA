@@ -67,7 +67,7 @@ npm run lint      # oxlint
 - [x] Fase 1 — Banco de dados (migrations + RLS)
 - [x] Fase 2 — MVP funcional (CRUD, cálculos, dashboard)
 - [x] Fase 3 — Configuração PWA (manifest, service worker, iOS)
-- [ ] Fase 4 — KPIs avançados e gráficos
+- [x] Fase 4 — KPIs avançados e gráficos
 - [ ] Fase 5 — Deploy no Vercel
 
 ## Sobre o projeto Supabase
