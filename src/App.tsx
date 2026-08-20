@@ -1,11 +1,32 @@
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { AuthProvider } from './hooks/useAuth'
+import { ProtectedRoute } from './components/ProtectedRoute'
+import { Layout } from './components/Layout'
+import { LoginPage } from './pages/LoginPage'
+import { DashboardPage } from './pages/DashboardPage'
+import { LotesPage } from './pages/LotesPage'
+import { ItensPage } from './pages/ItensPage'
+import { DespesasPage } from './pages/DespesasPage'
+import { ConfiguracoesPage } from './pages/ConfiguracoesPage'
+
 function App() {
   return (
-    <div className="flex min-h-screen items-center justify-center p-6 text-center">
-      <div>
-        <h1 className="text-2xl font-bold text-slate-900">Catira Control</h1>
-        <p className="mt-2 text-slate-500">Setup em andamento — Fase 0 concluída.</p>
-      </div>
-    </div>
+    <BrowserRouter>
+      <AuthProvider>
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route element={<ProtectedRoute />}>
+            <Route element={<Layout />}>
+              <Route path="/" element={<DashboardPage />} />
+              <Route path="/lotes" element={<LotesPage />} />
+              <Route path="/itens" element={<ItensPage />} />
+              <Route path="/despesas" element={<DespesasPage />} />
+              <Route path="/config" element={<ConfiguracoesPage />} />
+            </Route>
+          </Route>
+        </Routes>
+      </AuthProvider>
+    </BrowserRouter>
   )
 }
 
