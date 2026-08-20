@@ -19,7 +19,7 @@ const STATUS_OPTIONS: { value: StatusItem | 'todos'; label: string }[] = [
 ]
 
 export function ItensPage() {
-  const { itens, loading, error, registrarVenda, cancelarVenda, marcarPerdido } = useItens()
+  const { itens, loading, error, registrarVenda, cancelarVenda, marcarPerdido, alterarStatus } = useItens()
   const { categorias } = useCategorias()
   const { plataformas } = usePlataformas()
   const { config } = useConfiguracoes()
@@ -80,6 +80,7 @@ export function ItensPage() {
                 marcarPerdido(it.id)
               }
             }}
+            onAlterarStatus={(status) => alterarStatus(it.id, status)}
           />
         ))}
       </ul>

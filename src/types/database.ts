@@ -278,7 +278,22 @@ export type Database = {
       }
     }
     Views: Record<string, never>
-    Functions: Record<string, never>
+    Functions: {
+      criar_lote_com_itens: {
+        Args: {
+          p_categoria_id: string | null
+          p_cotacao_dolar: number | null
+          p_custo_extra: number
+          p_custo_frete: number
+          p_custo_produto: number
+          p_data_compra: string
+          p_fornecedor_id: string | null
+          p_observacoes: string | null
+          p_quantidade_comprada: number
+        }
+        Returns: string
+      }
+    }
     Enums: {
       categoria_despesa_tipo: 'marketing' | 'embalagem_geral' | 'transporte' | 'taxas' | 'outros'
       condicao_item: 'novo' | 'usado'

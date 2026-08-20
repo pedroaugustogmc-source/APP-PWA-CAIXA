@@ -11,9 +11,18 @@ interface Props {
   onVender: () => void
   onCancelarVenda: () => void
   onMarcarPerdido: () => void
+  onAlterarStatus: (status: 'em_estoque' | 'reservado') => void
 }
 
-export function ItemCard({ item, categoriaNome, diasAlerta, onVender, onCancelarVenda, onMarcarPerdido }: Props) {
+export function ItemCard({
+  item,
+  categoriaNome,
+  diasAlerta,
+  onVender,
+  onCancelarVenda,
+  onMarcarPerdido,
+  onAlterarStatus,
+}: Props) {
   const parado = isItemParado(item, diasAlerta)
 
   return (
@@ -77,6 +86,23 @@ export function ItemCard({ item, categoriaNome, diasAlerta, onVender, onCancelar
             <button type="button" onClick={onVender} className="rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white">
               Vender
             </button>
+            {item.status === 'em_estoque' ? (
+              <button
+                type="button"
+                onClick={() => onAlterarStatus('reservado')}
+                className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-semibold text-slate-700"
+              >
+                Reservar
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => onAlterarStatus('em_estoque')}
+                className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-semibold text-slate-700"
+              >
+                Voltar ao estoque
+              </button>
+            )}
             <button
               type="button"
               onClick={onMarcarPerdido}

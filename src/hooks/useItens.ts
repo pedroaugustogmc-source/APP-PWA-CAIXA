@@ -71,11 +71,5 @@ export function useItens() {
     return { error: error?.message ?? null }
   }
 
-  async function atualizar(itemId: string, input: Partial<Pick<Item, 'identificador' | 'condicao' | 'observacoes'>>) {
-    const { error } = await supabase.from('itens').update(input).eq('id', itemId)
-    if (!error) await refetch()
-    return { error: error?.message ?? null }
-  }
-
-  return { itens, loading, error, registrarVenda, cancelarVenda, marcarPerdido, alterarStatus, atualizar, refetch }
+  return { itens, loading, error, registrarVenda, cancelarVenda, marcarPerdido, alterarStatus, refetch }
 }

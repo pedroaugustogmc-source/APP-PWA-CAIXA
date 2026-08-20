@@ -44,24 +44,22 @@ export function useLotes() {
   })
 
   async function criar(input: LoteInput) {
-    const { data: novoLote, error: loteError } = await supabase
-      .from('lotes_compra')
-      .insert(input)
-      .select('id, quantidade_comprada')
-      .single()
+    // RPC transacional: cria o lote e as N linhas em `itens` na mesma transação —
+    // evita lote órfão sem itens caso o segundo insert falhasse isoladamente.
+    const { error } = await supabase.rpc('criar_lote_com_itens', {
+      p_data_compra: input.data_compra,
+      p_fornecedor_id: input.fornecedor_id,
+      p_categoria_id: input.categoria_id,
+      p_quantidade_comprada: input.quantidade_comprada,
+      p_custo_produto: input.custo_produto,
+      p_custo_frete: input.custo_frete,
+      p_custo_extra: input.custo_extra,
+      p_cotacao_dolar: input.cotacao_dolar,
+      p_observacoes: input.observacoes,
+    })
 
-    if (loteError || !novoLote) {
-      return { error: loteError?.message ?? 'Não foi possível criar o lote.' }
-    }
-
-    // Lote com quantidade > 1 gera N linhas em `itens` automaticamente.
-    const novosItens = Array.from({ length: novoLote.quantidade_comprada }, () => ({
-      lote_id: novoLote.id,
-    }))
-    const { error: itensError } = await supabase.from('itens').insert(novosItens)
-
-    if (itensError) {
-      return { error: itensError.message }
+    if (error) {
+      return { error: error.message }
     }
 
     await refetch()
