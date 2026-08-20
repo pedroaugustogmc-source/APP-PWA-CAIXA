@@ -178,11 +178,14 @@ export function kpiTop5MaisParados(itens: ItemCalculado[]): ItemCalculado[] {
     .slice(0, 5)
 }
 
+/** Usado no KPI 7 e no destaque visual por item — fonte única do critério de "parado". */
+export function isItemParado(item: Pick<ItemCalculado, 'status' | 'dias_em_estoque'>, diasLimite: number): boolean {
+  return (item.status === 'em_estoque' || item.status === 'reservado') && (item.dias_em_estoque ?? 0) > diasLimite
+}
+
 /** KPI 7 — itens parados há mais de X dias (configurável). */
 export function kpiAlertaEstoqueParado(itens: ItemCalculado[], diasLimite: number): ItemCalculado[] {
-  return itens.filter(
-    (i) => (i.status === 'em_estoque' || i.status === 'reservado') && (i.dias_em_estoque ?? 0) > diasLimite,
-  )
+  return itens.filter((i) => isItemParado(i, diasLimite))
 }
 
 /** KPI 8 — fluxo de caixa do período: quanto entrou (líquido) vs. quanto saiu. */

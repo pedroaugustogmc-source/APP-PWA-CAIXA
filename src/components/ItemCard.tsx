@@ -1,5 +1,6 @@
 import { StatusBadge } from './StatusBadge'
 import { formatBRL, formatDias, formatPercent } from '../lib/format'
+import { isItemParado } from '../lib/dashboard'
 import type { Categoria } from '../types/domain'
 import type { ItemCalculado } from '../types/domain'
 
@@ -13,7 +14,7 @@ interface Props {
 }
 
 export function ItemCard({ item, categoriaNome, diasAlerta, onVender, onCancelarVenda, onMarcarPerdido }: Props) {
-  const parado = (item.status === 'em_estoque' || item.status === 'reservado') && (item.dias_em_estoque ?? 0) > diasAlerta
+  const parado = isItemParado(item, diasAlerta)
 
   return (
     <li className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
