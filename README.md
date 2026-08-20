@@ -64,8 +64,24 @@ npm run lint      # oxlint
 ## Roadmap de fases
 
 - [x] Fase 0 — Setup do projeto
-- [ ] Fase 1 — Banco de dados (migrations + RLS)
-- [ ] Fase 2 — MVP funcional (CRUD, cálculos, dashboard)
+- [x] Fase 1 — Banco de dados (migrations + RLS)
+- [x] Fase 2 — MVP funcional (CRUD, cálculos, dashboard)
 - [ ] Fase 3 — Configuração PWA (manifest, service worker, iOS)
 - [ ] Fase 4 — KPIs avançados e gráficos
 - [ ] Fase 5 — Deploy no Vercel
+
+## Sobre o projeto Supabase
+
+O projeto Supabase usado (`rurqtctrbzxppeickltz`) já hospeda outro app do
+usuário (gestão de fazenda/gado — tabelas `animais`, `pastos`, `vacinas_*`
+etc.). As tabelas do Catira Control convivem no mesmo schema `public`, sem
+conflito de nomes, e o RLS (`auth.uid() = user_id`) isola os dados por
+usuário normalmente. Se preferir um projeto Supabase dedicado só para este
+app, é só criar um novo projeto e reaplicar as migrations de
+`supabase/migrations` nele.
+
+## Criar seu usuário
+
+O app não tem cadastro público (uso pessoal, login único). Crie seu usuário
+pelo painel do Supabase: **Authentication → Users → Add user**, marcando
+"Auto Confirm User". Depois é só entrar com esse e-mail/senha no app.
