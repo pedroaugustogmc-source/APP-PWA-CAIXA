@@ -8,7 +8,7 @@ import { ErrorMessage } from '../components/ErrorMessage'
 import { formatBRL, formatDate } from '../lib/format'
 
 export function LotesPage() {
-  const { lotes, loading, error, criar } = useLotes()
+  const { lotes, loading, error, criar, remover } = useLotes()
   const { categorias } = useCategorias()
   const { fornecedores } = useFornecedores()
   const [showForm, setShowForm] = useState(false)
@@ -57,6 +57,19 @@ export function LotesPage() {
                 <p className="font-medium">{formatBRL(lote.custo_unitario)}</p>
               </div>
             </div>
+            {lote.quantidade_em_estoque === lote.quantidade_comprada && (
+              <button
+                type="button"
+                onClick={() => {
+                  if (confirm('Excluir este lote? Essa ação não pode ser desfeita.')) {
+                    remover(lote.id)
+                  }
+                }}
+                className="mt-3 text-xs text-slate-400 hover:text-loss"
+              >
+                Excluir lote
+              </button>
+            )}
           </li>
         ))}
       </ul>
