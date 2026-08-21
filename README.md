@@ -48,6 +48,12 @@ npm run dev
 
 Nunca comite `.env.local` — ele já está no `.gitignore`.
 
+O `.env.production` **é** versionado de propósito: contém só a `anon key`
+pública do Supabase (não é segredo — é protegida por RLS e o Vite já a
+embute em qualquer bundle de produção de qualquer forma). Isso deixa o
+deploy no Vercel funcionar sem precisar configurar variáveis de ambiente
+no painel.
+
 ### Banco de dados
 
 As migrations SQL ficam em `supabase/migrations`. Aplique-as no seu projeto Supabase (SQL Editor ou Supabase CLI) na ordem numérica dos arquivos.
