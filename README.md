@@ -78,30 +78,26 @@ npm run lint      # oxlint
 
 ## Deploy no Vercel
 
-Projeto criado e conectado ao repositório GitHub:
-**`catira-control-app`**, na conta Vercel `pedrocastro`, apontando para
-`pedroaugustogmc-source/APP-PWA-CAIXA`. Cada push nesta branch dispara um
-build automático (Preview, já que a branch de produção do projeto é
-`main`). `.env.production` está versionado no repo, então o build já sai
-funcional sem configurar nada manualmente no painel.
+**Status: no ar.** Projeto `catira-control-app` (conta Vercel `pedrocastro`)
+conectado via GitHub App a `pedroaugustogmc-source/APP-PWA-CAIXA`. O
+check do GitHub no commit confirma `Vercel: Deployment has completed` e o
+bot do Vercel comentou na PR com status **Ready**:
 
-**Não consegui confirmar visualmente o resultado do build**: as chamadas
-de leitura da API do Vercel (`list_projects`, `get_project`,
-`get_deployment`) voltaram vazias/404 para esse projeto mesmo depois da
-criação ter respondido com sucesso — uma inconsistência da integração que
-não depende do código do app. O acesso direto a `*.vercel.app` também é
-bloqueado pela política de rede deste ambiente de desenvolvimento, então
-não deu pra checar por fora também.
+- Preview desta branch: https://catira-control-app-git-claude-catira-control-6e0219-pedrocastro.vercel.app
+- Painel do projeto: https://vercel.com/pedrocastro/catira-control-app
 
-**Para confirmar**: abra
-[vercel.com/pedrocastro/catira-control-app](https://vercel.com/pedrocastro/catira-control-app)
-no seu navegador. Se não houver nenhum deployment lá, o motivo mais
-provável é o GitHub App do Vercel não estar autorizado neste repositório
-ainda — a Vercel pede essa autorização (instalação do app na conta/repo
-GitHub) na primeira vez que conecta um projeto, e isso não é algo que a
-API consiga fazer sozinha. Autorizando pelo painel e dando um novo push
-(ou clicando em "Redeploy"), o build deve rodar normalmente — o app já
-está pronto pra isso.
+(As ferramentas de leitura da API do Vercel usadas nesta sessão não
+enxergam o projeto — provavelmente um problema de escopo da integração —
+mas o check do GitHub e o comentário do bot são a fonte de verdade do
+próprio Vercel e confirmam o deploy.)
+
+`.env.production` está versionado no repo (é a `anon key` pública do
+Supabase, protegida por RLS), então o build sai funcional sem configurar
+nada manualmente no painel. Como a branch de produção do projeto é
+`main`, isso ainda é uma *Preview* deployment — assim que a PR for
+mesclada em `main`, o mesmo build é promovido automaticamente para o
+domínio de produção (`catira-control-app.vercel.app` ou um domínio
+customizado, se configurado).
 
 ## Sobre o projeto Supabase
 
