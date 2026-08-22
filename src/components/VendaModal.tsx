@@ -8,13 +8,13 @@ import type { Plataforma } from '../types/domain'
 import type { VendaInput } from '../hooks/useItens'
 
 interface Props {
-  custoUnitario: number
+  custoTotal: number
   plataformas: Plataforma[]
   onClose: () => void
-  onSubmit: (input: VendaInput) => Promise<{ error: string | null }>
+  onSubmit: (input: VendaInput, plataforma: Plataforma) => Promise<{ error: string | null }>
 }
 
-export function VendaModal({ custoUnitario, plataformas, onClose, onSubmit }: Props) {
+export function VendaModal({ custoTotal, plataformas, onClose, onSubmit }: Props) {
   const [plataformaId, setPlataformaId] = useState(plataformas[0]?.id ?? '')
   const [precoVenda, setPrecoVenda] = useState(0)
   const [taxaPct, setTaxaPct] = useState(plataformas[0] ? plataformas[0].taxa_padrao_pct * 100 : 0)
@@ -23,7 +23,7 @@ export function VendaModal({ custoUnitario, plataformas, onClose, onSubmit }: Pr
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
 
-  const precoMin = useMemo(() => precoMinimo(custoUnitario, taxaPct / 100), [custoUnitario, taxaPct])
+  const precoMin = useMemo(() => precoMinimo(custoTotal, taxaPct / 100), [custoTotal, taxaPct])
   const abaixoDoMinimo = precoVenda > 0 && precoVenda < precoMin
 
   function handlePlataformaChange(id: string) {
@@ -34,7 +34,8 @@ export function VendaModal({ custoUnitario, plataformas, onClose, onSubmit }: Pr
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
-    if (!plataformaId) {
+    const plataforma = plataformas.find((p) => p.id === plataformaId)
+    if (!plataforma) {
       setError('Selecione uma plataforma.')
       return
     }
@@ -44,12 +45,15 @@ export function VendaModal({ custoUnitario, plataformas, onClose, onSubmit }: Pr
     }
     setSubmitting(true)
     setError(null)
-    const { error } = await onSubmit({
-      preco_venda: precoVenda,
-      plataforma_id: plataformaId,
-      taxa_plataforma_pct: taxaPct / 100,
-      data_venda: dataVenda,
-    })
+    const { error } = await onSubmit(
+      {
+        preco_venda: precoVenda,
+        plataforma_id: plataformaId,
+        taxa_plataforma_pct: taxaPct / 100,
+        data_venda: dataVenda,
+      },
+      plataforma,
+    )
     setSubmitting(false)
     if (error) setError(error)
     else onClose()

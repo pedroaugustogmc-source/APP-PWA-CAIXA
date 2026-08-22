@@ -1,12 +1,15 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { useItens } from '../hooks/useItens'
 import { useCategorias } from '../hooks/useCategorias'
+import { useFornecedores } from '../hooks/useFornecedores'
 import { usePlataformas } from '../hooks/usePlataformas'
 import { useConfiguracoes } from '../hooks/useConfiguracoes'
 import { ItemCard } from '../components/ItemCard'
+import { ItemFormModal } from '../components/ItemFormModal'
 import { VendaModal } from '../components/VendaModal'
 import { LoadingSpinner } from '../components/LoadingSpinner'
 import { ErrorMessage } from '../components/ErrorMessage'
+import { IconPlus } from '../components/icons'
 import { inputClass } from '../components/Field'
 import type { StatusItem } from '../types/domain'
 
@@ -19,20 +22,20 @@ const STATUS_OPTIONS: { value: StatusItem | 'todos'; label: string }[] = [
 ]
 
 export function ItensPage() {
-  const { itens, loading, error, registrarVenda, cancelarVenda, marcarPerdido, alterarStatus } = useItens()
+  const { itens, loading, error, criar, registrarVenda, cancelarVenda, marcarPerdido, alterarStatus } = useItens()
   const { categorias } = useCategorias()
+  const { fornecedores } = useFornecedores()
   const { plataformas } = usePlataformas()
   const { config } = useConfiguracoes()
 
   const [statusFiltro, setStatusFiltro] = useState<StatusItem | 'todos'>('todos')
   const [categoriaFiltro, setCategoriaFiltro] = useState('')
+  const [showForm, setShowForm] = useState(false)
   const [itemVendendo, setItemVendendo] = useState<string | null>(null)
-
-  const categoriaPorId = useMemo(() => new Map(categorias.map((c) => [c.id, c.nome])), [categorias])
 
   const itensFiltrados = itens.filter((item) => {
     if (statusFiltro !== 'todos' && item.status !== statusFiltro) return false
-    if (categoriaFiltro && item.lote.categoria_id !== categoriaFiltro) return false
+    if (categoriaFiltro && item.categoria_id !== categoriaFiltro) return false
     return true
   })
 
@@ -40,7 +43,16 @@ export function ItensPage() {
 
   return (
     <div>
-      <h2 className="mb-4 text-lg font-bold text-slate-900">Itens</h2>
+      <div className="mb-4 flex items-center justify-between">
+        <h2 className="text-lg font-bold text-slate-900">Itens</h2>
+        <button
+          type="button"
+          onClick={() => setShowForm(true)}
+          className="flex items-center gap-1 rounded-lg bg-slate-900 px-3 py-1.5 text-sm font-semibold text-white"
+        >
+          <IconPlus className="h-4 w-4" /> Novo
+        </button>
+      </div>
 
       <div className="mb-4 grid grid-cols-2 gap-2">
         <select value={statusFiltro} onChange={(e) => setStatusFiltro(e.target.value as StatusItem | 'todos')} className={inputClass}>
@@ -71,7 +83,6 @@ export function ItensPage() {
           <ItemCard
             key={it.id}
             item={it}
-            categoriaNome={categoriaPorId.get(it.lote.categoria_id ?? '')}
             diasAlerta={config.dias_estoque_parado_alerta}
             onVender={() => setItemVendendo(it.id)}
             onCancelarVenda={() => cancelarVenda(it.id)}
@@ -85,12 +96,21 @@ export function ItensPage() {
         ))}
       </ul>
 
+      {showForm && (
+        <ItemFormModal
+          categorias={categorias}
+          fornecedores={fornecedores}
+          onClose={() => setShowForm(false)}
+          onSubmit={criar}
+        />
+      )}
+
       {item && (
         <VendaModal
-          custoUnitario={item.custo_unitario}
+          custoTotal={item.custo_total}
           plataformas={plataformas}
           onClose={() => setItemVendendo(null)}
-          onSubmit={(input) => registrarVenda(item.id, input)}
+          onSubmit={(input, plataforma) => registrarVenda(item.id, input, plataforma)}
         />
       )}
     </div>

@@ -1,6 +1,6 @@
 # Catira Control
 
-PWA pessoal para gestão de compra e venda de acessórios (capas, relógios, etc). Calcula o lucro real do negócio automaticamente — não só por item — e mostra o preço mínimo pra não ter prejuízo em cada venda.
+PWA pessoal para gestão de compra e venda de acessórios (capas, relógios, etc). Cada item carrega seu próprio custo de compra e despesas extras (frete, embalagem...) e o app calcula o custo total, lucro, margem, ROI e preço mínimo automaticamente. Funciona online e offline.
 
 > Status: em construção (ver fases abaixo). Este README é atualizado a cada fase.
 
@@ -57,6 +57,30 @@ no painel.
 ### Banco de dados
 
 As migrations SQL ficam em `supabase/migrations`. Aplique-as no seu projeto Supabase (SQL Editor ou Supabase CLI) na ordem numérica dos arquivos.
+
+### Modelo de dados
+
+Não existe mais "lote de compra" nem "despesa geral" separados. Cada
+**item** é autossuficiente: guarda o próprio custo de compra
+(`custo_compra`), uma lista livre de despesas extras (`custos_extras`,
+ex.: frete, embalagem) e, opcionalmente, quantos dias você planeja ficar
+com ele antes de vender (`dias_planejados`). O custo total, lucro, margem,
+ROI e preço mínimo são todos derivados desses campos em
+`src/lib/calculations.ts` — nunca duplicados em componente.
+
+Quando `dias_planejados` não é definido, o alerta de "item parado" cai no
+prazo padrão configurado em Ajustes.
+
+### Uso offline
+
+O app funciona com a conexão caída. Leituras vêm do cache do service
+worker (Workbox, `NetworkFirst` pras chamadas ao Supabase). Duas ações de
+escrita continuam funcionando offline — cadastrar um item novo e
+registrar uma venda — guardadas numa fila no IndexedDB
+(`src/lib/offlineOutbox.ts`) e reenviadas automaticamente assim que a
+conexão volta. O selo no cabeçalho do app mostra "Offline" ou "Enviando
+N" enquanto há pendências. As demais ações (cancelar venda, marcar
+perdido, excluir) exigem conexão.
 
 ## Scripts
 

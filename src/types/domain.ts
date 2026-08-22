@@ -2,8 +2,6 @@ export type CondicaoItem = 'novo' | 'usado'
 
 export type StatusItem = 'em_estoque' | 'reservado' | 'vendido' | 'perdido_danificado'
 
-export type CategoriaDespesaTipo = 'marketing' | 'embalagem_geral' | 'transporte' | 'taxas' | 'outros'
-
 export interface Categoria {
   id: string
   user_id: string
@@ -32,46 +30,31 @@ export interface Plataforma {
   updated_at: string
 }
 
-export interface LoteCompra {
-  id: string
-  user_id: string
-  data_compra: string
-  fornecedor_id: string | null
-  categoria_id: string | null
-  quantidade_comprada: number
-  custo_produto: number
-  custo_frete: number
-  custo_extra: number
-  cotacao_dolar: number | null
-  observacoes: string | null
-  created_at: string
-  updated_at: string
+/** Um custo extra associado ao item (frete, embalagem, taxa etc.). */
+export interface CustoExtra {
+  label: string
+  valor: number
 }
 
 export interface Item {
   id: string
   user_id: string
-  lote_id: string
+  nome: string
+  categoria_id: string | null
+  fornecedor_id: string | null
   identificador: string | null
   condicao: CondicaoItem
   status: StatusItem
+  data_compra: string
+  custo_compra: number
+  custos_extras: CustoExtra[]
+  dias_planejados: number | null
   data_venda: string | null
   preco_venda: number | null
   plataforma_id: string | null
   /** Fração de 0 a 1; puxa o padrão da plataforma na venda, mas é editável. */
   taxa_plataforma_pct: number | null
   observacoes: string | null
-  created_at: string
-  updated_at: string
-}
-
-export interface DespesaGeral {
-  id: string
-  user_id: string
-  data: string
-  categoria_despesa: CategoriaDespesaTipo
-  descricao: string | null
-  valor: number
   created_at: string
   updated_at: string
 }
@@ -86,19 +69,9 @@ export interface Configuracoes {
   updated_at: string
 }
 
-/** Lote com os campos calculados da especificação (custo_total_lote, custo_unitario). */
-export interface LoteCalculado extends LoteCompra {
-  custo_total_lote: number
-  custo_unitario: number
-  fornecedor: Fornecedor | null
-  categoria: Categoria | null
-  quantidade_em_estoque: number
-  quantidade_vendida: number
-}
-
-/** Item com todos os campos "(calc)" da especificação resolvidos. */
+/** Item com todos os campos calculados resolvidos. */
 export interface ItemCalculado extends Item {
-  custo_unitario: number
+  custo_total: number
   taxa_plataforma_valor: number | null
   lucro_liquido: number | null
   margem_pct: number | null
@@ -106,6 +79,7 @@ export interface ItemCalculado extends Item {
   dias_em_estoque: number | null
   preco_minimo: number | null
   preco_sugerido: number | null
-  lote: LoteCompra
+  categoria: Categoria | null
+  fornecedor: Fornecedor | null
   plataforma: Plataforma | null
 }

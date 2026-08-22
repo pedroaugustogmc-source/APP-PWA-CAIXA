@@ -1,12 +1,11 @@
 import { StatusBadge } from './StatusBadge'
-import { formatBRL, formatDias, formatPercent } from '../lib/format'
+import { IconCloudOff } from './icons'
+import { formatBRL, formatPercent } from '../lib/format'
 import { isItemParado } from '../lib/dashboard'
-import type { Categoria } from '../types/domain'
 import type { ItemCalculado } from '../types/domain'
 
 interface Props {
-  item: ItemCalculado
-  categoriaNome: Categoria['nome'] | undefined
+  item: ItemCalculado & { pendenteSync?: boolean }
   diasAlerta: number
   onVender: () => void
   onCancelarVenda: () => void
@@ -14,30 +13,28 @@ interface Props {
   onAlterarStatus: (status: 'em_estoque' | 'reservado') => void
 }
 
-export function ItemCard({
-  item,
-  categoriaNome,
-  diasAlerta,
-  onVender,
-  onCancelarVenda,
-  onMarcarPerdido,
-  onAlterarStatus,
-}: Props) {
+export function ItemCard({ item, diasAlerta, onVender, onCancelarVenda, onMarcarPerdido, onAlterarStatus }: Props) {
   const parado = isItemParado(item, diasAlerta)
+  const prazo = item.dias_planejados
 
   return (
     <li className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
       <div className="flex items-start justify-between gap-2">
         <div>
-          <p className="font-semibold text-slate-900">
-            {categoriaNome ?? 'Sem categoria'}
-            {item.identificador ? ` · ${item.identificador}` : ''}
-          </p>
+          <p className="font-semibold text-slate-900">{item.nome}</p>
           <p className="text-xs text-slate-500">
-            {item.condicao === 'novo' ? 'Novo' : 'Usado'} · custo {formatBRL(item.custo_unitario)}
+            {item.categoria?.nome ?? 'Sem categoria'} · {item.condicao === 'novo' ? 'Novo' : 'Usado'} · custo{' '}
+            {formatBRL(item.custo_total)}
           </p>
         </div>
-        <StatusBadge status={item.status} />
+        <div className="flex flex-col items-end gap-1">
+          <StatusBadge status={item.status} />
+          {item.pendenteSync && (
+            <span className="flex items-center gap-1 text-[11px] font-medium text-amber-600">
+              <IconCloudOff className="h-3 w-3" /> aguardando envio
+            </span>
+          )}
+        </div>
       </div>
 
       {item.status === 'vendido' && item.lucro_liquido !== null && (
@@ -72,13 +69,20 @@ export function ItemCard({
             <p className="font-medium">{formatBRL(item.preco_sugerido ?? 0)}</p>
           </div>
           <div>
-            <p className="text-xs text-slate-400">Em estoque há</p>
-            <p className={`font-medium ${parado ? 'text-stale' : ''}`}>{formatDias(item.dias_em_estoque ?? 0)}</p>
+            <p className="text-xs text-slate-400">Dias com você</p>
+            <p className={`font-medium ${parado ? 'text-stale' : ''}`}>
+              {item.dias_em_estoque ?? 0}
+              {prazo ? ` de ${prazo}` : ''}
+            </p>
           </div>
         </div>
       )}
 
-      {parado && <p className="mt-2 text-xs font-medium text-stale">⚠ Estoque parado há mais de {diasAlerta} dias</p>}
+      {parado && (
+        <p className="mt-2 text-xs font-medium text-stale">
+          Parado {prazo ? `— passou do prazo de ${prazo} dias` : `há mais de ${diasAlerta} dias`}
+        </p>
+      )}
 
       <div className="mt-3 flex flex-wrap gap-2">
         {(item.status === 'em_estoque' || item.status === 'reservado') && (

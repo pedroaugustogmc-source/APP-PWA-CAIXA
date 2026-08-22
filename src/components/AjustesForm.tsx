@@ -63,7 +63,7 @@ export function AjustesForm() {
           />
         </Field>
 
-        <Field label="Alertar estoque parado após (dias)">
+        <Field label="Prazo padrão pra considerar um item parado (dias)">
           <input
             type="number"
             min={1}
@@ -73,6 +73,9 @@ export function AjustesForm() {
             className={inputClass}
           />
         </Field>
+        <p className="-mt-2 text-xs text-slate-400">
+          Vale só pra itens sem prazo próprio definido no cadastro.
+        </p>
 
         {error && <ErrorMessage message={error} />}
         {salvo && <p className="text-sm text-profit">Salvo.</p>}

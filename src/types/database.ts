@@ -1,6 +1,7 @@
-// Gerado a partir do schema real no Supabase (mcp__Supabase__generate_typescript_types),
-// filtrado apenas para as tabelas do Catira Control. O projeto Supabase é compartilhado
-// com outro app do usuário; as tabelas dele não entram aqui.
+import type { CondicaoItem, CustoExtra, StatusItem } from './domain'
+
+// Alinhado com /supabase/migrations. O projeto Supabase é compartilhado com
+// outro app do usuário; as tabelas dele não entram aqui.
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[]
 
 export type Database = {
@@ -25,6 +26,63 @@ export type Database = {
           created_at?: string
           id?: string
           nome?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      fornecedores: {
+        Row: {
+          contato: string | null
+          created_at: string
+          id: string
+          nome: string
+          observacoes: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          contato?: string | null
+          created_at?: string
+          id?: string
+          nome: string
+          observacoes?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Update: {
+          contato?: string | null
+          created_at?: string
+          id?: string
+          nome?: string
+          observacoes?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      plataformas: {
+        Row: {
+          created_at: string
+          id: string
+          nome: string
+          taxa_padrao_pct: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          nome: string
+          taxa_padrao_pct?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          nome?: string
+          taxa_padrao_pct?: number
           updated_at?: string
           user_id?: string
         }
@@ -60,121 +118,83 @@ export type Database = {
         }
         Relationships: []
       }
-      despesas_gerais: {
-        Row: {
-          categoria_despesa: Database['public']['Enums']['categoria_despesa_tipo']
-          created_at: string
-          data: string
-          descricao: string | null
-          id: string
-          updated_at: string
-          user_id: string
-          valor: number
-        }
-        Insert: {
-          categoria_despesa: Database['public']['Enums']['categoria_despesa_tipo']
-          created_at?: string
-          data: string
-          descricao?: string | null
-          id?: string
-          updated_at?: string
-          user_id?: string
-          valor: number
-        }
-        Update: {
-          categoria_despesa?: Database['public']['Enums']['categoria_despesa_tipo']
-          created_at?: string
-          data?: string
-          descricao?: string | null
-          id?: string
-          updated_at?: string
-          user_id?: string
-          valor?: number
-        }
-        Relationships: []
-      }
-      fornecedores: {
-        Row: {
-          contato: string | null
-          created_at: string
-          id: string
-          nome: string
-          observacoes: string | null
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          contato?: string | null
-          created_at?: string
-          id?: string
-          nome: string
-          observacoes?: string | null
-          updated_at?: string
-          user_id?: string
-        }
-        Update: {
-          contato?: string | null
-          created_at?: string
-          id?: string
-          nome?: string
-          observacoes?: string | null
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
       itens: {
         Row: {
-          condicao: Database['public']['Enums']['condicao_item']
-          created_at: string
-          data_venda: string | null
           id: string
-          identificador: string | null
-          lote_id: string
-          observacoes: string | null
-          plataforma_id: string | null
-          preco_venda: number | null
-          status: Database['public']['Enums']['status_item']
-          taxa_plataforma_pct: number | null
-          updated_at: string
           user_id: string
+          nome: string
+          categoria_id: string | null
+          fornecedor_id: string | null
+          identificador: string | null
+          condicao: CondicaoItem
+          status: StatusItem
+          data_compra: string
+          custo_compra: number
+          custos_extras: CustoExtra[]
+          dias_planejados: number | null
+          data_venda: string | null
+          preco_venda: number | null
+          plataforma_id: string | null
+          taxa_plataforma_pct: number | null
+          observacoes: string | null
+          created_at: string
+          updated_at: string
         }
         Insert: {
-          condicao?: Database['public']['Enums']['condicao_item']
-          created_at?: string
-          data_venda?: string | null
           id?: string
-          identificador?: string | null
-          lote_id: string
-          observacoes?: string | null
-          plataforma_id?: string | null
-          preco_venda?: number | null
-          status?: Database['public']['Enums']['status_item']
-          taxa_plataforma_pct?: number | null
-          updated_at?: string
           user_id?: string
+          nome: string
+          categoria_id?: string | null
+          fornecedor_id?: string | null
+          identificador?: string | null
+          condicao?: CondicaoItem
+          status?: StatusItem
+          data_compra: string
+          custo_compra?: number
+          custos_extras?: CustoExtra[]
+          dias_planejados?: number | null
+          data_venda?: string | null
+          preco_venda?: number | null
+          plataforma_id?: string | null
+          taxa_plataforma_pct?: number | null
+          observacoes?: string | null
+          created_at?: string
+          updated_at?: string
         }
         Update: {
-          condicao?: Database['public']['Enums']['condicao_item']
-          created_at?: string
-          data_venda?: string | null
           id?: string
-          identificador?: string | null
-          lote_id?: string
-          observacoes?: string | null
-          plataforma_id?: string | null
-          preco_venda?: number | null
-          status?: Database['public']['Enums']['status_item']
-          taxa_plataforma_pct?: number | null
-          updated_at?: string
           user_id?: string
+          nome?: string
+          categoria_id?: string | null
+          fornecedor_id?: string | null
+          identificador?: string | null
+          condicao?: CondicaoItem
+          status?: StatusItem
+          data_compra?: string
+          custo_compra?: number
+          custos_extras?: CustoExtra[]
+          dias_planejados?: number | null
+          data_venda?: string | null
+          preco_venda?: number | null
+          plataforma_id?: string | null
+          taxa_plataforma_pct?: number | null
+          observacoes?: string | null
+          created_at?: string
+          updated_at?: string
         }
         Relationships: [
           {
-            foreignKeyName: 'itens_lote_id_fkey'
-            columns: ['lote_id']
+            foreignKeyName: 'itens_categoria_id_fkey'
+            columns: ['categoria_id']
             isOneToOne: false
-            referencedRelation: 'lotes_compra'
+            referencedRelation: 'categorias'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'itens_fornecedor_id_fkey'
+            columns: ['fornecedor_id']
+            isOneToOne: false
+            referencedRelation: 'fornecedores'
             referencedColumns: ['id']
           },
           {
@@ -186,118 +206,12 @@ export type Database = {
           },
         ]
       }
-      lotes_compra: {
-        Row: {
-          categoria_id: string | null
-          cotacao_dolar: number | null
-          created_at: string
-          custo_extra: number
-          custo_frete: number
-          custo_produto: number
-          data_compra: string
-          fornecedor_id: string | null
-          id: string
-          observacoes: string | null
-          quantidade_comprada: number
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          categoria_id?: string | null
-          cotacao_dolar?: number | null
-          created_at?: string
-          custo_extra?: number
-          custo_frete?: number
-          custo_produto?: number
-          data_compra: string
-          fornecedor_id?: string | null
-          id?: string
-          observacoes?: string | null
-          quantidade_comprada: number
-          updated_at?: string
-          user_id?: string
-        }
-        Update: {
-          categoria_id?: string | null
-          cotacao_dolar?: number | null
-          created_at?: string
-          custo_extra?: number
-          custo_frete?: number
-          custo_produto?: number
-          data_compra?: string
-          fornecedor_id?: string | null
-          id?: string
-          observacoes?: string | null
-          quantidade_comprada?: number
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: 'lotes_compra_categoria_id_fkey'
-            columns: ['categoria_id']
-            isOneToOne: false
-            referencedRelation: 'categorias'
-            referencedColumns: ['id']
-          },
-          {
-            foreignKeyName: 'lotes_compra_fornecedor_id_fkey'
-            columns: ['fornecedor_id']
-            isOneToOne: false
-            referencedRelation: 'fornecedores'
-            referencedColumns: ['id']
-          },
-        ]
-      }
-      plataformas: {
-        Row: {
-          created_at: string
-          id: string
-          nome: string
-          taxa_padrao_pct: number
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          nome: string
-          taxa_padrao_pct?: number
-          updated_at?: string
-          user_id?: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          nome?: string
-          taxa_padrao_pct?: number
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
     }
     Views: Record<string, never>
-    Functions: {
-      criar_lote_com_itens: {
-        Args: {
-          p_categoria_id: string | null
-          p_cotacao_dolar: number | null
-          p_custo_extra: number
-          p_custo_frete: number
-          p_custo_produto: number
-          p_data_compra: string
-          p_fornecedor_id: string | null
-          p_observacoes: string | null
-          p_quantidade_comprada: number
-        }
-        Returns: string
-      }
-    }
+    Functions: Record<string, never>
     Enums: {
-      categoria_despesa_tipo: 'marketing' | 'embalagem_geral' | 'transporte' | 'taxas' | 'outros'
-      condicao_item: 'novo' | 'usado'
-      status_item: 'em_estoque' | 'reservado' | 'vendido' | 'perdido_danificado'
+      condicao_item: CondicaoItem
+      status_item: StatusItem
     }
     CompositeTypes: Record<string, never>
   }

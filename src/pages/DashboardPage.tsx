@@ -1,6 +1,4 @@
 import { useItens } from '../hooks/useItens'
-import { useDespesas } from '../hooks/useDespesas'
-import { useLotes } from '../hooks/useLotes'
 import { useCategorias } from '../hooks/useCategorias'
 import { useFornecedores } from '../hooks/useFornecedores'
 import { usePlataformas } from '../hooks/usePlataformas'
@@ -31,34 +29,32 @@ import { MetaMensalCard } from '../components/dashboard/MetaMensalCard'
 import { FluxoCaixaCard } from '../components/dashboard/FluxoCaixaCard'
 import { GraficosSection } from '../components/dashboard/GraficosSection'
 import { RankingsSection } from '../components/dashboard/RankingsSection'
+import { IconAlert } from '../components/icons'
 import { formatBRL, formatDias } from '../lib/format'
 
 export function DashboardPage() {
-  const { itens, loading: loadingItens } = useItens()
-  const { despesas, loading: loadingDespesas } = useDespesas()
-  const { lotes, loading: loadingLotes } = useLotes()
+  const { itens, loading } = useItens()
   const { categorias } = useCategorias()
   const { fornecedores } = useFornecedores()
   const { plataformas } = usePlataformas()
   const { config } = useConfiguracoes()
 
-  const loading = loadingItens || loadingDespesas || loadingLotes
   if (loading) return <LoadingSpinner label="Calculando KPIs…" />
 
   const mesAtual = periodoMesAtual()
-  const lucroTotal = kpiLucroNegocio(itens, despesas)
-  const lucroMes = kpiLucroNegocio(itens, despesas, mesAtual)
+  const lucroTotal = kpiLucroNegocio(itens)
+  const lucroMes = kpiLucroNegocio(itens, mesAtual)
   const margemPorCategoria = kpiMargemPorCategoria(itens, categorias)
   const giroMedio = kpiGiroEstoqueMedio(itens)
-  const capital = kpiCapital(lotes, itens)
+  const capital = kpiCapital(itens)
   const roiMedio = kpiRoiMedioGeral(itens)
   const top5Lucrativos = kpiTop5MaisLucrativos(itens)
   const top5Parados = kpiTop5MaisParados(itens)
   const alerta = kpiAlertaEstoqueParado(itens, config.dias_estoque_parado_alerta)
-  const fluxo = kpiFluxoCaixa(itens, despesas, lotes, mesAtual)
-  const variacaoMesAnterior = kpiVariacaoLucroMesAnterior(itens, despesas)
+  const fluxo = kpiFluxoCaixa(itens, mesAtual)
+  const variacaoMesAnterior = kpiVariacaoLucroMesAnterior(itens)
 
-  const lucroPorMes = kpiLucroPorMes(itens, despesas)
+  const lucroPorMes = kpiLucroPorMes(itens)
   const lucroPorCategoria = kpiLucroPorCategoria(itens, categorias)
   const porPlataforma = kpiMargemPorPlataforma(itens, plataformas)
   const porFornecedor = kpiMargemPorFornecedor(itens, fornecedores)
@@ -102,10 +98,10 @@ export function DashboardPage() {
       </div>
 
       {alerta.length > 0 && (
-        <div className="rounded-xl border border-amber-200 bg-amber-50 p-4">
+        <div className="flex items-center gap-2 rounded-xl border border-amber-200 bg-amber-50 p-4">
+          <IconAlert className="h-4 w-4 shrink-0 text-amber-600" />
           <p className="text-sm font-semibold text-amber-800">
-            ⚠ {alerta.length} {alerta.length === 1 ? 'item parado' : 'itens parados'} há mais de{' '}
-            {config.dias_estoque_parado_alerta} dias
+            {alerta.length} {alerta.length === 1 ? 'item passou do prazo' : 'itens passaram do prazo'} — veja em Itens
           </p>
         </div>
       )}

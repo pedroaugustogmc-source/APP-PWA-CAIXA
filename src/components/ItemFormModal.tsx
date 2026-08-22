@@ -1,0 +1,224 @@
+import { useState, type FormEvent } from 'react'
+import { Modal } from './Modal'
+import { Field, inputClass } from './Field'
+import { ErrorMessage } from './ErrorMessage'
+import { IconPlus } from './icons'
+import { todayISO } from '../lib/calculations'
+import { formatBRL } from '../lib/format'
+import type { Categoria, CondicaoItem, CustoExtra, Fornecedor } from '../types/domain'
+import type { ItemInput } from '../hooks/useItens'
+
+interface Props {
+  categorias: Categoria[]
+  fornecedores: Fornecedor[]
+  onClose: () => void
+  onSubmit: (input: ItemInput, categoria: Categoria | null, fornecedor: Fornecedor | null) => Promise<{ error: string | null }>
+}
+
+export function ItemFormModal({ categorias, fornecedores, onClose, onSubmit }: Props) {
+  const [nome, setNome] = useState('')
+  const [categoriaId, setCategoriaId] = useState('')
+  const [fornecedorId, setFornecedorId] = useState('')
+  const [condicao, setCondicao] = useState<CondicaoItem>('novo')
+  const [dataCompra, setDataCompra] = useState(todayISO())
+  const [custoCompra, setCustoCompra] = useState(0)
+  const [custosExtras, setCustosExtras] = useState<CustoExtra[]>([])
+  const [diasPlanejados, setDiasPlanejados] = useState('')
+  const [observacoes, setObservacoes] = useState('')
+  const [error, setError] = useState<string | null>(null)
+  const [submitting, setSubmitting] = useState(false)
+
+  const custoTotal = custoCompra + custosExtras.reduce((acc, c) => acc + c.valor, 0)
+
+  function adicionarCustoExtra() {
+    setCustosExtras([...custosExtras, { label: '', valor: 0 }])
+  }
+
+  function atualizarCustoExtra(index: number, campo: 'label' | 'valor', valor: string) {
+    setCustosExtras(
+      custosExtras.map((c, i) => (i === index ? { ...c, [campo]: campo === 'valor' ? Number(valor) : valor } : c)),
+    )
+  }
+
+  function removerCustoExtra(index: number) {
+    setCustosExtras(custosExtras.filter((_, i) => i !== index))
+  }
+
+  async function handleSubmit(e: FormEvent) {
+    e.preventDefault()
+    if (!nome.trim()) {
+      setError('Dê um nome pro produto.')
+      return
+    }
+    setSubmitting(true)
+    setError(null)
+
+    const input: ItemInput = {
+      nome: nome.trim(),
+      categoria_id: categoriaId || null,
+      fornecedor_id: fornecedorId || null,
+      data_compra: dataCompra,
+      custo_compra: custoCompra,
+      custos_extras: custosExtras.filter((c) => c.label.trim() !== ''),
+      dias_planejados: diasPlanejados ? Number(diasPlanejados) : null,
+      condicao,
+      observacoes: observacoes || null,
+    }
+
+    const categoria = categorias.find((c) => c.id === categoriaId) ?? null
+    const fornecedor = fornecedores.find((f) => f.id === fornecedorId) ?? null
+
+    const { error } = await onSubmit(input, categoria, fornecedor)
+    setSubmitting(false)
+    if (error) setError(error)
+    else onClose()
+  }
+
+  return (
+    <Modal title="Novo item" onClose={onClose}>
+      <form onSubmit={handleSubmit} className="space-y-3">
+        <Field label="Produto">
+          <input
+            type="text"
+            required
+            autoFocus
+            placeholder="Ex.: Capa transparente iPhone 13"
+            value={nome}
+            onChange={(e) => setNome(e.target.value)}
+            className={inputClass}
+          />
+        </Field>
+
+        <div className="grid grid-cols-2 gap-2">
+          <Field label="Categoria">
+            <select value={categoriaId} onChange={(e) => setCategoriaId(e.target.value)} className={inputClass}>
+              <option value="">— nenhuma —</option>
+              {categorias.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.nome}
+                </option>
+              ))}
+            </select>
+          </Field>
+          <Field label="Condição">
+            <select value={condicao} onChange={(e) => setCondicao(e.target.value as CondicaoItem)} className={inputClass}>
+              <option value="novo">Novo</option>
+              <option value="usado">Usado</option>
+            </select>
+          </Field>
+        </div>
+
+        <Field label="Fornecedor">
+          <select value={fornecedorId} onChange={(e) => setFornecedorId(e.target.value)} className={inputClass}>
+            <option value="">— nenhum —</option>
+            {fornecedores.map((f) => (
+              <option key={f.id} value={f.id}>
+                {f.nome}
+              </option>
+            ))}
+          </select>
+        </Field>
+
+        <div className="grid grid-cols-2 gap-2">
+          <Field label="Data da compra">
+            <input
+              type="date"
+              required
+              value={dataCompra}
+              onChange={(e) => setDataCompra(e.target.value)}
+              className={inputClass}
+            />
+          </Field>
+          <Field label="Custo de compra (R$)">
+            <input
+              type="number"
+              min={0}
+              step={0.01}
+              inputMode="decimal"
+              value={custoCompra}
+              onChange={(e) => setCustoCompra(Number(e.target.value))}
+              className={inputClass}
+            />
+          </Field>
+        </div>
+
+        <div>
+          <div className="mb-1 flex items-center justify-between">
+            <span className="text-sm font-medium text-slate-700">Despesas com este item</span>
+            <button
+              type="button"
+              onClick={adicionarCustoExtra}
+              className="flex items-center gap-1 text-xs font-semibold text-slate-600"
+            >
+              <IconPlus className="h-3.5 w-3.5" /> adicionar
+            </button>
+          </div>
+          {custosExtras.length === 0 && (
+            <p className="text-xs text-slate-400">Frete, embalagem, taxas — o que mais custou pra ter esse item.</p>
+          )}
+          <div className="space-y-2">
+            {custosExtras.map((c, i) => (
+              <div key={i} className="flex gap-2">
+                <input
+                  type="text"
+                  placeholder="Ex.: Frete"
+                  value={c.label}
+                  onChange={(e) => atualizarCustoExtra(i, 'label', e.target.value)}
+                  className={inputClass}
+                />
+                <input
+                  type="number"
+                  min={0}
+                  step={0.01}
+                  inputMode="decimal"
+                  placeholder="R$"
+                  value={c.valor}
+                  onChange={(e) => atualizarCustoExtra(i, 'valor', e.target.value)}
+                  className={`${inputClass} w-24 shrink-0`}
+                />
+                <button
+                  type="button"
+                  onClick={() => removerCustoExtra(i)}
+                  className="shrink-0 text-slate-400 hover:text-loss"
+                  aria-label="Remover despesa"
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <Field label="Quantos dias você quer ficar com ele até vender">
+          <input
+            type="number"
+            min={1}
+            step={1}
+            placeholder="Opcional"
+            value={diasPlanejados}
+            onChange={(e) => setDiasPlanejados(e.target.value)}
+            className={inputClass}
+          />
+        </Field>
+
+        <Field label="Observações">
+          <textarea value={observacoes} onChange={(e) => setObservacoes(e.target.value)} className={inputClass} rows={2} />
+        </Field>
+
+        <div className="rounded-lg bg-slate-50 px-3 py-2 text-sm text-slate-600">
+          Custo total do item: <strong className="text-slate-900">{formatBRL(custoTotal)}</strong>
+        </div>
+
+        {error && <ErrorMessage message={error} />}
+
+        <button
+          type="submit"
+          disabled={submitting}
+          className="w-full rounded-lg bg-slate-900 py-2.5 text-sm font-semibold text-white disabled:opacity-50"
+        >
+          {submitting ? 'Salvando…' : 'Salvar item'}
+        </button>
+      </form>
+    </Modal>
+  )
+}

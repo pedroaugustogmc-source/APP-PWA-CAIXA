@@ -1,7 +1,7 @@
-import type { Categoria, DespesaGeral, Fornecedor, ItemCalculado, LoteCalculado, Plataforma } from '../types/domain'
+import type { Categoria, Fornecedor, ItemCalculado, Plataforma } from '../types/domain'
 import { lucroLiquidoNegocio, media, soma, todayISO } from './calculations'
 
-/** KPIs 1–8 do dashboard, todos derivados aqui — nenhuma fórmula duplicada em página/componente. */
+/** KPIs do dashboard, todos derivados aqui — nenhuma fórmula duplicada em página/componente. */
 
 export interface PeriodoFiltro {
   inicio: string
@@ -41,44 +41,38 @@ export function itensPerdidosNoPeriodo(itens: ItemCalculado[], periodo?: Periodo
   )
 }
 
-export function despesasNoPeriodo(despesas: DespesaGeral[], periodo?: PeriodoFiltro): DespesaGeral[] {
-  return despesas.filter((d) => dentroDoPeriodo(d.data, periodo))
+export function itensCompradosNoPeriodo(itens: ItemCalculado[], periodo?: PeriodoFiltro): ItemCalculado[] {
+  return itens.filter((i) => dentroDoPeriodo(i.data_compra, periodo))
 }
 
-export function lotesNoPeriodo(lotes: LoteCalculado[], periodo?: PeriodoFiltro): LoteCalculado[] {
-  return lotes.filter((l) => dentroDoPeriodo(l.data_compra, periodo))
-}
-
-/** KPI 1 — lucro líquido do negócio no período. */
-export function kpiLucroNegocio(itens: ItemCalculado[], despesas: DespesaGeral[], periodo?: PeriodoFiltro): number {
+/** KPI — lucro líquido do negócio no período. */
+export function kpiLucroNegocio(itens: ItemCalculado[], periodo?: PeriodoFiltro): number {
   return lucroLiquidoNegocio({
     itensVendidos: itensVendidosNoPeriodo(itens, periodo),
-    despesas: despesasNoPeriodo(despesas, periodo),
     itensPerdidos: itensPerdidosNoPeriodo(itens, periodo),
   })
 }
 
-/** KPI 1 (série) — lucro líquido do negócio, mês a mês. */
+/** KPI (série) — lucro líquido do negócio, mês a mês. */
 export interface LucroPorMes {
   mes: string
   lucro: number
 }
 
-export function kpiLucroPorMes(itens: ItemCalculado[], despesas: DespesaGeral[]): LucroPorMes[] {
+export function kpiLucroPorMes(itens: ItemCalculado[]): LucroPorMes[] {
   const meses = new Set<string>()
   for (const item of itens) {
     if (item.status === 'vendido' && item.data_venda) meses.add(item.data_venda.slice(0, 7))
     if (item.status === 'perdido_danificado') meses.add(item.updated_at.slice(0, 7))
   }
-  for (const despesa of despesas) meses.add(despesa.data.slice(0, 7))
 
   return [...meses].sort().map((mes) => ({
     mes,
-    lucro: kpiLucroNegocio(itens, despesas, { inicio: `${mes}-01`, fim: `${mes}-31` }),
+    lucro: kpiLucroNegocio(itens, { inicio: `${mes}-01`, fim: `${mes}-31` }),
   }))
 }
 
-/** KPI 2 — margem média por categoria (itens vendidos). */
+/** KPI — margem média por categoria (itens vendidos). */
 export interface MargemPorCategoria {
   categoria_id: string | null
   categoria_nome: string
@@ -90,8 +84,7 @@ export function kpiMargemPorCategoria(itens: ItemCalculado[], categorias: Catego
   const vendidos = itens.filter((i) => i.status === 'vendido' && i.margem_pct !== null)
   const grupos = new Map<string | null, ItemCalculado[]>()
   for (const item of vendidos) {
-    const catId = item.lote.categoria_id
-    grupos.set(catId, [...(grupos.get(catId) ?? []), item])
+    grupos.set(item.categoria_id, [...(grupos.get(item.categoria_id) ?? []), item])
   }
   return [...grupos.entries()]
     .map(([catId, doGrupo]) => ({
@@ -114,8 +107,7 @@ export function kpiLucroPorCategoria(itens: ItemCalculado[], categorias: Categor
   const vendidos = itens.filter((i) => i.status === 'vendido' && i.lucro_liquido !== null)
   const grupos = new Map<string | null, ItemCalculado[]>()
   for (const item of vendidos) {
-    const catId = item.lote.categoria_id
-    grupos.set(catId, [...(grupos.get(catId) ?? []), item])
+    grupos.set(item.categoria_id, [...(grupos.get(item.categoria_id) ?? []), item])
   }
   return [...grupos.entries()]
     .map(([catId, doGrupo]) => ({
@@ -126,16 +118,16 @@ export function kpiLucroPorCategoria(itens: ItemCalculado[], categorias: Categor
     .sort((a, b) => b.lucro_total - a.lucro_total)
 }
 
-/** KPI 3 — giro de estoque médio: média de dias até vender. */
+/** KPI — giro de estoque médio: média de dias até vender. */
 export function kpiGiroEstoqueMedio(itens: ItemCalculado[]): number {
   const vendidos = itens.filter((i) => i.status === 'vendido' && i.dias_em_estoque !== null)
   return media(vendidos.map((i) => i.dias_em_estoque ?? 0))
 }
 
 /**
- * KPI 4 — capital investido (total histórico) vs. capital preso em estoque não
- * vendido. Também decompõe em capital realizado (custo dos itens já vendidos)
- * e perdido, já que investido_total = realizado + preso_em_estoque + perdido.
+ * KPI — capital investido (total histórico) vs. capital preso em estoque não
+ * vendido, decomposto também em realizado (vendido) e perdido.
+ * investido_total = realizado + preso_em_estoque + perdido
  */
 export interface CapitalKpi {
   investido_total: number
@@ -144,26 +136,25 @@ export interface CapitalKpi {
   perdido: number
 }
 
-export function kpiCapital(lotes: LoteCalculado[], itens: ItemCalculado[]): CapitalKpi {
-  const investido_total = soma(lotes.map((l) => l.custo_total_lote))
+export function kpiCapital(itens: ItemCalculado[]): CapitalKpi {
   const emEstoque = itens.filter((i) => i.status === 'em_estoque' || i.status === 'reservado')
   const vendidos = itens.filter((i) => i.status === 'vendido')
   const perdidos = itens.filter((i) => i.status === 'perdido_danificado')
   return {
-    investido_total,
-    preso_em_estoque: soma(emEstoque.map((i) => i.custo_unitario)),
-    realizado: soma(vendidos.map((i) => i.custo_unitario)),
-    perdido: soma(perdidos.map((i) => i.custo_unitario)),
+    investido_total: soma(itens.map((i) => i.custo_total)),
+    preso_em_estoque: soma(emEstoque.map((i) => i.custo_total)),
+    realizado: soma(vendidos.map((i) => i.custo_total)),
+    perdido: soma(perdidos.map((i) => i.custo_total)),
   }
 }
 
-/** KPI 5 — ROI médio geral. */
+/** KPI — ROI médio geral. */
 export function kpiRoiMedioGeral(itens: ItemCalculado[]): number {
   const vendidos = itens.filter((i) => i.status === 'vendido' && i.roi_pct !== null)
   return media(vendidos.map((i) => i.roi_pct ?? 0))
 }
 
-/** KPI 6 — top 5 itens mais lucrativos / mais parados. */
+/** KPI — top 5 itens mais lucrativos / mais parados. */
 export function kpiTop5MaisLucrativos(itens: ItemCalculado[]): ItemCalculado[] {
   return [...itens]
     .filter((i) => i.status === 'vendido')
@@ -178,40 +169,41 @@ export function kpiTop5MaisParados(itens: ItemCalculado[]): ItemCalculado[] {
     .slice(0, 5)
 }
 
-/** Usado no KPI 7 e no destaque visual por item — fonte única do critério de "parado". */
-export function isItemParado(item: Pick<ItemCalculado, 'status' | 'dias_em_estoque'>, diasLimite: number): boolean {
-  return (item.status === 'em_estoque' || item.status === 'reservado') && (item.dias_em_estoque ?? 0) > diasLimite
+/**
+ * Critério de "parado": usa o prazo planejado do próprio item quando definido
+ * (dias_planejados), senão cai no limite global configurável.
+ */
+export function isItemParado(
+  item: Pick<ItemCalculado, 'status' | 'dias_em_estoque' | 'dias_planejados'>,
+  diasLimitePadrao: number,
+): boolean {
+  const limite = item.dias_planejados ?? diasLimitePadrao
+  return (item.status === 'em_estoque' || item.status === 'reservado') && (item.dias_em_estoque ?? 0) > limite
 }
 
-/** KPI 7 — itens parados há mais de X dias (configurável). */
-export function kpiAlertaEstoqueParado(itens: ItemCalculado[], diasLimite: number): ItemCalculado[] {
-  return itens.filter((i) => isItemParado(i, diasLimite))
+/** KPI — itens parados (acima do prazo planejado ou do limite padrão). */
+export function kpiAlertaEstoqueParado(itens: ItemCalculado[], diasLimitePadrao: number): ItemCalculado[] {
+  return itens.filter((i) => isItemParado(i, diasLimitePadrao))
 }
 
-/** KPI 8 — fluxo de caixa do período: quanto entrou (líquido) vs. quanto saiu. */
+/** KPI — fluxo de caixa do período: quanto entrou (líquido) vs. quanto saiu (compras). */
 export interface FluxoCaixa {
   entrou: number
   saiu: number
   saldo: number
 }
 
-export function kpiFluxoCaixa(
-  itens: ItemCalculado[],
-  despesas: DespesaGeral[],
-  lotes: LoteCalculado[],
-  periodo?: PeriodoFiltro,
-): FluxoCaixa {
+export function kpiFluxoCaixa(itens: ItemCalculado[], periodo?: PeriodoFiltro): FluxoCaixa {
   const vendidosPeriodo = itensVendidosNoPeriodo(itens, periodo)
   const entrou = soma(vendidosPeriodo.map((i) => (i.preco_venda ?? 0) - (i.taxa_plataforma_valor ?? 0)))
 
-  const despesasPeriodo = despesasNoPeriodo(despesas, periodo)
-  const lotesPeriodo = lotesNoPeriodo(lotes, periodo)
-  const saiu = soma(despesasPeriodo.map((d) => d.valor)) + soma(lotesPeriodo.map((l) => l.custo_total_lote))
+  const compradosPeriodo = itensCompradosNoPeriodo(itens, periodo)
+  const saiu = soma(compradosPeriodo.map((i) => i.custo_total))
 
   return { entrou, saiu, saldo: entrou - saiu }
 }
 
-/** KPI 9 — canal de venda mais lucrativo: melhor margem líquida média por plataforma. */
+/** KPI — canal de venda mais lucrativo: melhor margem líquida média por plataforma. */
 export interface MargemPorPlataforma {
   plataforma_id: string | null
   plataforma_nome: string
@@ -235,7 +227,7 @@ export function kpiMargemPorPlataforma(itens: ItemCalculado[], plataformas: Plat
     .sort((a, b) => b.margem_media - a.margem_media)
 }
 
-/** KPI 10 — fornecedor mais lucrativo: melhor margem líquida média. */
+/** KPI — fornecedor mais lucrativo: melhor margem líquida média. */
 export interface MargemPorFornecedor {
   fornecedor_id: string | null
   fornecedor_nome: string
@@ -247,8 +239,7 @@ export function kpiMargemPorFornecedor(itens: ItemCalculado[], fornecedores: For
   const vendidos = itens.filter((i) => i.status === 'vendido' && i.margem_pct !== null)
   const grupos = new Map<string | null, ItemCalculado[]>()
   for (const item of vendidos) {
-    const id = item.lote.fornecedor_id
-    grupos.set(id, [...(grupos.get(id) ?? []), item])
+    grupos.set(item.fornecedor_id, [...(grupos.get(item.fornecedor_id) ?? []), item])
   }
   return [...grupos.entries()]
     .map(([id, doGrupo]) => ({
@@ -260,7 +251,7 @@ export function kpiMargemPorFornecedor(itens: ItemCalculado[], fornecedores: For
     .sort((a, b) => b.margem_media - a.margem_media)
 }
 
-/** KPI 11 — perdas/danos do período e impacto real no lucro (mesmo valor descontado em kpiLucroNegocio). */
+/** KPI — perdas/danos do período e impacto real no lucro. */
 export interface PerdasKpi {
   quantidade: number
   valor_total: number
@@ -268,13 +259,13 @@ export interface PerdasKpi {
 
 export function kpiPerdas(itens: ItemCalculado[], periodo?: PeriodoFiltro): PerdasKpi {
   const perdidos = itensPerdidosNoPeriodo(itens, periodo)
-  return { quantidade: perdidos.length, valor_total: soma(perdidos.map((i) => i.custo_unitario)) }
+  return { quantidade: perdidos.length, valor_total: soma(perdidos.map((i) => i.custo_total)) }
 }
 
-/** KPI 12 — variação % do lucro do mês vs. mês anterior (progresso da meta já é feito na página). */
-export function kpiVariacaoLucroMesAnterior(itens: ItemCalculado[], despesas: DespesaGeral[]): number | null {
-  const mesAtual = kpiLucroNegocio(itens, despesas, periodoMesAtual())
-  const mesAnterior = kpiLucroNegocio(itens, despesas, periodoMesAnterior())
+/** KPI — variação % do lucro do mês vs. mês anterior. */
+export function kpiVariacaoLucroMesAnterior(itens: ItemCalculado[]): number | null {
+  const mesAtual = kpiLucroNegocio(itens, periodoMesAtual())
+  const mesAnterior = kpiLucroNegocio(itens, periodoMesAnterior())
   if (mesAnterior === 0) return null
   return (mesAtual - mesAnterior) / Math.abs(mesAnterior)
 }
