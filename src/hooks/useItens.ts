@@ -156,6 +156,12 @@ export function useItens() {
     return { error: error?.message ?? null }
   }
 
+  async function editar(itemId: string, input: ItemInput) {
+    const { error } = await supabase.from('itens').update(input).eq('id', itemId)
+    if (!error) await refetch()
+    return { error: error?.message ?? null }
+  }
+
   async function cancelarVenda(itemId: string) {
     const { error } = await supabase
       .from('itens')
@@ -203,6 +209,7 @@ export function useItens() {
     loading,
     error,
     criar,
+    editar,
     registrarVenda,
     cancelarVenda,
     marcarPerdido,

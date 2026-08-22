@@ -22,7 +22,8 @@ const STATUS_OPTIONS: { value: StatusItem | 'todos'; label: string }[] = [
 ]
 
 export function ItensPage() {
-  const { itens, loading, error, criar, registrarVenda, cancelarVenda, marcarPerdido, alterarStatus } = useItens()
+  const { itens, loading, error, criar, editar, registrarVenda, cancelarVenda, marcarPerdido, alterarStatus, remover } =
+    useItens()
   const { categorias } = useCategorias()
   const { fornecedores } = useFornecedores()
   const { plataformas } = usePlataformas()
@@ -31,6 +32,7 @@ export function ItensPage() {
   const [statusFiltro, setStatusFiltro] = useState<StatusItem | 'todos'>('todos')
   const [categoriaFiltro, setCategoriaFiltro] = useState('')
   const [showForm, setShowForm] = useState(false)
+  const [itemEditandoId, setItemEditandoId] = useState<string | null>(null)
   const [itemVendendo, setItemVendendo] = useState<string | null>(null)
 
   const itensFiltrados = itens.filter((item) => {
@@ -40,6 +42,12 @@ export function ItensPage() {
   })
 
   const item = itens.find((i) => i.id === itemVendendo) ?? null
+  const itemEditando = itens.find((i) => i.id === itemEditandoId) ?? null
+
+  function fecharFormulario() {
+    setShowForm(false)
+    setItemEditandoId(null)
+  }
 
   return (
     <div>
@@ -92,16 +100,25 @@ export function ItensPage() {
               }
             }}
             onAlterarStatus={(status) => alterarStatus(it.id, status)}
+            onEditar={() => setItemEditandoId(it.id)}
+            onExcluir={() => {
+              if (confirm(`Excluir "${it.nome}" definitivamente? Essa ação não pode ser desfeita.`)) {
+                remover(it.id)
+              }
+            }}
           />
         ))}
       </ul>
 
-      {showForm && (
+      {(showForm || itemEditando) && (
         <ItemFormModal
           categorias={categorias}
           fornecedores={fornecedores}
-          onClose={() => setShowForm(false)}
-          onSubmit={criar}
+          itemInicial={itemEditando}
+          onClose={fecharFormulario}
+          onSubmit={(input, categoria, fornecedor) =>
+            itemEditando ? editar(itemEditando.id, input) : criar(input, categoria, fornecedor)
+          }
         />
       )}
 

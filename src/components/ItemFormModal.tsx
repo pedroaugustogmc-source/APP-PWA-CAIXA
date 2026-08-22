@@ -5,26 +5,27 @@ import { ErrorMessage } from './ErrorMessage'
 import { IconPlus } from './icons'
 import { todayISO } from '../lib/calculations'
 import { formatBRL } from '../lib/format'
-import type { Categoria, CondicaoItem, CustoExtra, Fornecedor } from '../types/domain'
+import type { Categoria, CondicaoItem, CustoExtra, Fornecedor, Item } from '../types/domain'
 import type { ItemInput } from '../hooks/useItens'
 
 interface Props {
   categorias: Categoria[]
   fornecedores: Fornecedor[]
+  itemInicial?: Item | null
   onClose: () => void
   onSubmit: (input: ItemInput, categoria: Categoria | null, fornecedor: Fornecedor | null) => Promise<{ error: string | null }>
 }
 
-export function ItemFormModal({ categorias, fornecedores, onClose, onSubmit }: Props) {
-  const [nome, setNome] = useState('')
-  const [categoriaId, setCategoriaId] = useState('')
-  const [fornecedorId, setFornecedorId] = useState('')
-  const [condicao, setCondicao] = useState<CondicaoItem>('novo')
-  const [dataCompra, setDataCompra] = useState(todayISO())
-  const [custoCompra, setCustoCompra] = useState(0)
-  const [custosExtras, setCustosExtras] = useState<CustoExtra[]>([])
-  const [diasPlanejados, setDiasPlanejados] = useState('')
-  const [observacoes, setObservacoes] = useState('')
+export function ItemFormModal({ categorias, fornecedores, itemInicial, onClose, onSubmit }: Props) {
+  const [nome, setNome] = useState(itemInicial?.nome ?? '')
+  const [categoriaId, setCategoriaId] = useState(itemInicial?.categoria_id ?? '')
+  const [fornecedorId, setFornecedorId] = useState(itemInicial?.fornecedor_id ?? '')
+  const [condicao, setCondicao] = useState<CondicaoItem>(itemInicial?.condicao ?? 'novo')
+  const [dataCompra, setDataCompra] = useState(itemInicial?.data_compra ?? todayISO())
+  const [custoCompra, setCustoCompra] = useState(itemInicial?.custo_compra ?? 0)
+  const [custosExtras, setCustosExtras] = useState<CustoExtra[]>(itemInicial?.custos_extras ?? [])
+  const [diasPlanejados, setDiasPlanejados] = useState(itemInicial?.dias_planejados ? String(itemInicial.dias_planejados) : '')
+  const [observacoes, setObservacoes] = useState(itemInicial?.observacoes ?? '')
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
 
@@ -75,7 +76,7 @@ export function ItemFormModal({ categorias, fornecedores, onClose, onSubmit }: P
   }
 
   return (
-    <Modal title="Novo item" onClose={onClose}>
+    <Modal title={itemInicial ? 'Editar item' : 'Novo item'} onClose={onClose}>
       <form onSubmit={handleSubmit} className="space-y-3">
         <Field label="Produto">
           <input
@@ -216,7 +217,7 @@ export function ItemFormModal({ categorias, fornecedores, onClose, onSubmit }: P
           disabled={submitting}
           className="w-full rounded-lg bg-slate-900 py-2.5 text-sm font-semibold text-white disabled:opacity-50"
         >
-          {submitting ? 'Salvando…' : 'Salvar item'}
+          {submitting ? 'Salvando…' : itemInicial ? 'Salvar alterações' : 'Salvar item'}
         </button>
       </form>
     </Modal>

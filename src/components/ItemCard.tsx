@@ -1,5 +1,5 @@
 import { StatusBadge } from './StatusBadge'
-import { IconCloudOff } from './icons'
+import { IconCloudOff, IconEdit, IconTrash } from './icons'
 import { formatBRL, formatPercent } from '../lib/format'
 import { isItemParado } from '../lib/dashboard'
 import type { ItemCalculado } from '../types/domain'
@@ -11,9 +11,20 @@ interface Props {
   onCancelarVenda: () => void
   onMarcarPerdido: () => void
   onAlterarStatus: (status: 'em_estoque' | 'reservado') => void
+  onEditar: () => void
+  onExcluir: () => void
 }
 
-export function ItemCard({ item, diasAlerta, onVender, onCancelarVenda, onMarcarPerdido, onAlterarStatus }: Props) {
+export function ItemCard({
+  item,
+  diasAlerta,
+  onVender,
+  onCancelarVenda,
+  onMarcarPerdido,
+  onAlterarStatus,
+  onEditar,
+  onExcluir,
+}: Props) {
   const parado = isItemParado(item, diasAlerta)
   const prazo = item.dias_planejados
 
@@ -28,6 +39,16 @@ export function ItemCard({ item, diasAlerta, onVender, onCancelarVenda, onMarcar
           </p>
         </div>
         <div className="flex flex-col items-end gap-1">
+          {!item.pendenteSync && (
+            <div className="flex items-center gap-2">
+              <button type="button" onClick={onEditar} aria-label="Editar item" className="text-slate-400 hover:text-slate-700">
+                <IconEdit className="h-4 w-4" />
+              </button>
+              <button type="button" onClick={onExcluir} aria-label="Excluir item" className="text-slate-400 hover:text-loss">
+                <IconTrash className="h-4 w-4" />
+              </button>
+            </div>
+          )}
           <StatusBadge status={item.status} />
           {item.pendenteSync && (
             <span className="flex items-center gap-1 text-[11px] font-medium text-amber-600">
