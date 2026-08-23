@@ -2,6 +2,8 @@ import { useEffect, useState, type FormEvent } from 'react'
 import { useConfiguracoes } from '../hooks/useConfiguracoes'
 import { Field, inputClass } from './Field'
 import { ErrorMessage } from './ErrorMessage'
+import { Button } from './Button'
+import { Card } from './Card'
 
 export function AjustesForm() {
   const { config, salvar, loading } = useConfiguracoes()
@@ -36,8 +38,8 @@ export function AjustesForm() {
   if (loading) return null
 
   return (
-    <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-      <h3 className="mb-2 font-semibold text-slate-900">Preferências</h3>
+    <Card as="section">
+      <h3 className="mb-3 font-semibold text-slate-900">Preferências</h3>
       <form onSubmit={handleSubmit} className="space-y-3">
         <Field label="Margem alvo do motor de precificação (%)">
           <input
@@ -73,21 +75,15 @@ export function AjustesForm() {
             className={inputClass}
           />
         </Field>
-        <p className="-mt-2 text-xs text-slate-400">
-          Vale só pra itens sem prazo próprio definido no cadastro.
-        </p>
+        <p className="-mt-2 text-xs text-slate-400">Vale só pra itens sem prazo próprio definido no cadastro.</p>
 
         {error && <ErrorMessage message={error} />}
-        {salvo && <p className="text-sm text-profit">Salvo.</p>}
+        {salvo && <p className="text-sm font-medium text-profit">Salvo.</p>}
 
-        <button
-          type="submit"
-          disabled={salvando}
-          className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
-        >
+        <Button type="submit" variant="primary" disabled={salvando}>
           {salvando ? 'Salvando…' : 'Salvar preferências'}
-        </button>
+        </Button>
       </form>
-    </section>
+    </Card>
   )
 }

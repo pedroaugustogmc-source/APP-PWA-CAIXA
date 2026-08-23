@@ -1,10 +1,11 @@
 import type { FluxoCaixa } from '../../lib/dashboard'
 import { formatBRL } from '../../lib/format'
+import { Card, CardLabel } from '../Card'
 
 export function FluxoCaixaCard({ fluxo }: { fluxo: FluxoCaixa }) {
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-      <p className="mb-2 text-xs font-medium text-slate-500">Fluxo de caixa do mês</p>
+    <Card>
+      <CardLabel>Fluxo de caixa do mês</CardLabel>
       <div className="grid grid-cols-3 gap-2 text-sm">
         <div>
           <p className="text-xs text-slate-400">Entrou</p>
@@ -19,6 +20,6 @@ export function FluxoCaixaCard({ fluxo }: { fluxo: FluxoCaixa }) {
           <p className={`font-semibold ${fluxo.saldo < 0 ? 'text-loss' : 'text-profit'}`}>{formatBRL(fluxo.saldo)}</p>
         </div>
       </div>
-    </div>
+    </Card>
   )
 }

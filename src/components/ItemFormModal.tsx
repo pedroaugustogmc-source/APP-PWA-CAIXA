@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react'
 import { Modal } from './Modal'
 import { Field, inputClass } from './Field'
 import { ErrorMessage } from './ErrorMessage'
+import { Button } from './Button'
 import { IconPlus } from './icons'
 import { todayISO } from '../lib/calculations'
 import { formatBRL } from '../lib/format'
@@ -149,7 +150,7 @@ export function ItemFormModal({ categorias, fornecedores, itemInicial, onClose, 
             <button
               type="button"
               onClick={adicionarCustoExtra}
-              className="flex items-center gap-1 text-xs font-semibold text-slate-600"
+              className="flex items-center gap-1 text-xs font-semibold text-slate-600 transition-colors hover:text-slate-900"
             >
               <IconPlus className="h-3.5 w-3.5" /> adicionar
             </button>
@@ -180,7 +181,7 @@ export function ItemFormModal({ categorias, fornecedores, itemInicial, onClose, 
                 <button
                   type="button"
                   onClick={() => removerCustoExtra(i)}
-                  className="shrink-0 text-slate-400 hover:text-loss"
+                  className="shrink-0 self-center text-lg leading-none text-slate-400 transition-colors hover:text-loss"
                   aria-label="Remover despesa"
                 >
                   ×
@@ -206,19 +207,16 @@ export function ItemFormModal({ categorias, fornecedores, itemInicial, onClose, 
           <textarea value={observacoes} onChange={(e) => setObservacoes(e.target.value)} className={inputClass} rows={2} />
         </Field>
 
-        <div className="rounded-lg bg-slate-50 px-3 py-2 text-sm text-slate-600">
-          Custo total do item: <strong className="text-slate-900">{formatBRL(custoTotal)}</strong>
+        <div className="flex items-center justify-between rounded-lg bg-slate-50 px-3 py-2.5 text-sm text-slate-600">
+          <span>Custo total do item</span>
+          <strong className="tabular-nums text-slate-900">{formatBRL(custoTotal)}</strong>
         </div>
 
         {error && <ErrorMessage message={error} />}
 
-        <button
-          type="submit"
-          disabled={submitting}
-          className="w-full rounded-lg bg-slate-900 py-2.5 text-sm font-semibold text-white disabled:opacity-50"
-        >
+        <Button type="submit" variant="primary" fullWidth disabled={submitting}>
           {submitting ? 'Salvando…' : itemInicial ? 'Salvar alterações' : 'Salvar item'}
-        </button>
+        </Button>
       </form>
     </Modal>
   )

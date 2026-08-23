@@ -1,21 +1,23 @@
+import { Card } from './Card'
+
 interface KpiCardProps {
   label: string
   value: string
   tone?: 'neutral' | 'auto'
   helpText?: string
+  className?: string
 }
 
 /** tone="auto" colore verde/vermelho a partir do sinal embutido no texto (ex.: "-R$ 10,00"). */
-export function KpiCard({ label, value, tone = 'neutral', helpText }: KpiCardProps) {
+export function KpiCard({ label, value, tone = 'neutral', helpText, className = '' }: KpiCardProps) {
   const isNegative = value.trim().startsWith('-')
-  const colorClass =
-    tone === 'auto' ? (isNegative ? 'text-loss' : 'text-profit') : 'text-slate-900'
+  const colorClass = tone === 'auto' ? (isNegative ? 'text-loss' : 'text-profit') : 'text-slate-900'
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+    <Card className={className}>
       <p className="text-xs font-medium text-slate-500">{label}</p>
       <p className={`mt-1 text-xl font-bold tabular-nums ${colorClass}`}>{value}</p>
       {helpText && <p className="mt-1 text-xs text-slate-400">{helpText}</p>}
-    </div>
+    </Card>
   )
 }

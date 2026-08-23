@@ -1,7 +1,7 @@
 import { Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import type { LucroPorCategoria } from '../../lib/dashboard'
 import { formatBRL } from '../../lib/format'
-import { CHART_COLORS } from '../../lib/chartColors'
+import { CHART_COLORS, CHART_TOOLTIP_STYLE } from '../../lib/chartColors'
 
 export function LucroPorCategoriaChart({ dados }: { dados: LucroPorCategoria[] }) {
   if (dados.length === 0) return <p className="text-sm text-slate-400">Sem vendas registradas ainda.</p>
@@ -19,7 +19,7 @@ export function LucroPorCategoriaChart({ dados }: { dados: LucroPorCategoria[] }
           tickLine={false}
           width={90}
         />
-        <Tooltip formatter={(value) => formatBRL(Number(value))} />
+        <Tooltip formatter={(value) => formatBRL(Number(value))} {...CHART_TOOLTIP_STYLE} />
         <Bar dataKey="lucro_total" radius={[0, 4, 4, 0]}>
           {dados.map((d) => (
             <Cell

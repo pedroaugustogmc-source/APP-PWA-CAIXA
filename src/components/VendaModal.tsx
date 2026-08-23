@@ -2,6 +2,7 @@ import { useMemo, useState, type FormEvent } from 'react'
 import { Modal } from './Modal'
 import { Field, inputClass } from './Field'
 import { ErrorMessage } from './ErrorMessage'
+import { Button } from './Button'
 import { precoMinimo, todayISO } from '../lib/calculations'
 import { formatBRL } from '../lib/format'
 import type { Plataforma } from '../types/domain'
@@ -110,18 +111,19 @@ export function VendaModal({ custoTotal, plataformas, onClose, onSubmit }: Props
           />
         </Field>
 
-        <p className="text-xs text-slate-500">Preço mínimo (break-even): {formatBRL(precoMin)}</p>
+        <p className="text-xs text-slate-500">
+          Preço mínimo (break-even): <span className="font-medium tabular-nums text-slate-700">{formatBRL(precoMin)}</span>
+        </p>
 
         {abaixoDoMinimo && (
-          <div className="space-y-2 rounded-lg border border-loss/30 bg-red-50 px-3 py-2">
-            <p className="text-sm font-medium text-loss">
-              Essa venda fica abaixo do preço mínimo e vai dar prejuízo.
-            </p>
+          <div className="space-y-2 rounded-lg border border-loss/30 bg-loss/5 px-3 py-2.5">
+            <p className="text-sm font-medium text-loss">Essa venda fica abaixo do preço mínimo e vai dar prejuízo.</p>
             <label className="flex items-center gap-2 text-sm text-red-700">
               <input
                 type="checkbox"
                 checked={confirmaPrejuizo}
                 onChange={(e) => setConfirmaPrejuizo(e.target.checked)}
+                className="accent-loss"
               />
               Confirmo que quero vender mesmo assim.
             </label>
@@ -130,13 +132,9 @@ export function VendaModal({ custoTotal, plataformas, onClose, onSubmit }: Props
 
         {error && <ErrorMessage message={error} />}
 
-        <button
-          type="submit"
-          disabled={submitting}
-          className="w-full rounded-lg bg-slate-900 py-2.5 text-sm font-semibold text-white disabled:opacity-50"
-        >
+        <Button type="submit" variant="primary" fullWidth disabled={submitting}>
           {submitting ? 'Salvando…' : 'Confirmar venda'}
-        </button>
+        </Button>
       </form>
     </Modal>
   )

@@ -73,6 +73,15 @@ export function IconEdit({ className }: IconProps) {
   )
 }
 
+export function IconShare({ className }: IconProps) {
+  return (
+    <svg {...base} className={className} aria-hidden="true">
+      <path d="M12 16V4M8 8l4-4 4 4" />
+      <path d="M5 12v7a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-7" />
+    </svg>
+  )
+}
+
 export function IconTrash({ className }: IconProps) {
   return (
     <svg {...base} className={className} aria-hidden="true">

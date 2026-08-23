@@ -1,7 +1,7 @@
 import { Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import type { CapitalKpi } from '../../lib/dashboard'
 import { formatBRL } from '../../lib/format'
-import { CHART_COLORS } from '../../lib/chartColors'
+import { CHART_COLORS, CHART_TOOLTIP_STYLE } from '../../lib/chartColors'
 
 export function CapitalChart({ capital }: { capital: CapitalKpi }) {
   const dados = [
@@ -17,7 +17,7 @@ export function CapitalChart({ capital }: { capital: CapitalKpi }) {
         <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#e2e8f0" />
         <XAxis type="number" tick={{ fontSize: 11 }} axisLine={false} tickLine={false} />
         <YAxis type="category" dataKey="label" tick={{ fontSize: 11 }} axisLine={false} tickLine={false} width={110} />
-        <Tooltip formatter={(value) => formatBRL(Number(value))} />
+        <Tooltip formatter={(value) => formatBRL(Number(value))} {...CHART_TOOLTIP_STYLE} />
         <Bar dataKey="valor" radius={[0, 4, 4, 0]}>
           {dados.map((d) => (
             <Cell key={d.label} fill={d.cor} />

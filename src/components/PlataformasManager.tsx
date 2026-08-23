@@ -2,6 +2,8 @@ import { useState, type FormEvent } from 'react'
 import { usePlataformas } from '../hooks/usePlataformas'
 import { inputClass } from './Field'
 import { ErrorMessage } from './ErrorMessage'
+import { Button } from './Button'
+import { Card } from './Card'
 import { formatPercent } from '../lib/format'
 
 export function PlataformasManager() {
@@ -20,15 +22,20 @@ export function PlataformasManager() {
   }
 
   return (
-    <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-      <h3 className="mb-2 font-semibold text-slate-900">Plataformas de venda</h3>
-      <ul className="mb-3 space-y-1">
+    <Card as="section">
+      <h3 className="mb-3 font-semibold text-slate-900">Plataformas de venda</h3>
+      <ul className="mb-3 space-y-1.5">
         {plataformas.map((p) => (
-          <li key={p.id} className="flex items-center justify-between rounded-lg bg-slate-50 px-3 py-1.5 text-sm">
-            <span>
+          <li key={p.id} className="flex items-center justify-between rounded-lg bg-slate-50 px-3 py-2 text-sm">
+            <span className="text-slate-700">
               {p.nome} <span className="text-slate-400">· taxa {formatPercent(p.taxa_padrao_pct, 1)}</span>
             </span>
-            <button type="button" onClick={() => remover(p.id)} className="text-slate-400 hover:text-loss" aria-label={`Remover ${p.nome}`}>
+            <button
+              type="button"
+              onClick={() => remover(p.id)}
+              className="text-slate-400 transition-colors hover:text-loss"
+              aria-label={`Remover ${p.nome}`}
+            >
               ×
             </button>
           </li>
@@ -55,10 +62,10 @@ export function PlataformasManager() {
           onChange={(e) => setTaxaPct(Number(e.target.value))}
           className={`${inputClass} w-24 shrink-0`}
         />
-        <button type="submit" className="shrink-0 rounded-lg bg-slate-900 px-3 py-2 text-sm font-semibold text-white">
+        <Button type="submit" variant="primary" className="shrink-0">
           Adicionar
-        </button>
+        </Button>
       </form>
-    </section>
+    </Card>
   )
 }

@@ -1,9 +1,21 @@
-@import "tailwindcss";
+/* Só os subsets latin/latin-ext — cobrem pt-BR (incluindo acentos) sem baixar
+   glifos cirílicos, gregos etc. que este app nunca usa. */
+@import '@fontsource/inter/latin-400.css';
+@import '@fontsource/inter/latin-500.css';
+@import '@fontsource/inter/latin-600.css';
+@import '@fontsource/inter/latin-700.css';
+@import '@fontsource/inter/latin-ext-400.css';
+@import '@fontsource/inter/latin-ext-500.css';
+@import '@fontsource/inter/latin-ext-600.css';
+@import '@fontsource/inter/latin-ext-700.css';
+@import 'tailwindcss';
 
 @theme {
   --color-profit: #16a34a;
   --color-loss: #dc2626;
   --color-stale: #f59e0b;
+  --font-sans:
+    'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
 }
 
 html,
@@ -15,5 +27,20 @@ body,
 body {
   background-color: #f8fafc;
   color: #0f172a;
+  font-family: var(--font-sans);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   -webkit-tap-highlight-color: transparent;
+}
+
+/* Indicador de foco só aparece pra quem navega por teclado — mouse/touch fica limpo. */
+:focus-visible {
+  outline: 2px solid #0f172a;
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
 }

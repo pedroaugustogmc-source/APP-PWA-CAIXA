@@ -14,34 +14,43 @@ export function Layout() {
 
   return (
     <div className="flex min-h-screen flex-col bg-slate-50">
-      <header className="flex items-center justify-between border-b border-slate-200 bg-white px-4 py-3">
-        <h1 className="text-lg font-bold text-slate-900">Catira Control</h1>
+      <header className="sticky top-0 z-40 flex items-center justify-between border-b border-slate-200 bg-white/80 px-4 py-3 backdrop-blur-sm">
+        <h1 className="text-lg font-bold tracking-tight text-slate-900">Catira Control</h1>
         <div className="flex items-center gap-3">
           <SyncStatusBadge />
-          <button type="button" onClick={signOut} className="text-sm text-slate-500 hover:text-slate-700">
+          <button
+            type="button"
+            onClick={signOut}
+            className="rounded-md text-sm text-slate-500 transition-colors hover:text-slate-900"
+          >
             Sair
           </button>
         </div>
       </header>
 
-      <main className="flex-1 overflow-y-auto px-4 py-4 pb-20">
+      <main className="flex-1 overflow-y-auto px-4 py-4 pb-24">
         <Outlet />
       </main>
 
-      <nav className="fixed inset-x-0 bottom-0 flex border-t border-slate-200 bg-white">
+      <nav className="safe-bottom fixed inset-x-0 bottom-0 z-40 flex border-t border-slate-200 bg-white/95 backdrop-blur-sm">
         {TABS.map(({ to, label, Icon }) => (
           <NavLink
             key={to}
             to={to}
             end={to === '/'}
             className={({ isActive }) =>
-              `flex flex-1 flex-col items-center gap-0.5 py-2 text-xs ${
-                isActive ? 'text-slate-900 font-semibold' : 'text-slate-400'
+              `relative flex flex-1 flex-col items-center gap-0.5 py-2.5 text-xs transition-colors ${
+                isActive ? 'font-semibold text-slate-900' : 'text-slate-400 hover:text-slate-600'
               }`
             }
           >
-            <Icon className="h-5 w-5" />
-            {label}
+            {({ isActive }) => (
+              <>
+                {isActive && <span className="absolute top-0 h-0.5 w-8 rounded-full bg-slate-900" />}
+                <Icon className="h-5 w-5" />
+                {label}
+              </>
+            )}
           </NavLink>
         ))}
       </nav>

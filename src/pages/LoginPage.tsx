@@ -2,6 +2,8 @@ import { useState, type FormEvent } from 'react'
 import { Navigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { ErrorMessage } from '../components/ErrorMessage'
+import { Field, inputClass } from '../components/Field'
+import { Button } from '../components/Button'
 
 export function LoginPage() {
   const { session, signIn } = useAuth()
@@ -24,14 +26,16 @@ export function LoginPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
       <div className="w-full max-w-sm">
-        <h1 className="mb-1 text-center text-2xl font-bold text-slate-900">Catira Control</h1>
-        <p className="mb-6 text-center text-sm text-slate-500">Gestão de compra e venda de acessórios</p>
+        <div className="mb-8 flex flex-col items-center">
+          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-slate-900 text-lg font-bold text-white">
+            CC
+          </div>
+          <h1 className="text-center text-2xl font-bold tracking-tight text-slate-900">Catira Control</h1>
+          <p className="mt-1 text-center text-sm text-slate-500">Gestão de compra e venda de acessórios</p>
+        </div>
 
-        <form onSubmit={handleSubmit} className="space-y-3 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-          <div>
-            <label htmlFor="email" className="mb-1 block text-sm font-medium text-slate-700">
-              E-mail
-            </label>
+        <form onSubmit={handleSubmit} className="space-y-4 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+          <Field label="E-mail">
             <input
               id="email"
               type="email"
@@ -39,14 +43,11 @@ export function LoginPage() {
               autoComplete="username"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-base focus:border-slate-500 focus:outline-none"
+              className={inputClass}
             />
-          </div>
+          </Field>
 
-          <div>
-            <label htmlFor="password" className="mb-1 block text-sm font-medium text-slate-700">
-              Senha
-            </label>
+          <Field label="Senha">
             <input
               id="password"
               type="password"
@@ -54,19 +55,15 @@ export function LoginPage() {
               autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-base focus:border-slate-500 focus:outline-none"
+              className={inputClass}
             />
-          </div>
+          </Field>
 
           {error && <ErrorMessage message={error} />}
 
-          <button
-            type="submit"
-            disabled={submitting}
-            className="w-full rounded-lg bg-slate-900 py-2.5 text-sm font-semibold text-white disabled:opacity-50"
-          >
+          <Button type="submit" variant="primary" fullWidth disabled={submitting}>
             {submitting ? 'Entrando…' : 'Entrar'}
-          </button>
+          </Button>
         </form>
       </div>
     </div>

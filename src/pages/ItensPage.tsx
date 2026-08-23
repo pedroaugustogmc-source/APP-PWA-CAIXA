@@ -9,6 +9,7 @@ import { ItemFormModal } from '../components/ItemFormModal'
 import { VendaModal } from '../components/VendaModal'
 import { LoadingSpinner } from '../components/LoadingSpinner'
 import { ErrorMessage } from '../components/ErrorMessage'
+import { Button } from '../components/Button'
 import { IconPlus } from '../components/icons'
 import { inputClass } from '../components/Field'
 import type { StatusItem } from '../types/domain'
@@ -52,14 +53,10 @@ export function ItensPage() {
   return (
     <div>
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-lg font-bold text-slate-900">Itens</h2>
-        <button
-          type="button"
-          onClick={() => setShowForm(true)}
-          className="flex items-center gap-1 rounded-lg bg-slate-900 px-3 py-1.5 text-sm font-semibold text-white"
-        >
-          <IconPlus className="h-4 w-4" /> Novo
-        </button>
+        <h2 className="text-lg font-bold tracking-tight text-slate-900">Itens</h2>
+        <Button variant="primary" size="sm" onClick={() => setShowForm(true)}>
+          <IconPlus className="h-3.5 w-3.5" /> Novo
+        </Button>
       </div>
 
       <div className="mb-4 grid grid-cols-2 gap-2">
@@ -86,7 +83,7 @@ export function ItensPage() {
         <p className="py-8 text-center text-sm text-slate-400">Nenhum item encontrado com esse filtro.</p>
       )}
 
-      <ul className="space-y-2">
+      <ul className="space-y-3">
         {itensFiltrados.map((it) => (
           <ItemCard
             key={it.id}

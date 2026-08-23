@@ -2,6 +2,8 @@ import { useState, type FormEvent } from 'react'
 import { useCategorias } from '../hooks/useCategorias'
 import { inputClass } from './Field'
 import { ErrorMessage } from './ErrorMessage'
+import { Button } from './Button'
+import { Card } from './Card'
 
 export function CategoriasManager() {
   const { categorias, criar, remover, error } = useCategorias()
@@ -15,13 +17,18 @@ export function CategoriasManager() {
   }
 
   return (
-    <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-      <h3 className="mb-2 font-semibold text-slate-900">Categorias</h3>
+    <Card as="section">
+      <h3 className="mb-3 font-semibold text-slate-900">Categorias</h3>
       <ul className="mb-3 flex flex-wrap gap-2">
         {categorias.map((c) => (
-          <li key={c.id} className="flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1 text-sm">
+          <li key={c.id} className="flex items-center gap-1.5 rounded-full bg-slate-100 py-1 pr-2 pl-3 text-sm text-slate-700">
             {c.nome}
-            <button type="button" onClick={() => remover(c.id)} className="text-slate-400 hover:text-loss" aria-label={`Remover ${c.nome}`}>
+            <button
+              type="button"
+              onClick={() => remover(c.id)}
+              className="text-slate-400 transition-colors hover:text-loss"
+              aria-label={`Remover ${c.nome}`}
+            >
               ×
             </button>
           </li>
@@ -37,10 +44,10 @@ export function CategoriasManager() {
           onChange={(e) => setNome(e.target.value)}
           className={inputClass}
         />
-        <button type="submit" className="shrink-0 rounded-lg bg-slate-900 px-3 py-2 text-sm font-semibold text-white">
+        <Button type="submit" variant="primary" className="shrink-0">
           Adicionar
-        </button>
+        </Button>
       </form>
-    </section>
+    </Card>
   )
 }

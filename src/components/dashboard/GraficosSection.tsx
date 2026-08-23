@@ -2,6 +2,7 @@ import type { CapitalKpi, LucroPorCategoria, LucroPorMes } from '../../lib/dashb
 import { LucroMensalChart } from '../charts/LucroMensalChart'
 import { LucroPorCategoriaChart } from '../charts/LucroPorCategoriaChart'
 import { CapitalChart } from '../charts/CapitalChart'
+import { Card, CardLabel } from '../Card'
 
 interface Props {
   lucroPorMes: LucroPorMes[]
@@ -12,20 +13,20 @@ interface Props {
 export function GraficosSection({ lucroPorMes, lucroPorCategoria, capital }: Props) {
   return (
     <div className="space-y-3">
-      <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-        <p className="mb-2 text-xs font-medium text-slate-500">Lucro mensal</p>
+      <Card>
+        <CardLabel>Lucro mensal</CardLabel>
         <LucroMensalChart dados={lucroPorMes} />
-      </div>
+      </Card>
 
-      <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-        <p className="mb-2 text-xs font-medium text-slate-500">Lucro por categoria</p>
+      <Card>
+        <CardLabel>Lucro por categoria</CardLabel>
         <LucroPorCategoriaChart dados={lucroPorCategoria} />
-      </div>
+      </Card>
 
-      <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-        <p className="mb-2 text-xs font-medium text-slate-500">Capital investido vs. realizado</p>
+      <Card>
+        <CardLabel>Capital investido vs. realizado</CardLabel>
         <CapitalChart capital={capital} />
-      </div>
+      </Card>
     </div>
   )
 }

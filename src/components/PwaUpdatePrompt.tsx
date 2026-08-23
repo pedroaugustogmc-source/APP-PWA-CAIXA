@@ -21,14 +21,14 @@ export function PwaUpdatePrompt() {
           <button
             type="button"
             onClick={() => setNeedRefresh(false)}
-            className="rounded-lg px-2 py-1 text-xs text-slate-300"
+            className="rounded-lg px-2 py-1 text-xs text-slate-300 transition-colors hover:text-white"
           >
             Depois
           </button>
           <button
             type="button"
             onClick={() => updateServiceWorker(true)}
-            className="rounded-lg bg-white px-3 py-1 text-xs font-semibold text-slate-900"
+            className="rounded-lg bg-white px-3 py-1 text-xs font-semibold text-slate-900 transition-opacity hover:opacity-90"
           >
             Atualizar
           </button>

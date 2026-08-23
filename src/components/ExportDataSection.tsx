@@ -1,6 +1,8 @@
 import { useItens } from '../hooks/useItens'
 import { toCsv, downloadCsv, type CsvColumn } from '../lib/csv'
 import { todayISO } from '../lib/calculations'
+import { Button } from './Button'
+import { Card } from './Card'
 import type { ItemCalculado } from '../types/domain'
 
 const itemColunas: CsvColumn<ItemCalculado>[] = [
@@ -36,18 +38,14 @@ export function ExportDataSection() {
   }
 
   return (
-    <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+    <Card as="section">
       <h3 className="mb-1 font-semibold text-slate-900">Backup dos dados</h3>
       <p className="mb-3 text-xs text-slate-500">
         Exporte tudo em CSV de vez em quando — é o registro financeiro do seu negócio.
       </p>
-      <button
-        type="button"
-        onClick={exportar}
-        className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-semibold text-slate-700"
-      >
+      <Button variant="secondary" size="sm" onClick={exportar}>
         Exportar itens
-      </button>
-    </section>
+      </Button>
+    </Card>
   )
 }

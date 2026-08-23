@@ -1,4 +1,5 @@
 import { StatusBadge } from './StatusBadge'
+import { Button } from './Button'
 import { IconCloudOff, IconEdit, IconTrash } from './icons'
 import { formatBRL, formatPercent } from '../lib/format'
 import { isItemParado } from '../lib/dashboard'
@@ -29,22 +30,36 @@ export function ItemCard({
   const prazo = item.dias_planejados
 
   return (
-    <li className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+    <li
+      className={`rounded-xl border bg-white p-4 shadow-sm transition-shadow hover:shadow-md ${
+        parado ? 'border-stale/40 border-l-4' : 'border-slate-200'
+      }`}
+    >
       <div className="flex items-start justify-between gap-2">
-        <div>
-          <p className="font-semibold text-slate-900">{item.nome}</p>
+        <div className="min-w-0">
+          <p className="truncate font-semibold text-slate-900">{item.nome}</p>
           <p className="text-xs text-slate-500">
             {item.categoria?.nome ?? 'Sem categoria'} · {item.condicao === 'novo' ? 'Novo' : 'Usado'} · custo{' '}
             {formatBRL(item.custo_total)}
           </p>
         </div>
-        <div className="flex flex-col items-end gap-1">
+        <div className="flex shrink-0 flex-col items-end gap-1.5">
           {!item.pendenteSync && (
-            <div className="flex items-center gap-2">
-              <button type="button" onClick={onEditar} aria-label="Editar item" className="text-slate-400 hover:text-slate-700">
+            <div className="flex items-center gap-2.5">
+              <button
+                type="button"
+                onClick={onEditar}
+                aria-label="Editar item"
+                className="text-slate-400 transition-colors hover:text-slate-700"
+              >
                 <IconEdit className="h-4 w-4" />
               </button>
-              <button type="button" onClick={onExcluir} aria-label="Excluir item" className="text-slate-400 hover:text-loss">
+              <button
+                type="button"
+                onClick={onExcluir}
+                aria-label="Excluir item"
+                className="text-slate-400 transition-colors hover:text-loss"
+              >
                 <IconTrash className="h-4 w-4" />
               </button>
             </div>
@@ -59,20 +74,20 @@ export function ItemCard({
       </div>
 
       {item.status === 'vendido' && item.lucro_liquido !== null && (
-        <div className="mt-3 grid grid-cols-3 gap-2 text-sm">
+        <div className="mt-3 grid grid-cols-3 gap-2 border-t border-slate-100 pt-3 text-sm">
           <div>
             <p className="text-xs text-slate-400">Venda</p>
-            <p className="font-medium">{formatBRL(item.preco_venda ?? 0)}</p>
+            <p className="font-medium tabular-nums">{formatBRL(item.preco_venda ?? 0)}</p>
           </div>
           <div>
             <p className="text-xs text-slate-400">Lucro</p>
-            <p className={`font-semibold ${item.lucro_liquido < 0 ? 'text-loss' : 'text-profit'}`}>
+            <p className={`font-semibold tabular-nums ${item.lucro_liquido < 0 ? 'text-loss' : 'text-profit'}`}>
               {formatBRL(item.lucro_liquido)}
             </p>
           </div>
           <div>
             <p className="text-xs text-slate-400">Margem / ROI</p>
-            <p className="font-medium">
+            <p className="font-medium tabular-nums">
               {formatPercent(item.margem_pct ?? 0)} / {formatPercent(item.roi_pct ?? 0)}
             </p>
           </div>
@@ -80,18 +95,18 @@ export function ItemCard({
       )}
 
       {(item.status === 'em_estoque' || item.status === 'reservado') && (
-        <div className="mt-3 grid grid-cols-3 gap-2 text-sm">
+        <div className="mt-3 grid grid-cols-3 gap-2 border-t border-slate-100 pt-3 text-sm">
           <div>
             <p className="text-xs text-slate-400">Preço mínimo</p>
-            <p className="font-medium">{formatBRL(item.preco_minimo ?? 0)}</p>
+            <p className="font-medium tabular-nums">{formatBRL(item.preco_minimo ?? 0)}</p>
           </div>
           <div>
             <p className="text-xs text-slate-400">Preço sugerido</p>
-            <p className="font-medium">{formatBRL(item.preco_sugerido ?? 0)}</p>
+            <p className="font-medium tabular-nums">{formatBRL(item.preco_sugerido ?? 0)}</p>
           </div>
           <div>
             <p className="text-xs text-slate-400">Dias com você</p>
-            <p className={`font-medium ${parado ? 'text-stale' : ''}`}>
+            <p className={`font-medium tabular-nums ${parado ? 'text-stale' : ''}`}>
               {item.dias_em_estoque ?? 0}
               {prazo ? ` de ${prazo}` : ''}
             </p>
@@ -108,43 +123,27 @@ export function ItemCard({
       <div className="mt-3 flex flex-wrap gap-2">
         {(item.status === 'em_estoque' || item.status === 'reservado') && (
           <>
-            <button type="button" onClick={onVender} className="rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white">
+            <Button variant="primary" size="sm" onClick={onVender}>
               Vender
-            </button>
+            </Button>
             {item.status === 'em_estoque' ? (
-              <button
-                type="button"
-                onClick={() => onAlterarStatus('reservado')}
-                className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-semibold text-slate-700"
-              >
+              <Button variant="secondary" size="sm" onClick={() => onAlterarStatus('reservado')}>
                 Reservar
-              </button>
+              </Button>
             ) : (
-              <button
-                type="button"
-                onClick={() => onAlterarStatus('em_estoque')}
-                className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-semibold text-slate-700"
-              >
+              <Button variant="secondary" size="sm" onClick={() => onAlterarStatus('em_estoque')}>
                 Voltar ao estoque
-              </button>
+              </Button>
             )}
-            <button
-              type="button"
-              onClick={onMarcarPerdido}
-              className="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-semibold text-loss"
-            >
+            <Button variant="danger" size="sm" onClick={onMarcarPerdido}>
               Perdido/danificado
-            </button>
+            </Button>
           </>
         )}
         {item.status === 'vendido' && (
-          <button
-            type="button"
-            onClick={onCancelarVenda}
-            className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-semibold text-slate-700"
-          >
+          <Button variant="secondary" size="sm" onClick={onCancelarVenda}>
             Cancelar venda
-          </button>
+          </Button>
         )}
       </div>
     </li>
