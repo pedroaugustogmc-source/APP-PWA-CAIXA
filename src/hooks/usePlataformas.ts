@@ -13,9 +13,9 @@ export function usePlataformas() {
   )
 
   async function criar(input: PlataformaInput) {
-    const { error } = await supabase.from('plataformas').insert(input)
+    const { data, error } = await supabase.from('plataformas').insert(input).select().single()
     if (!error) await refetch()
-    return { error: error?.message ?? null }
+    return { error: error?.message ?? null, plataforma: (data as Plataforma | null) ?? undefined }
   }
 
   async function remover(id: string) {

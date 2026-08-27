@@ -45,12 +45,12 @@ export function ItemCard({
         </div>
         <div className="flex shrink-0 flex-col items-end gap-1.5">
           {!item.pendenteSync && (
-            <div className="flex items-center gap-2.5">
+            <div className="-mt-1 -mr-1 flex items-center gap-0.5">
               <button
                 type="button"
                 onClick={onEditar}
                 aria-label="Editar item"
-                className="text-slate-400 transition-colors hover:text-slate-700"
+                className="rounded-md p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700"
               >
                 <IconEdit className="h-4 w-4" />
               </button>
@@ -58,7 +58,7 @@ export function ItemCard({
                 type="button"
                 onClick={onExcluir}
                 aria-label="Excluir item"
-                className="text-slate-400 transition-colors hover:text-loss"
+                className="rounded-md p-1.5 text-slate-400 transition-colors hover:bg-loss/10 hover:text-loss"
               >
                 <IconTrash className="h-4 w-4" />
               </button>
@@ -95,14 +95,10 @@ export function ItemCard({
       )}
 
       {(item.status === 'em_estoque' || item.status === 'reservado') && (
-        <div className="mt-3 grid grid-cols-3 gap-2 border-t border-slate-100 pt-3 text-sm">
+        <div className="mt-3 grid grid-cols-2 gap-2 border-t border-slate-100 pt-3 text-sm">
           <div>
             <p className="text-xs text-slate-400">Preço mínimo</p>
             <p className="font-medium tabular-nums">{formatBRL(item.preco_minimo ?? 0)}</p>
-          </div>
-          <div>
-            <p className="text-xs text-slate-400">Preço sugerido</p>
-            <p className="font-medium tabular-nums">{formatBRL(item.preco_sugerido ?? 0)}</p>
           </div>
           <div>
             <p className="text-xs text-slate-400">Dias com você</p>

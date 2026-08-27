@@ -176,12 +176,12 @@ export function ItemFormModal({ categorias, fornecedores, itemInicial, onClose, 
                   placeholder="R$"
                   value={c.valor}
                   onChange={(e) => atualizarCustoExtra(i, 'valor', e.target.value)}
-                  className={`${inputClass} w-24 shrink-0`}
+                  className={`${inputClass} w-24! shrink-0`}
                 />
                 <button
                   type="button"
                   onClick={() => removerCustoExtra(i)}
-                  className="shrink-0 self-center text-lg leading-none text-slate-400 transition-colors hover:text-loss"
+                  className="shrink-0 self-center rounded-md p-1.5 text-lg leading-none text-slate-400 transition-colors hover:bg-slate-100 hover:text-loss"
                   aria-label="Remover despesa"
                 >
                   ×

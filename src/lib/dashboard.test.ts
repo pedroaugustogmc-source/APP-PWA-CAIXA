@@ -49,8 +49,8 @@ function itemVendido(overrides: Partial<Item> = {}): Item {
 
 describe('KPIs por plataforma, fornecedor, categoria e perdas', () => {
   const itens = [
-    calcularItem(itemVendido({ id: 'a' }), categoria, fornecedor, plataforma, 0.4),
-    calcularItem(itemVendido({ id: 'b', preco_venda: 15 }), categoria, fornecedor, plataforma, 0.4), // venda com prejuízo
+    calcularItem(itemVendido({ id: 'a' }), categoria, fornecedor, plataforma),
+    calcularItem(itemVendido({ id: 'b', preco_venda: 15 }), categoria, fornecedor, plataforma), // venda com prejuízo
   ]
 
   it('margem média por plataforma', () => {
@@ -83,7 +83,6 @@ describe('KPIs por plataforma, fornecedor, categoria e perdas', () => {
       categoria,
       fornecedor,
       plataforma,
-      0.4,
     )
     const resultado = kpiPerdas([perdido])
     expect(resultado.quantidade).toBe(1)

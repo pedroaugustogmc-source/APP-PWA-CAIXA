@@ -36,11 +36,6 @@ export function precoMinimo(custoTotal: number, taxaPlataformaPct: number): numb
   return custoTotal / (1 - taxaPlataformaPct)
 }
 
-/** Preço de venda que bate a margem alvo, já descontada a taxa da plataforma. */
-export function precoSugerido(custoTotal: number, taxaPlataformaPct: number, margemAlvoPct: number): number {
-  return custoTotal / (1 - taxaPlataformaPct - margemAlvoPct)
-}
-
 export function todayISO(): string {
   return new Date().toISOString().slice(0, 10)
 }
@@ -57,7 +52,6 @@ export function calcularItem(
   categoria: Categoria | null,
   fornecedor: Fornecedor | null,
   plataforma: Plataforma | null,
-  margemAlvoPct: number,
 ): ItemCalculado {
   const custoTotal = custoTotalItem(item)
   const vendido = item.status === 'vendido'
@@ -82,7 +76,6 @@ export function calcularItem(
   const taxaParaPrecificacao = plataforma?.taxa_padrao_pct ?? item.taxa_plataforma_pct ?? 0
   const emEstoque = item.status === 'em_estoque' || item.status === 'reservado'
   const precoMin = emEstoque ? precoMinimo(custoTotal, taxaParaPrecificacao) : null
-  const precoSug = emEstoque ? precoSugerido(custoTotal, taxaParaPrecificacao, margemAlvoPct) : null
 
   return {
     ...item,
@@ -93,7 +86,6 @@ export function calcularItem(
     roi_pct: roi,
     dias_em_estoque: diasEmEstoque,
     preco_minimo: precoMin,
-    preco_sugerido: precoSug,
     categoria,
     fornecedor,
     plataforma,

@@ -13,7 +13,6 @@ import type {
   StatusItem,
 } from '../types/domain'
 import { useSupabaseList } from './useSupabaseList'
-import { useConfiguracoes } from './useConfiguracoes'
 
 type ItemRow = Item & { categoria: Categoria | null; fornecedor: Fornecedor | null; plataforma: Plataforma | null }
 
@@ -36,10 +35,7 @@ export interface VendaInput {
   data_venda: string
 }
 
-function itemDePendenciaCriada(
-  pending: Extract<PendingMutation, { kind: 'criar_item' }>,
-  margemAlvoPct: number,
-): ItemCalculado {
+function itemDePendenciaCriada(pending: Extract<PendingMutation, { kind: 'criar_item' }>): ItemCalculado {
   const item: Item = {
     id: pending.id,
     user_id: '',
@@ -61,11 +57,10 @@ function itemDePendenciaCriada(
     created_at: pending.createdAt,
     updated_at: pending.createdAt,
   }
-  return calcularItem(item, pending.categoriaSnapshot, pending.fornecedorSnapshot, null, margemAlvoPct)
+  return calcularItem(item, pending.categoriaSnapshot, pending.fornecedorSnapshot, null)
 }
 
 export function useItens() {
-  const { config } = useConfiguracoes()
   const { data, loading, error, refetch } = useSupabaseList<ItemRow>(async () =>
     supabase
       .from('itens')
@@ -83,9 +78,7 @@ export function useItens() {
     recarregarPendentes()
   }, [recarregarPendentes])
 
-  const criados = data.map((item) =>
-    calcularItem(item, item.categoria, item.fornecedor, item.plataforma, config.margem_alvo_pct),
-  )
+  const criados = data.map((item) => calcularItem(item, item.categoria, item.fornecedor, item.plataforma))
 
   const idsExistentes = new Set(criados.map((i) => i.id))
   const criacoesPendentes = pendentes.filter(
@@ -96,7 +89,7 @@ export function useItens() {
   )
 
   const itens: (ItemCalculado & { pendenteSync?: boolean })[] = [
-    ...criacoesPendentes.map((p) => ({ ...itemDePendenciaCriada(p, config.margem_alvo_pct), pendenteSync: true })),
+    ...criacoesPendentes.map((p) => ({ ...itemDePendenciaCriada(p), pendenteSync: true })),
     ...criados.map((item) => {
       const venda = vendasPendentesPorItem.get(item.id)
       if (!venda || venda.kind !== 'registrar_venda') return item
@@ -109,7 +102,7 @@ export function useItens() {
         data_venda: venda.input.data_venda,
       }
       return {
-        ...calcularItem(atualizado, item.categoria, item.fornecedor, venda.plataformaSnapshot, config.margem_alvo_pct),
+        ...calcularItem(atualizado, item.categoria, item.fornecedor, venda.plataformaSnapshot),
         pendenteSync: true,
       }
     }),

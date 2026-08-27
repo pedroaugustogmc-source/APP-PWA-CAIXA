@@ -7,7 +7,6 @@ import { Card } from './Card'
 
 export function AjustesForm() {
   const { config, salvar, loading } = useConfiguracoes()
-  const [margemAlvo, setMargemAlvo] = useState(40)
   const [metaMensal, setMetaMensal] = useState(0)
   const [diasAlerta, setDiasAlerta] = useState(30)
   const [error, setError] = useState<string | null>(null)
@@ -15,7 +14,6 @@ export function AjustesForm() {
   const [salvo, setSalvo] = useState(false)
 
   useEffect(() => {
-    setMargemAlvo(config.margem_alvo_pct * 100)
     setMetaMensal(config.meta_mensal_lucro)
     setDiasAlerta(config.dias_estoque_parado_alerta)
   }, [config])
@@ -26,7 +24,6 @@ export function AjustesForm() {
     setError(null)
     setSalvo(false)
     const { error } = await salvar({
-      margem_alvo_pct: margemAlvo / 100,
       meta_mensal_lucro: metaMensal,
       dias_estoque_parado_alerta: diasAlerta,
     })
@@ -41,18 +38,6 @@ export function AjustesForm() {
     <Card as="section">
       <h3 className="mb-3 font-semibold text-slate-900">Preferências</h3>
       <form onSubmit={handleSubmit} className="space-y-3">
-        <Field label="Margem alvo do motor de precificação (%)">
-          <input
-            type="number"
-            min={0}
-            max={99}
-            step={1}
-            value={margemAlvo}
-            onChange={(e) => setMargemAlvo(Number(e.target.value))}
-            className={inputClass}
-          />
-        </Field>
-
         <Field label="Meta mensal de lucro (R$)">
           <input
             type="number"

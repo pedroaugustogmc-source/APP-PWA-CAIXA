@@ -21,12 +21,12 @@ export function FornecedoresManager() {
       <h3 className="mb-3 font-semibold text-slate-900">Fornecedores</h3>
       <ul className="mb-3 flex flex-wrap gap-2">
         {fornecedores.map((f) => (
-          <li key={f.id} className="flex items-center gap-1.5 rounded-full bg-slate-100 py-1 pr-2 pl-3 text-sm text-slate-700">
+          <li key={f.id} className="flex items-center gap-0.5 rounded-full bg-slate-100 py-1 pr-1 pl-3 text-sm text-slate-700">
             {f.nome}
             <button
               type="button"
               onClick={() => remover(f.id)}
-              className="text-slate-400 transition-colors hover:text-loss"
+              className="rounded-full p-1 text-base leading-none text-slate-400 transition-colors hover:bg-slate-200 hover:text-loss"
               aria-label={`Remover ${f.nome}`}
             >
               ×

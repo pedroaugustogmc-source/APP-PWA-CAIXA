@@ -27,7 +27,7 @@ export function ItensPage() {
     useItens()
   const { categorias } = useCategorias()
   const { fornecedores } = useFornecedores()
-  const { plataformas } = usePlataformas()
+  const { plataformas, criar: criarPlataforma } = usePlataformas()
   const { config } = useConfiguracoes()
 
   const [statusFiltro, setStatusFiltro] = useState<StatusItem | 'todos'>('todos')
@@ -53,7 +53,7 @@ export function ItensPage() {
   return (
     <div>
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-lg font-bold tracking-tight text-slate-900">Itens</h2>
+        <h2 className="text-lg font-bold text-slate-900">Itens</h2>
         <Button variant="primary" size="sm" onClick={() => setShowForm(true)}>
           <IconPlus className="h-3.5 w-3.5" /> Novo
         </Button>
@@ -125,6 +125,7 @@ export function ItensPage() {
           plataformas={plataformas}
           onClose={() => setItemVendendo(null)}
           onSubmit={(input, plataforma) => registrarVenda(item.id, input, plataforma)}
+          onCriarPlataforma={criarPlataforma}
         />
       )}
     </div>

@@ -34,7 +34,7 @@ import { Card, CardLabel } from '../components/Card'
 import { formatBRL, formatDias } from '../lib/format'
 
 function SectionLabel({ children }: { children: string }) {
-  return <h3 className="px-1 text-xs font-semibold tracking-wide text-slate-400 uppercase">{children}</h3>
+  return <h3 className="px-1 text-xs font-semibold tracking-wide text-slate-400">{children}</h3>
 }
 
 export function DashboardPage() {
@@ -67,7 +67,7 @@ export function DashboardPage() {
 
   return (
     <div className="space-y-5">
-      <h2 className="text-lg font-bold tracking-tight text-slate-900">Dashboard</h2>
+      <h2 className="text-lg font-bold text-slate-900">Dashboard</h2>
 
       <MetaMensalCard lucroMes={lucroMes} metaMensal={config.meta_mensal_lucro} variacaoMesAnterior={variacaoMesAnterior} />
 

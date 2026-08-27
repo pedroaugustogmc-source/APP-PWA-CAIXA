@@ -2,12 +2,7 @@ import { supabase } from './supabase'
 import type { ItemInput, VendaInput } from '../hooks/useItens'
 import type { Categoria, Fornecedor, Plataforma } from '../types/domain'
 
-/**
- * Fila de ações feitas sem conexão. Guardada no IndexedDB do navegador (some
- * se o usuário limpar dados do site, mas sobrevive a fechar/reabrir o app).
- * Só cobre as duas ações mais prováveis de acontecer sem sinal: cadastrar um
- * item e registrar uma venda — o resto exige conexão, como já era offline-só-leitura.
- */
+/** Fila de ações feitas sem conexão (IndexedDB). Cobre só criar item e registrar venda — o resto exige conexão. */
 export interface PendingCriarItem {
   kind: 'criar_item'
   id: string

@@ -93,7 +93,6 @@ export type Database = {
           created_at: string
           dias_estoque_parado_alerta: number
           id: string
-          margem_alvo_pct: number
           meta_mensal_lucro: number
           updated_at: string
           user_id: string
@@ -102,7 +101,6 @@ export type Database = {
           created_at?: string
           dias_estoque_parado_alerta?: number
           id?: string
-          margem_alvo_pct?: number
           meta_mensal_lucro?: number
           updated_at?: string
           user_id?: string
@@ -111,7 +109,6 @@ export type Database = {
           created_at?: string
           dias_estoque_parado_alerta?: number
           id?: string
-          margem_alvo_pct?: number
           meta_mensal_lucro?: number
           updated_at?: string
           user_id?: string

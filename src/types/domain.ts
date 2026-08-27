@@ -62,7 +62,6 @@ export interface Item {
 export interface Configuracoes {
   id: string
   user_id: string
-  margem_alvo_pct: number
   meta_mensal_lucro: number
   dias_estoque_parado_alerta: number
   created_at: string
@@ -78,7 +77,6 @@ export interface ItemCalculado extends Item {
   roi_pct: number | null
   dias_em_estoque: number | null
   preco_minimo: number | null
-  preco_sugerido: number | null
   categoria: Categoria | null
   fornecedor: Fornecedor | null
   plataforma: Plataforma | null

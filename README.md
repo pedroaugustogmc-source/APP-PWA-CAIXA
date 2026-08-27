@@ -2,8 +2,6 @@
 
 PWA pessoal para gestão de compra e venda de acessórios (capas, relógios, etc). Cada item carrega seu próprio custo de compra e despesas extras (frete, embalagem...) e o app calcula o custo total, lucro, margem, ROI e preço mínimo automaticamente. Funciona online e offline.
 
-> Status: em construção (ver fases abaixo). Este README é atualizado a cada fase.
-
 ## Stack
 
 - Vite + React + TypeScript (strict)
@@ -60,13 +58,13 @@ As migrations SQL ficam em `supabase/migrations`. Aplique-as no seu projeto Supa
 
 ### Modelo de dados
 
-Não existe mais "lote de compra" nem "despesa geral" separados. Cada
-**item** é autossuficiente: guarda o próprio custo de compra
-(`custo_compra`), uma lista livre de despesas extras (`custos_extras`,
-ex.: frete, embalagem) e, opcionalmente, quantos dias você planeja ficar
-com ele antes de vender (`dias_planejados`). O custo total, lucro, margem,
-ROI e preço mínimo são todos derivados desses campos em
-`src/lib/calculations.ts` — nunca duplicados em componente.
+Não existe "lote de compra" nem "despesa geral" separados. Cada **item**
+é autossuficiente: guarda o próprio custo de compra (`custo_compra`), uma
+lista livre de despesas extras (`custos_extras`, ex.: frete, embalagem) e,
+opcionalmente, quantos dias você planeja ficar com ele antes de vender
+(`dias_planejados`). O custo total, lucro, margem, ROI e preço mínimo são
+todos derivados desses campos em `src/lib/calculations.ts` — nunca
+duplicados em componente.
 
 Quando `dias_planejados` não é definido, o alerta de "item parado" cai no
 prazo padrão configurado em Ajustes.
@@ -89,64 +87,28 @@ npm run dev       # servidor de desenvolvimento
 npm run build     # build de produção (tsc -b && vite build)
 npm run preview   # servir o build localmente
 npm run lint      # oxlint
+npm run test      # vitest
 ```
 
-## Roadmap de fases
+## Deploy
 
-- [x] Fase 0 — Setup do projeto
-- [x] Fase 1 — Banco de dados (migrations + RLS)
-- [x] Fase 2 — MVP funcional (CRUD, cálculos, dashboard)
-- [x] Fase 3 — Configuração PWA (manifest, service worker, iOS)
-- [x] Fase 4 — KPIs avançados e gráficos
-- [x] Fase 5 — Deploy no Vercel (ver nota abaixo)
-
-## Deploy no Vercel
-
-**Status: no ar.** Projeto `catira-control-app` (conta Vercel `pedrocastro`)
-conectado via GitHub App a `pedroaugustogmc-source/APP-PWA-CAIXA`. O
-check do GitHub no commit confirma `Vercel: Deployment has completed` e o
-bot do Vercel comentou na PR com status **Ready**:
-
-- Preview desta branch: https://catira-control-app-git-claude-catira-control-6e0219-pedrocastro.vercel.app
-- Painel do projeto: https://vercel.com/pedrocastro/catira-control-app
-
-(As ferramentas de leitura da API do Vercel usadas nesta sessão não
-enxergam o projeto — provavelmente um problema de escopo da integração —
-mas o check do GitHub e o comentário do bot são a fonte de verdade do
-próprio Vercel e confirmam o deploy.)
+Projeto `catira-control-app` no Vercel, conectado via GitHub App ao
+repositório — todo push na branch abre/atualiza uma preview deployment, e
+merge em `main` promove pra produção automaticamente.
 
 `.env.production` está versionado no repo (é a `anon key` pública do
 Supabase, protegida por RLS), então o build sai funcional sem configurar
-nada manualmente no painel. Como a branch de produção do projeto é
-`main`, isso ainda é uma *Preview* deployment — assim que a PR for
-mesclada em `main`, o mesmo build é promovido automaticamente para o
-domínio de produção (`catira-control-app.vercel.app` ou um domínio
-customizado, se configurado).
+nada manualmente no painel do Vercel.
 
 ## Sobre o projeto Supabase
 
-O projeto Supabase usado (`rurqtctrbzxppeickltz`) já hospeda outro app do
-usuário (gestão de fazenda/gado — tabelas `animais`, `pastos`, `vacinas_*`
-etc.). As tabelas do Catira Control convivem no mesmo schema `public`, sem
-conflito de nomes, e o RLS (`auth.uid() = user_id`) isola os dados por
-usuário normalmente. Se preferir um projeto Supabase dedicado só para este
-app, é só criar um novo projeto e reaplicar as migrations de
-`supabase/migrations` nele.
-
-## Auditoria PWA
-
-O Lighthouse 13.x removeu a categoria "PWA" do relatório padrão (o Google
-descontinuou esse score dedicado). Validação feita manualmente com o build
-de produção (`npm run build && npm run preview`):
-
-- Categorias que ainda existem no Lighthouse: **Performance 100**,
-  **Best Practices 100**, **Accessibility 96**, **SEO 91**.
-- `manifest.webmanifest` válido: name, short_name, ícones 192/512/maskable,
-  `start_url`, `display: standalone`.
-- Service worker ativo controlando a página (`sw.js`, escopo `/`).
-- Ícones (192, 512, maskable, apple-touch-icon) servidos com `200` e
-  `image/png`.
-- Zero erros de console no carregamento.
+O projeto Supabase usado (`rurqtctrbzxppeickltz`) também hospeda outro
+app do mesmo usuário (gestão de fazenda/gado — tabelas `animais`,
+`pastos`, `vacinas_*` etc.). As tabelas do Catira Control convivem no
+mesmo schema `public`, sem conflito de nomes, e o RLS
+(`auth.uid() = user_id`) isola os dados por usuário normalmente. Se
+preferir um projeto Supabase dedicado só para este app, é só criar um
+novo projeto e reaplicar as migrations de `supabase/migrations` nele.
 
 ## Criar seu usuário
 

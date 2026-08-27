@@ -33,7 +33,7 @@ export function PlataformasManager() {
             <button
               type="button"
               onClick={() => remover(p.id)}
-              className="text-slate-400 transition-colors hover:text-loss"
+              className="rounded-md p-1 text-base leading-none text-slate-400 transition-colors hover:bg-slate-200 hover:text-loss"
               aria-label={`Remover ${p.nome}`}
             >
               ×
@@ -60,7 +60,7 @@ export function PlataformasManager() {
           placeholder="Taxa %"
           value={taxaPct}
           onChange={(e) => setTaxaPct(Number(e.target.value))}
-          className={`${inputClass} w-24 shrink-0`}
+          className={`${inputClass} w-24! shrink-0`}
         />
         <Button type="submit" variant="primary" className="shrink-0">
           Adicionar

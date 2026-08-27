@@ -15,7 +15,7 @@ export function Layout() {
   return (
     <div className="flex min-h-screen flex-col bg-slate-50">
       <header className="sticky top-0 z-40 flex items-center justify-between border-b border-slate-200 bg-white/80 px-4 py-3 backdrop-blur-sm">
-        <h1 className="text-lg font-bold tracking-tight text-slate-900">Catira Control</h1>
+        <h1 className="text-lg font-bold text-slate-900">Catira Control</h1>
         <div className="flex items-center gap-3">
           <SyncStatusBadge />
           <button

@@ -16,7 +16,7 @@ export function IosInstallBanner() {
       <button
         type="button"
         onClick={dismiss}
-        className="shrink-0 text-lg leading-none text-slate-400 transition-colors hover:text-white"
+        className="-mt-1 -mr-1 shrink-0 rounded-md p-1.5 text-lg leading-none text-slate-400 transition-colors hover:bg-white/10 hover:text-white"
         aria-label="Fechar aviso"
       >
         ×

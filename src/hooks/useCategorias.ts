@@ -13,11 +13,17 @@ export function useCategorias() {
     return { error: error?.message ?? null }
   }
 
+  async function editar(id: string, nome: string) {
+    const { error } = await supabase.from('categorias').update({ nome }).eq('id', id)
+    if (!error) await refetch()
+    return { error: error?.message ?? null }
+  }
+
   async function remover(id: string) {
     const { error } = await supabase.from('categorias').delete().eq('id', id)
     if (!error) await refetch()
     return { error: error?.message ?? null }
   }
 
-  return { categorias: data, loading, error, criar, remover, refetch }
+  return { categorias: data, loading, error, criar, editar, remover, refetch }
 }
