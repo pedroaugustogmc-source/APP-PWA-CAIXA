@@ -110,8 +110,9 @@ mesmo schema `public`, sem conflito de nomes, e o RLS
 preferir um projeto Supabase dedicado só para este app, é só criar um
 novo projeto e reaplicar as migrations de `supabase/migrations` nele.
 
-## Criar seu usuário
+## Autenticação
 
-O app não tem cadastro público (uso pessoal, login único). Crie seu usuário
-pelo painel do Supabase: **Authentication → Users → Add user**, marcando
-"Auto Confirm User". Depois é só entrar com esse e-mail/senha no app.
+Cada pessoa cria sua própria conta direto na tela de login (aba "Criar
+conta"), via Supabase Auth. Dependendo da configuração do projeto Supabase
+(**Authentication → Providers → Email → Confirm email**), pode ser exigida
+confirmação por e-mail antes do primeiro acesso.
