@@ -4,6 +4,7 @@ import { useFornecedores } from '../hooks/useFornecedores'
 import { usePlataformas } from '../hooks/usePlataformas'
 import { useConfiguracoes } from '../hooks/useConfiguracoes'
 import {
+  itensVendidosNoPeriodo,
   kpiAlertaEstoqueParado,
   kpiCapital,
   kpiFluxoCaixa,
@@ -15,17 +16,20 @@ import {
   kpiMargemPorFornecedor,
   kpiMargemPorPlataforma,
   kpiPerdas,
-  kpiRoiMedioGeral,
   kpiTop5MaisLucrativos,
   kpiTop5MaisParados,
   kpiVariacaoLucroMesAnterior,
   periodoMesAtual,
+  periodoSemanaAtual,
 } from '../lib/dashboard'
+import { soma } from '../lib/calculations'
 import { KpiCard } from '../components/KpiCard'
 import { MargemPorCategoriaList } from '../components/MargemPorCategoriaList'
 import { Top5List } from '../components/Top5List'
 import { LoadingSpinner } from '../components/LoadingSpinner'
 import { MetaMensalCard } from '../components/dashboard/MetaMensalCard'
+import { MetaSemanalCard } from '../components/dashboard/MetaSemanalCard'
+import { HistoricoVendasSection } from '../components/dashboard/HistoricoVendasSection'
 import { FluxoCaixaCard } from '../components/dashboard/FluxoCaixaCard'
 import { GraficosSection } from '../components/dashboard/GraficosSection'
 import { RankingsSection } from '../components/dashboard/RankingsSection'
@@ -47,12 +51,15 @@ export function DashboardPage() {
   if (loading) return <LoadingSpinner label="Calculando KPIs…" />
 
   const mesAtual = periodoMesAtual()
+  const semanaAtual = periodoSemanaAtual()
   const lucroTotal = kpiLucroNegocio(itens)
   const lucroMes = kpiLucroNegocio(itens, mesAtual)
+  const lucroSemana = kpiLucroNegocio(itens, semanaAtual)
   const margemPorCategoria = kpiMargemPorCategoria(itens, categorias)
   const giroMedio = kpiGiroEstoqueMedio(itens)
   const capital = kpiCapital(itens)
-  const roiMedio = kpiRoiMedioGeral(itens)
+  const itensVendidos = [...itensVendidosNoPeriodo(itens)].sort((a, b) => (b.data_venda ?? '').localeCompare(a.data_venda ?? ''))
+  const lucroTotalVendas = soma(itensVendidos.map((i) => i.lucro_liquido ?? 0))
   const top5Lucrativos = kpiTop5MaisLucrativos(itens)
   const top5Parados = kpiTop5MaisParados(itens)
   const alerta = kpiAlertaEstoqueParado(itens, config.dias_estoque_parado_alerta)
@@ -70,6 +77,7 @@ export function DashboardPage() {
       <h2 className="text-lg font-bold text-slate-900">Dashboard</h2>
 
       <MetaMensalCard lucroMes={lucroMes} metaMensal={config.meta_mensal_lucro} variacaoMesAnterior={variacaoMesAnterior} />
+      <MetaSemanalCard lucroSemana={lucroSemana} metaSemanal={config.meta_semanal_lucro} />
 
       {alerta.length > 0 && (
         <div className="flex items-center gap-2 rounded-xl border border-stale/30 bg-stale/10 p-4">
@@ -84,16 +92,16 @@ export function DashboardPage() {
         <SectionLabel>Resumo</SectionLabel>
         <div className="grid grid-cols-2 gap-3">
           <KpiCard label="Lucro total" value={formatBRL(lucroTotal)} tone="auto" />
-          <KpiCard label="ROI médio geral" value={`${(roiMedio * 100).toFixed(0)}%`} tone="auto" />
           <KpiCard label="Giro médio de estoque" value={formatDias(Math.round(giroMedio))} />
           <KpiCard label="Capital investido" value={formatBRL(capital.investido_total)} />
-          <KpiCard
-            label="Capital preso em estoque"
-            value={formatBRL(capital.preso_em_estoque)}
-            className="col-span-2"
-          />
+          <KpiCard label="Capital preso em estoque" value={formatBRL(capital.preso_em_estoque)} />
         </div>
         <FluxoCaixaCard fluxo={fluxo} />
+      </div>
+
+      <div className="space-y-3">
+        <SectionLabel>Vendas</SectionLabel>
+        <HistoricoVendasSection itensVendidos={itensVendidos} lucroTotal={lucroTotalVendas} />
       </div>
 
       <div className="space-y-3">

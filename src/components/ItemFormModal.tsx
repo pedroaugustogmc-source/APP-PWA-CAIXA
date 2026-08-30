@@ -6,21 +6,20 @@ import { Button } from './Button'
 import { IconPlus } from './icons'
 import { todayISO } from '../lib/calculations'
 import { formatBRL } from '../lib/format'
-import type { Categoria, CondicaoItem, CustoExtra, Fornecedor, Item } from '../types/domain'
+import type { Categoria, CondicaoItem, CustoExtra, Item } from '../types/domain'
 import type { ItemInput } from '../hooks/useItens'
 
 interface Props {
   categorias: Categoria[]
-  fornecedores: Fornecedor[]
   itemInicial?: Item | null
   onClose: () => void
-  onSubmit: (input: ItemInput, categoria: Categoria | null, fornecedor: Fornecedor | null) => Promise<{ error: string | null }>
+  onSubmit: (input: ItemInput, categoria: Categoria | null) => Promise<{ error: string | null }>
+  onCriarCategoria: (nome: string) => Promise<{ error: string | null; categoria?: Categoria }>
 }
 
-export function ItemFormModal({ categorias, fornecedores, itemInicial, onClose, onSubmit }: Props) {
+export function ItemFormModal({ categorias, itemInicial, onClose, onSubmit, onCriarCategoria }: Props) {
   const [nome, setNome] = useState(itemInicial?.nome ?? '')
   const [categoriaId, setCategoriaId] = useState(itemInicial?.categoria_id ?? '')
-  const [fornecedorId, setFornecedorId] = useState(itemInicial?.fornecedor_id ?? '')
   const [condicao, setCondicao] = useState<CondicaoItem>(itemInicial?.condicao ?? 'novo')
   const [dataCompra, setDataCompra] = useState(itemInicial?.data_compra ?? todayISO())
   const [custoCompra, setCustoCompra] = useState(itemInicial?.custo_compra ?? 0)
@@ -30,7 +29,26 @@ export function ItemFormModal({ categorias, fornecedores, itemInicial, onClose, 
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
 
+  const [criandoCategoria, setCriandoCategoria] = useState(categorias.length === 0)
+  const [novaCategoriaNome, setNovaCategoriaNome] = useState('')
+  const [criandoCategoriaSubmitting, setCriandoCategoriaSubmitting] = useState(false)
+
   const custoTotal = custoCompra + custosExtras.reduce((acc, c) => acc + c.valor, 0)
+
+  async function handleCriarCategoria() {
+    if (!novaCategoriaNome.trim()) return
+    setCriandoCategoriaSubmitting(true)
+    setError(null)
+    const { error, categoria } = await onCriarCategoria(novaCategoriaNome.trim())
+    setCriandoCategoriaSubmitting(false)
+    if (error) {
+      setError(error)
+      return
+    }
+    if (categoria) setCategoriaId(categoria.id)
+    setNovaCategoriaNome('')
+    setCriandoCategoria(false)
+  }
 
   function adicionarCustoExtra() {
     setCustosExtras([...custosExtras, { label: '', valor: 0 }])
@@ -58,7 +76,7 @@ export function ItemFormModal({ categorias, fornecedores, itemInicial, onClose, 
     const input: ItemInput = {
       nome: nome.trim(),
       categoria_id: categoriaId || null,
-      fornecedor_id: fornecedorId || null,
+      fornecedor_id: null,
       data_compra: dataCompra,
       custo_compra: custoCompra,
       custos_extras: custosExtras.filter((c) => c.label.trim() !== ''),
@@ -68,9 +86,8 @@ export function ItemFormModal({ categorias, fornecedores, itemInicial, onClose, 
     }
 
     const categoria = categorias.find((c) => c.id === categoriaId) ?? null
-    const fornecedor = fornecedores.find((f) => f.id === fornecedorId) ?? null
 
-    const { error } = await onSubmit(input, categoria, fornecedor)
+    const { error } = await onSubmit(input, categoria)
     setSubmitting(false)
     if (error) setError(error)
     else onClose()
@@ -91,8 +108,45 @@ export function ItemFormModal({ categorias, fornecedores, itemInicial, onClose, 
           />
         </Field>
 
-        <div className="grid grid-cols-2 gap-2">
-          <Field label="Categoria">
+        <div>
+          <div className="mb-1 flex items-center justify-between">
+            <span className="text-sm font-medium text-slate-700">Categoria</span>
+            {categorias.length > 0 && (
+              <button
+                type="button"
+                onClick={() => setCriandoCategoria((v) => !v)}
+                className="flex items-center gap-1 text-xs font-semibold text-slate-600 transition-colors hover:text-slate-900"
+              >
+                {criandoCategoria ? 'cancelar' : (
+                  <>
+                    <IconPlus className="h-3.5 w-3.5" /> nova
+                  </>
+                )}
+              </button>
+            )}
+          </div>
+
+          {criandoCategoria ? (
+            <div className="flex gap-2">
+              <input
+                type="text"
+                autoFocus
+                placeholder="Ex.: Capa, Relógio…"
+                value={novaCategoriaNome}
+                onChange={(e) => setNovaCategoriaNome(e.target.value)}
+                className={inputClass}
+              />
+              <Button
+                type="button"
+                variant="primary"
+                size="sm"
+                onClick={handleCriarCategoria}
+                disabled={criandoCategoriaSubmitting}
+              >
+                Salvar
+              </Button>
+            </div>
+          ) : (
             <select value={categoriaId} onChange={(e) => setCategoriaId(e.target.value)} className={inputClass}>
               <option value="">— nenhuma —</option>
               {categorias.map((c) => (
@@ -101,23 +155,13 @@ export function ItemFormModal({ categorias, fornecedores, itemInicial, onClose, 
                 </option>
               ))}
             </select>
-          </Field>
-          <Field label="Condição">
-            <select value={condicao} onChange={(e) => setCondicao(e.target.value as CondicaoItem)} className={inputClass}>
-              <option value="novo">Novo</option>
-              <option value="usado">Usado</option>
-            </select>
-          </Field>
+          )}
         </div>
 
-        <Field label="Fornecedor">
-          <select value={fornecedorId} onChange={(e) => setFornecedorId(e.target.value)} className={inputClass}>
-            <option value="">— nenhum —</option>
-            {fornecedores.map((f) => (
-              <option key={f.id} value={f.id}>
-                {f.nome}
-              </option>
-            ))}
+        <Field label="Condição">
+          <select value={condicao} onChange={(e) => setCondicao(e.target.value as CondicaoItem)} className={inputClass}>
+            <option value="novo">Novo</option>
+            <option value="usado">Usado</option>
           </select>
         </Field>
 

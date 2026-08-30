@@ -94,6 +94,7 @@ export type Database = {
           dias_estoque_parado_alerta: number
           id: string
           meta_mensal_lucro: number
+          meta_semanal_lucro: number
           updated_at: string
           user_id: string
         }
@@ -102,6 +103,7 @@ export type Database = {
           dias_estoque_parado_alerta?: number
           id?: string
           meta_mensal_lucro?: number
+          meta_semanal_lucro?: number
           updated_at?: string
           user_id?: string
         }
@@ -110,6 +112,7 @@ export type Database = {
           dias_estoque_parado_alerta?: number
           id?: string
           meta_mensal_lucro?: number
+          meta_semanal_lucro?: number
           updated_at?: string
           user_id?: string
         }

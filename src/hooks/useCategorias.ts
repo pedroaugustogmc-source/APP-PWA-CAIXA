@@ -8,9 +8,9 @@ export function useCategorias() {
   )
 
   async function criar(nome: string) {
-    const { error } = await supabase.from('categorias').insert({ nome })
+    const { data, error } = await supabase.from('categorias').insert({ nome }).select().single()
     if (!error) await refetch()
-    return { error: error?.message ?? null }
+    return { error: error?.message ?? null, categoria: (data as Categoria | null) ?? undefined }
   }
 
   async function editar(id: string, nome: string) {

@@ -25,6 +25,18 @@ export function periodoMesAnterior(referencia = todayISO()): PeriodoFiltro {
   return periodoMesAtual(`${anoAnterior}-${String(mesAnterior).padStart(2, '0')}-01`)
 }
 
+/** Semana de segunda a domingo, contendo a data de referência. */
+export function periodoSemanaAtual(referencia = todayISO()): PeriodoFiltro {
+  const data = new Date(`${referencia}T00:00:00`)
+  const offsetSegunda = (data.getDay() + 6) % 7
+  const inicio = new Date(data)
+  inicio.setDate(data.getDate() - offsetSegunda)
+  const fim = new Date(inicio)
+  fim.setDate(inicio.getDate() + 6)
+  const paraISO = (d: Date) => d.toISOString().slice(0, 10)
+  return { inicio: paraISO(inicio), fim: paraISO(fim) }
+}
+
 function dentroDoPeriodo(dataISO: string, periodo?: PeriodoFiltro): boolean {
   if (!periodo) return true
   return dataISO >= periodo.inicio && dataISO <= periodo.fim

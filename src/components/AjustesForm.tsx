@@ -8,6 +8,7 @@ import { Card } from './Card'
 export function AjustesForm() {
   const { config, salvar, loading } = useConfiguracoes()
   const [metaMensal, setMetaMensal] = useState(0)
+  const [metaSemanal, setMetaSemanal] = useState(0)
   const [diasAlerta, setDiasAlerta] = useState(30)
   const [error, setError] = useState<string | null>(null)
   const [salvando, setSalvando] = useState(false)
@@ -15,6 +16,7 @@ export function AjustesForm() {
 
   useEffect(() => {
     setMetaMensal(config.meta_mensal_lucro)
+    setMetaSemanal(config.meta_semanal_lucro)
     setDiasAlerta(config.dias_estoque_parado_alerta)
   }, [config])
 
@@ -25,6 +27,7 @@ export function AjustesForm() {
     setSalvo(false)
     const { error } = await salvar({
       meta_mensal_lucro: metaMensal,
+      meta_semanal_lucro: metaSemanal,
       dias_estoque_parado_alerta: diasAlerta,
     })
     setSalvando(false)
@@ -46,6 +49,18 @@ export function AjustesForm() {
             inputMode="decimal"
             value={metaMensal}
             onChange={(e) => setMetaMensal(Number(e.target.value))}
+            className={inputClass}
+          />
+        </Field>
+
+        <Field label="Meta semanal de lucro (R$)">
+          <input
+            type="number"
+            min={0}
+            step={0.01}
+            inputMode="decimal"
+            value={metaSemanal}
+            onChange={(e) => setMetaSemanal(Number(e.target.value))}
             className={inputClass}
           />
         </Field>

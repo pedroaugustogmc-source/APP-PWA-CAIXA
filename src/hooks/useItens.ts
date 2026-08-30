@@ -30,7 +30,7 @@ export interface ItemInput {
 
 export interface VendaInput {
   preco_venda: number
-  plataforma_id: string
+  plataforma_id: string | null
   taxa_plataforma_pct: number
   data_venda: string
 }
@@ -108,7 +108,7 @@ export function useItens() {
     }),
   ]
 
-  async function criar(input: ItemInput, categoriaSnapshot: Categoria | null, fornecedorSnapshot: Fornecedor | null) {
+  async function criar(input: ItemInput, categoriaSnapshot: Categoria | null) {
     if (!navigator.onLine) {
       await enqueueMutation({
         kind: 'criar_item',
@@ -116,7 +116,7 @@ export function useItens() {
         createdAt: new Date().toISOString(),
         input,
         categoriaSnapshot,
-        fornecedorSnapshot,
+        fornecedorSnapshot: null,
       })
       await recarregarPendentes()
       return { error: null }
@@ -127,7 +127,7 @@ export function useItens() {
     return { error: error?.message ?? null }
   }
 
-  async function registrarVenda(itemId: string, input: VendaInput, plataformaSnapshot: Plataforma) {
+  async function registrarVenda(itemId: string, input: VendaInput) {
     if (!navigator.onLine) {
       await enqueueMutation({
         kind: 'registrar_venda',
@@ -135,7 +135,7 @@ export function useItens() {
         createdAt: new Date().toISOString(),
         itemId,
         input,
-        plataformaSnapshot,
+        plataformaSnapshot: null,
       })
       await recarregarPendentes()
       return { error: null }

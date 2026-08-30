@@ -1,8 +1,6 @@
 import { useState } from 'react'
 import { useItens } from '../hooks/useItens'
 import { useCategorias } from '../hooks/useCategorias'
-import { useFornecedores } from '../hooks/useFornecedores'
-import { usePlataformas } from '../hooks/usePlataformas'
 import { useConfiguracoes } from '../hooks/useConfiguracoes'
 import { ItemCard } from '../components/ItemCard'
 import { ItemFormModal } from '../components/ItemFormModal'
@@ -12,6 +10,7 @@ import { ErrorMessage } from '../components/ErrorMessage'
 import { Button } from '../components/Button'
 import { IconPlus } from '../components/icons'
 import { inputClass } from '../components/Field'
+import { todayISO } from '../lib/calculations'
 import type { StatusItem } from '../types/domain'
 
 const STATUS_OPTIONS: { value: StatusItem | 'todos'; label: string }[] = [
@@ -25,16 +24,14 @@ const STATUS_OPTIONS: { value: StatusItem | 'todos'; label: string }[] = [
 export function ItensPage() {
   const { itens, loading, error, criar, editar, registrarVenda, cancelarVenda, marcarPerdido, alterarStatus, remover } =
     useItens()
-  const { categorias } = useCategorias()
-  const { fornecedores } = useFornecedores()
-  const { plataformas, criar: criarPlataforma } = usePlataformas()
+  const { categorias, criar: criarCategoria } = useCategorias()
   const { config } = useConfiguracoes()
 
   const [statusFiltro, setStatusFiltro] = useState<StatusItem | 'todos'>('todos')
   const [categoriaFiltro, setCategoriaFiltro] = useState('')
   const [showForm, setShowForm] = useState(false)
   const [itemEditandoId, setItemEditandoId] = useState<string | null>(null)
-  const [itemVendendo, setItemVendendo] = useState<string | null>(null)
+  const [itemVendendoId, setItemVendendoId] = useState<string | null>(null)
 
   const itensFiltrados = itens.filter((item) => {
     if (statusFiltro !== 'todos' && item.status !== statusFiltro) return false
@@ -42,12 +39,19 @@ export function ItensPage() {
     return true
   })
 
-  const item = itens.find((i) => i.id === itemVendendo) ?? null
+  const itemVendendo = itens.find((i) => i.id === itemVendendoId) ?? null
   const itemEditando = itens.find((i) => i.id === itemEditandoId) ?? null
+  const editandoVenda = itemEditando?.status === 'vendido'
+  const itemParaVenda = itemVendendo ?? (editandoVenda ? itemEditando : null)
 
   function fecharFormulario() {
     setShowForm(false)
     setItemEditandoId(null)
+  }
+
+  function fecharVenda() {
+    setItemVendendoId(null)
+    if (editandoVenda) setItemEditandoId(null)
   }
 
   return (
@@ -89,7 +93,7 @@ export function ItensPage() {
             key={it.id}
             item={it}
             diasAlerta={config.dias_estoque_parado_alerta}
-            onVender={() => setItemVendendo(it.id)}
+            onVender={() => setItemVendendoId(it.id)}
             onCancelarVenda={() => cancelarVenda(it.id)}
             onMarcarPerdido={() => {
               if (confirm('Marcar este item como perdido/danificado? Ele sai do estoque e entra como prejuízo.')) {
@@ -107,25 +111,31 @@ export function ItensPage() {
         ))}
       </ul>
 
-      {(showForm || itemEditando) && (
+      {(showForm || (itemEditando && !editandoVenda)) && (
         <ItemFormModal
           categorias={categorias}
-          fornecedores={fornecedores}
-          itemInicial={itemEditando}
+          itemInicial={editandoVenda ? null : itemEditando}
           onClose={fecharFormulario}
-          onSubmit={(input, categoria, fornecedor) =>
-            itemEditando ? editar(itemEditando.id, input) : criar(input, categoria, fornecedor)
-          }
+          onSubmit={(input, categoria) => (itemEditando ? editar(itemEditando.id, input) : criar(input, categoria))}
+          onCriarCategoria={criarCategoria}
         />
       )}
 
-      {item && (
+      {itemParaVenda && (
         <VendaModal
-          custoTotal={item.custo_total}
-          plataformas={plataformas}
-          onClose={() => setItemVendendo(null)}
-          onSubmit={(input, plataforma) => registrarVenda(item.id, input, plataforma)}
-          onCriarPlataforma={criarPlataforma}
+          custoTotal={itemParaVenda.custo_total}
+          vendaInicial={
+            editandoVenda && itemEditando
+              ? {
+                  preco_venda: itemEditando.preco_venda ?? 0,
+                  plataforma_id: itemEditando.plataforma_id,
+                  taxa_plataforma_pct: itemEditando.taxa_plataforma_pct ?? 0,
+                  data_venda: itemEditando.data_venda ?? todayISO(),
+                }
+              : null
+          }
+          onClose={fecharVenda}
+          onSubmit={(input) => registrarVenda(itemParaVenda.id, input)}
         />
       )}
     </div>

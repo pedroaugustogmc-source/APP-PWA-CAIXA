@@ -18,7 +18,7 @@ export interface PendingVenda {
   createdAt: string
   itemId: string
   input: VendaInput
-  plataformaSnapshot: Plataforma
+  plataformaSnapshot: Plataforma | null
 }
 
 export type PendingMutation = PendingCriarItem | PendingVenda

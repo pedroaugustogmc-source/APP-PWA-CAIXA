@@ -2,10 +2,11 @@ import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import type { Configuracoes } from '../types/domain'
 
-type ConfigValues = Pick<Configuracoes, 'meta_mensal_lucro' | 'dias_estoque_parado_alerta'>
+type ConfigValues = Pick<Configuracoes, 'meta_mensal_lucro' | 'meta_semanal_lucro' | 'dias_estoque_parado_alerta'>
 
 const PADRAO: ConfigValues = {
   meta_mensal_lucro: 0,
+  meta_semanal_lucro: 0,
   dias_estoque_parado_alerta: 30,
 }
 

@@ -40,6 +40,17 @@ body {
   text-transform: uppercase;
 }
 
+/* O preflight do Tailwind zera text-transform em button/select pra remover a
+   aparência nativa do SO — isso sobrescreve o uppercase herdado do body
+   nesses elementos especificamente. Reforça aqui pra cobrir também as
+   <option> (cujo texto no dropdown aberto não herda do <select> em todo
+   navegador). */
+button,
+select,
+option {
+  text-transform: uppercase;
+}
+
 /* Indicador de foco só aparece pra quem navega por teclado — mouse/touch fica limpo. */
 :focus-visible {
   outline: 2px solid #0f172a;

@@ -63,6 +63,7 @@ export interface Configuracoes {
   id: string
   user_id: string
   meta_mensal_lucro: number
+  meta_semanal_lucro: number
   dias_estoque_parado_alerta: number
   created_at: string
   updated_at: string
