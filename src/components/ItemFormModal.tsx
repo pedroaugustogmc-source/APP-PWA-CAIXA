@@ -148,7 +148,7 @@ export function ItemFormModal({ categorias, itemInicial, onClose, onSubmit, onCr
             </div>
           ) : (
             <select value={categoriaId} onChange={(e) => setCategoriaId(e.target.value)} className={inputClass}>
-              <option value="">— nenhuma —</option>
+              <option value="">Nenhuma</option>
               {categorias.map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.nome}
