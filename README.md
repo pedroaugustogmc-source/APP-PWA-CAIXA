@@ -1,6 +1,6 @@
 # Catira Control
 
-PWA pessoal para gestão de compra e venda de acessórios (capas, relógios, etc). Cada item carrega seu próprio custo de compra e despesas extras (frete, embalagem...) e o app calcula o custo total, lucro, margem, ROI e preço mínimo automaticamente. Funciona online e offline.
+PWA pessoal para gestão de compra e venda de qualquer tipo de produto. Cada item carrega seu próprio custo de compra e despesas extras (frete, embalagem...) e o app calcula o custo total, lucro, margem, ROI e preço mínimo automaticamente. Funciona online e offline.
 
 ## Stack
 

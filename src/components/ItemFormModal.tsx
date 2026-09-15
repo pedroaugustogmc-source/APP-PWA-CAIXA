@@ -101,7 +101,7 @@ export function ItemFormModal({ categorias, itemInicial, onClose, onSubmit, onCr
             type="text"
             required
             autoFocus
-            placeholder="Ex.: Capa transparente iPhone 13"
+            placeholder="Ex.: Nome do produto"
             value={nome}
             onChange={(e) => setNome(e.target.value)}
             className={inputClass}
@@ -131,7 +131,7 @@ export function ItemFormModal({ categorias, itemInicial, onClose, onSubmit, onCr
               <input
                 type="text"
                 autoFocus
-                placeholder="Ex.: Capa, Relógio…"
+                placeholder="Ex.: Eletrônicos, Roupas…"
                 value={novaCategoriaNome}
                 onChange={(e) => setNovaCategoriaNome(e.target.value)}
                 className={inputClass}

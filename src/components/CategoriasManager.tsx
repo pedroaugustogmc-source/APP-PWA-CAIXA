@@ -83,7 +83,7 @@ export function CategoriasManager() {
       <form onSubmit={handleSubmit} className="flex gap-2">
         <input
           type="text"
-          placeholder="Ex.: Capa, Relógio…"
+          placeholder="Ex.: Eletrônicos, Roupas…"
           value={nome}
           onChange={(e) => setNome(e.target.value)}
           className={inputClass}

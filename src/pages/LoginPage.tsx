@@ -49,7 +49,7 @@ export function LoginPage() {
             CC
           </div>
           <h1 className="text-center text-2xl font-bold text-slate-900">Catira Control</h1>
-          <p className="mt-1 text-center text-sm text-slate-500">Gestão de compra e venda de acessórios</p>
+          <p className="mt-1 text-center text-sm text-slate-500">Gestão de compra e venda de produtos</p>
         </div>
 
         <div className="mb-4 flex rounded-lg border border-slate-200 bg-white p-1 text-sm font-semibold">
