@@ -1,6 +1,7 @@
 import type { Session } from '@supabase/supabase-js'
 import { createContext, use, useEffect, useState, type ReactNode } from 'react'
 import { supabase } from '../lib/supabase'
+import { senhaVazada } from '../lib/senhaVazada'
 
 interface AuthContextValue {
   session: Session | null
@@ -35,6 +36,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   async function signUp(email: string, password: string) {
+    if (await senhaVazada(password)) {
+      return {
+        error: 'Essa senha já apareceu em vazamentos conhecidos. Escolha outra senha.',
+        precisaConfirmarEmail: false,
+      }
+    }
     const { data, error } = await supabase.auth.signUp({ email, password })
     return { error: error?.message ?? null, precisaConfirmarEmail: !error && !data.session }
   }
