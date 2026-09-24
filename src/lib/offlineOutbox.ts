@@ -90,7 +90,13 @@ export async function flushOutbox(): Promise<void> {
               .update({ status: 'vendido', ...mutation.input })
               .eq('id', mutation.itemId)
 
-      if (error) break // provável falha de rede — mantém a fila e tenta de novo depois
+      if (error) {
+        // Mantém na fila e tenta de novo na próxima sincronização — mas não
+        // trava as demais ações pendentes por causa de uma só (ex.: rede caiu
+        // no meio, ou a ação referencia algo apagado enquanto estava offline).
+        console.warn(`Não consegui sincronizar ação pendente (${mutation.kind}, id ${mutation.id}): ${error.message}`)
+        continue
+      }
       await removeMutation(mutation.id)
     }
   } finally {
