@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { useItens } from '../hooks/useItens'
 import { useCategorias } from '../hooks/useCategorias'
+import { useFornecedores } from '../hooks/useFornecedores'
+import { usePlataformas } from '../hooks/usePlataformas'
 import { useConfiguracoes } from '../hooks/useConfiguracoes'
 import { ItemCard } from '../components/ItemCard'
 import { ItemFormModal } from '../components/ItemFormModal'
@@ -25,6 +27,8 @@ export function ItensPage() {
   const { itens, loading, error, criar, editar, registrarVenda, cancelarVenda, marcarPerdido, alterarStatus, remover } =
     useItens()
   const { categorias, criar: criarCategoria } = useCategorias()
+  const { fornecedores, criar: criarFornecedor } = useFornecedores()
+  const { plataformas, criar: criarPlataforma } = usePlataformas()
   const { config } = useConfiguracoes()
 
   const [statusFiltro, setStatusFiltro] = useState<StatusItem | 'todos'>('todos')
@@ -114,16 +118,21 @@ export function ItensPage() {
       {(showForm || (itemEditando && !editandoVenda)) && (
         <ItemFormModal
           categorias={categorias}
+          fornecedores={fornecedores}
           itemInicial={editandoVenda ? null : itemEditando}
           onClose={fecharFormulario}
-          onSubmit={(input, categoria) => (itemEditando ? editar(itemEditando.id, input) : criar(input, categoria))}
+          onSubmit={(input, categoria, fornecedor) =>
+            itemEditando ? editar(itemEditando.id, input) : criar(input, categoria, fornecedor)
+          }
           onCriarCategoria={criarCategoria}
+          onCriarFornecedor={criarFornecedor}
         />
       )}
 
       {itemParaVenda && (
         <VendaModal
           custoTotal={itemParaVenda.custo_total}
+          plataformas={plataformas}
           vendaInicial={
             editandoVenda && itemEditando
               ? {
@@ -135,7 +144,8 @@ export function ItensPage() {
               : null
           }
           onClose={fecharVenda}
-          onSubmit={(input) => registrarVenda(itemParaVenda.id, input)}
+          onSubmit={(input, plataforma) => registrarVenda(itemParaVenda.id, input, plataforma)}
+          onCriarPlataforma={criarPlataforma}
         />
       )}
     </div>

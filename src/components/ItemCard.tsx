@@ -76,7 +76,7 @@ export function ItemCard({
       {item.status === 'vendido' && item.lucro_liquido !== null && (
         <div className="mt-3 grid grid-cols-3 gap-2 border-t border-slate-100 pt-3 text-sm">
           <div>
-            <p className="text-xs text-slate-400">Venda</p>
+            <p className="text-xs text-slate-400">Venda{item.plataforma ? ` · ${item.plataforma.nome}` : ''}</p>
             <p className="font-medium tabular-nums">{formatBRL(item.preco_venda ?? 0)}</p>
           </div>
           <div>

@@ -14,9 +14,9 @@ export function useFornecedores() {
   )
 
   async function criar(input: FornecedorInput) {
-    const { error } = await supabase.from('fornecedores').insert(input)
+    const { data, error } = await supabase.from('fornecedores').insert(input).select().single()
     if (!error) await refetch()
-    return { error: error?.message ?? null }
+    return { error: error?.message ?? null, fornecedor: (data as Fornecedor | null) ?? undefined }
   }
 
   async function remover(id: string) {

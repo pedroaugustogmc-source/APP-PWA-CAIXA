@@ -6,20 +6,32 @@ import { Button } from './Button'
 import { IconPlus } from './icons'
 import { todayISO } from '../lib/calculations'
 import { formatBRL } from '../lib/format'
-import type { Categoria, CondicaoItem, CustoExtra, Item } from '../types/domain'
+import type { Categoria, CondicaoItem, CustoExtra, Fornecedor, Item } from '../types/domain'
 import type { ItemInput } from '../hooks/useItens'
+import type { FornecedorInput } from '../hooks/useFornecedores'
 
 interface Props {
   categorias: Categoria[]
+  fornecedores: Fornecedor[]
   itemInicial?: Item | null
   onClose: () => void
-  onSubmit: (input: ItemInput, categoria: Categoria | null) => Promise<{ error: string | null }>
+  onSubmit: (input: ItemInput, categoria: Categoria | null, fornecedor: Fornecedor | null) => Promise<{ error: string | null }>
   onCriarCategoria: (nome: string) => Promise<{ error: string | null; categoria?: Categoria }>
+  onCriarFornecedor: (input: FornecedorInput) => Promise<{ error: string | null; fornecedor?: Fornecedor }>
 }
 
-export function ItemFormModal({ categorias, itemInicial, onClose, onSubmit, onCriarCategoria }: Props) {
+export function ItemFormModal({
+  categorias,
+  fornecedores,
+  itemInicial,
+  onClose,
+  onSubmit,
+  onCriarCategoria,
+  onCriarFornecedor,
+}: Props) {
   const [nome, setNome] = useState(itemInicial?.nome ?? '')
   const [categoriaId, setCategoriaId] = useState(itemInicial?.categoria_id ?? '')
+  const [fornecedorId, setFornecedorId] = useState(itemInicial?.fornecedor_id ?? '')
   const [condicao, setCondicao] = useState<CondicaoItem>(itemInicial?.condicao ?? 'novo')
   const [dataCompra, setDataCompra] = useState(itemInicial?.data_compra ?? todayISO())
   const [custoCompra, setCustoCompra] = useState(itemInicial?.custo_compra ?? 0)
@@ -32,6 +44,10 @@ export function ItemFormModal({ categorias, itemInicial, onClose, onSubmit, onCr
   const [criandoCategoria, setCriandoCategoria] = useState(categorias.length === 0)
   const [novaCategoriaNome, setNovaCategoriaNome] = useState('')
   const [criandoCategoriaSubmitting, setCriandoCategoriaSubmitting] = useState(false)
+
+  const [criandoFornecedor, setCriandoFornecedor] = useState(false)
+  const [novoFornecedorNome, setNovoFornecedorNome] = useState('')
+  const [criandoFornecedorSubmitting, setCriandoFornecedorSubmitting] = useState(false)
 
   const custoTotal = custoCompra + custosExtras.reduce((acc, c) => acc + c.valor, 0)
 
@@ -48,6 +64,21 @@ export function ItemFormModal({ categorias, itemInicial, onClose, onSubmit, onCr
     if (categoria) setCategoriaId(categoria.id)
     setNovaCategoriaNome('')
     setCriandoCategoria(false)
+  }
+
+  async function handleCriarFornecedor() {
+    if (!novoFornecedorNome.trim()) return
+    setCriandoFornecedorSubmitting(true)
+    setError(null)
+    const { error, fornecedor } = await onCriarFornecedor({ nome: novoFornecedorNome.trim() })
+    setCriandoFornecedorSubmitting(false)
+    if (error) {
+      setError(error)
+      return
+    }
+    if (fornecedor) setFornecedorId(fornecedor.id)
+    setNovoFornecedorNome('')
+    setCriandoFornecedor(false)
   }
 
   function adicionarCustoExtra() {
@@ -76,7 +107,7 @@ export function ItemFormModal({ categorias, itemInicial, onClose, onSubmit, onCr
     const input: ItemInput = {
       nome: nome.trim(),
       categoria_id: categoriaId || null,
-      fornecedor_id: null,
+      fornecedor_id: fornecedorId || null,
       data_compra: dataCompra,
       custo_compra: custoCompra,
       custos_extras: custosExtras.filter((c) => c.label.trim() !== ''),
@@ -86,8 +117,9 @@ export function ItemFormModal({ categorias, itemInicial, onClose, onSubmit, onCr
     }
 
     const categoria = categorias.find((c) => c.id === categoriaId) ?? null
+    const fornecedor = fornecedores.find((f) => f.id === fornecedorId) ?? null
 
-    const { error } = await onSubmit(input, categoria)
+    const { error } = await onSubmit(input, categoria, fornecedor)
     setSubmitting(false)
     if (error) setError(error)
     else onClose()
@@ -152,6 +184,56 @@ export function ItemFormModal({ categorias, itemInicial, onClose, onSubmit, onCr
               {categorias.map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.nome}
+                </option>
+              ))}
+            </select>
+          )}
+        </div>
+
+        <div>
+          <div className="mb-1 flex items-center justify-between">
+            <span className="text-sm font-medium text-slate-700">Fornecedor</span>
+            {fornecedores.length > 0 && (
+              <button
+                type="button"
+                onClick={() => setCriandoFornecedor((v) => !v)}
+                className="flex items-center gap-1 text-xs font-semibold text-slate-600 transition-colors hover:text-slate-900"
+              >
+                {criandoFornecedor ? 'cancelar' : (
+                  <>
+                    <IconPlus className="h-3.5 w-3.5" /> novo
+                  </>
+                )}
+              </button>
+            )}
+          </div>
+
+          {criandoFornecedor || fornecedores.length === 0 ? (
+            <div className="flex gap-2">
+              <input
+                type="text"
+                autoFocus={fornecedores.length > 0}
+                placeholder="Ex.: Distribuidora ABC"
+                value={novoFornecedorNome}
+                onChange={(e) => setNovoFornecedorNome(e.target.value)}
+                className={inputClass}
+              />
+              <Button
+                type="button"
+                variant="primary"
+                size="sm"
+                onClick={handleCriarFornecedor}
+                disabled={criandoFornecedorSubmitting}
+              >
+                Salvar
+              </Button>
+            </div>
+          ) : (
+            <select value={fornecedorId} onChange={(e) => setFornecedorId(e.target.value)} className={inputClass}>
+              <option value="">Nenhum</option>
+              {fornecedores.map((f) => (
+                <option key={f.id} value={f.id}>
+                  {f.nome}
                 </option>
               ))}
             </select>

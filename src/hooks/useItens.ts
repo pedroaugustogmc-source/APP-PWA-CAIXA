@@ -108,7 +108,7 @@ export function useItens() {
     }),
   ]
 
-  async function criar(input: ItemInput, categoriaSnapshot: Categoria | null) {
+  async function criar(input: ItemInput, categoriaSnapshot: Categoria | null, fornecedorSnapshot: Fornecedor | null = null) {
     if (!navigator.onLine) {
       await enqueueMutation({
         kind: 'criar_item',
@@ -116,7 +116,7 @@ export function useItens() {
         createdAt: new Date().toISOString(),
         input,
         categoriaSnapshot,
-        fornecedorSnapshot: null,
+        fornecedorSnapshot,
       })
       await recarregarPendentes()
       return { error: null }
@@ -127,7 +127,7 @@ export function useItens() {
     return { error: error?.message ?? null }
   }
 
-  async function registrarVenda(itemId: string, input: VendaInput) {
+  async function registrarVenda(itemId: string, input: VendaInput, plataformaSnapshot: Plataforma | null = null) {
     if (!navigator.onLine) {
       await enqueueMutation({
         kind: 'registrar_venda',
@@ -135,7 +135,7 @@ export function useItens() {
         createdAt: new Date().toISOString(),
         itemId,
         input,
-        plataformaSnapshot: null,
+        plataformaSnapshot,
       })
       await recarregarPendentes()
       return { error: null }
