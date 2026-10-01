@@ -1,5 +1,8 @@
-export function formatBRL(value: number): string {
-  return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+import { toMoney, type MoneyInput } from './money'
+
+/** Única conversão de Decimal pra number permitida fora de calculations.ts — é o limite de exibição. */
+export function formatBRL(value: MoneyInput): string {
+  return toMoney(value).toNumber().toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
 }
 
 export function formatPercent(value: number, digits = 0): string {
