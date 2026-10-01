@@ -1,8 +1,6 @@
 import { AjustesForm } from '../components/AjustesForm'
 import { CategoriasManager } from '../components/CategoriasManager'
 import { FornecedoresManager } from '../components/FornecedoresManager'
-import { PlataformasManager } from '../components/PlataformasManager'
-import { ExportDataSection } from '../components/ExportDataSection'
 
 export function ConfiguracoesPage() {
   return (
@@ -11,8 +9,6 @@ export function ConfiguracoesPage() {
       <AjustesForm />
       <CategoriasManager />
       <FornecedoresManager />
-      <PlataformasManager />
-      <ExportDataSection />
     </div>
   )
 }

@@ -1,27 +1,23 @@
 import { supabase } from './supabase'
-import type { ItemInput, VendaInput } from '../hooks/useItens'
-import type { Categoria, Fornecedor, Plataforma } from '../types/domain'
+import type { AparelhoInput } from '../hooks/useAparelhos'
+import type { Categoria, Fornecedor } from '../types/domain'
 
-/** Fila de ações feitas sem conexão (IndexedDB). Cobre só criar item e registrar venda — o resto exige conexão. */
-export interface PendingCriarItem {
-  kind: 'criar_item'
+/**
+ * Fila de ações feitas sem conexão (IndexedDB). Cobre só cadastro de
+ * aparelho — venda exige conexão: `concluir_venda` é uma operação atômica
+ * multi-tabela via RPC, não um insert simples que dá pra enfileirar e
+ * reenviar depois sem risco de corrida (ver supabase/migrations/0019).
+ */
+export interface PendingCriarAparelho {
+  kind: 'criar_aparelho'
   id: string
   createdAt: string
-  input: ItemInput
+  input: AparelhoInput
   categoriaSnapshot: Categoria | null
   fornecedorSnapshot: Fornecedor | null
 }
 
-export interface PendingVenda {
-  kind: 'registrar_venda'
-  id: string
-  createdAt: string
-  itemId: string
-  input: VendaInput
-  plataformaSnapshot: Plataforma | null
-}
-
-export type PendingMutation = PendingCriarItem | PendingVenda
+export type PendingMutation = PendingCriarAparelho
 
 const DB_NAME = 'catira-outbox'
 const STORE = 'mutations'
@@ -82,13 +78,7 @@ export async function flushOutbox(): Promise<void> {
   try {
     const pending = await listPendingMutations()
     for (const mutation of pending) {
-      const { error } =
-        mutation.kind === 'criar_item'
-          ? await supabase.from('itens').insert({ id: mutation.id, ...mutation.input })
-          : await supabase
-              .from('itens')
-              .update({ status: 'vendido', ...mutation.input })
-              .eq('id', mutation.itemId)
+      const { error } = await supabase.from('aparelhos').insert({ id: mutation.id, ...mutation.input })
 
       if (error) {
         // Mantém na fila e tenta de novo na próxima sincronização — mas não

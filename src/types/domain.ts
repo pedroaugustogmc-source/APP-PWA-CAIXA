@@ -1,6 +1,10 @@
-export type CondicaoItem = 'novo' | 'usado'
-
-export type StatusItem = 'em_estoque' | 'reservado' | 'vendido' | 'perdido_danificado'
+export interface Loja {
+  id: string
+  user_id: string
+  nome: string
+  created_at: string
+  updated_at: string
+}
 
 export interface Categoria {
   id: string
@@ -20,40 +24,159 @@ export interface Fornecedor {
   updated_at: string
 }
 
-export interface Plataforma {
-  id: string
-  user_id: string
-  nome: string
-  /** Fração de 0 a 1 (ex.: 0.12 = 12%), aplicada sobre o preço de venda. */
-  taxa_padrao_pct: number
-  created_at: string
-  updated_at: string
-}
-
-/** Um custo extra associado ao item (frete, embalagem, taxa etc.). */
+/** Um custo extra associado ao aparelho (frete, embalagem, taxa etc.). */
 export interface CustoExtra {
   label: string
   valor: number
 }
 
-export interface Item {
+export type CondicaoAparelho = 'novo' | 'seminovo' | 'vitrine' | 'defeito'
+
+export type StatusAparelho = 'em_estoque' | 'reservado' | 'vendido' | 'devolvido' | 'baixado'
+
+/**
+ * 1 linha = 1 unidade física (serializado por IMEI). Dados de venda NÃO
+ * vivem mais aqui — ver Venda/VendaItem/VendaPagamento/VendaTradeIn.
+ */
+export interface Aparelho {
   id: string
   user_id: string
+  loja_id: string
   nome: string
   categoria_id: string | null
   fornecedor_id: string | null
   identificador: string | null
-  condicao: CondicaoItem
-  status: StatusItem
+  modelo: string
+  cor: string | null
+  capacidade_gb: number | null
+  bateria_saude: number | null
+  /** Nulo só em linha legada pré-Fase 1 — todo aparelho novo exige IMEI (ver AparelhoInput). */
+  imei: string | null
+  imei2: string | null
+  condicao: CondicaoAparelho
+  status: StatusAparelho
   data_compra: string
   custo_compra: number
   custos_extras: CustoExtra[]
   dias_planejados: number | null
-  data_venda: string | null
-  preco_venda: number | null
-  plataforma_id: string | null
-  /** Fração de 0 a 1; puxa o padrão da plataforma na venda, mas é editável. */
-  taxa_plataforma_pct: number | null
+  observacoes: string | null
+  created_at: string
+  updated_at: string
+  categoria?: Categoria | null
+  fornecedor?: Fornecedor | null
+}
+
+/** Timeline append-only de mudanças de status de um aparelho — nunca editável/apagável pelo client. */
+export interface AparelhoEvento {
+  id: string
+  loja_id: string
+  user_id: string
+  aparelho_id: string
+  status_anterior: StatusAparelho | null
+  status_novo: StatusAparelho
+  motivo: string | null
+  metadata: Record<string, unknown>
+  created_at: string
+}
+
+/** Produto fungível (não serializado) — capa, película, carregador, fone. */
+export interface Acessorio {
+  id: string
+  user_id: string
+  loja_id: string
+  sku: string
+  nome: string
+  categoria_id: string | null
+  fornecedor_id: string | null
+  custo_unitario: number
+  preco_venda: number
+  quantidade_estoque: number
+  estoque_minimo: number
+  observacoes: string | null
+  created_at: string
+  updated_at: string
+  categoria?: Categoria | null
+  fornecedor?: Fornecedor | null
+}
+
+export type StatusVenda = 'concluida' | 'cancelada'
+
+export interface Venda {
+  id: string
+  user_id: string
+  loja_id: string
+  vendedor_user_id: string
+  cliente_nome: string | null
+  cliente_contato: string | null
+  status: StatusVenda
+  comissao_vendedor_pct: number | null
+  comissao_vendedor_valor: number
+  observacoes: string | null
+  data_venda: string
+  created_at: string
+  updated_at: string
+}
+
+export interface VendaItem {
+  id: string
+  venda_id: string
+  user_id: string
+  loja_id: string
+  /** Exatamente um de aparelho_id/acessorio_id é preenchido (ver CHECK venda_itens_um_tipo). */
+  aparelho_id: string | null
+  acessorio_id: string | null
+  quantidade: number
+  preco_unitario: number
+  /** Custo capturado no momento da venda — nunca recalculado depois. */
+  custo_unitario_snapshot: number
+  created_at: string
+  aparelho?: Aparelho | null
+  acessorio?: Acessorio | null
+}
+
+export type FormaPagamento = 'dinheiro' | 'pix' | 'cartao_debito' | 'cartao_credito' | 'boleto' | 'financiamento'
+
+export interface VendaPagamento {
+  id: string
+  venda_id: string
+  user_id: string
+  loja_id: string
+  forma: FormaPagamento
+  valor: number
+  parcelas: number
+  taxa_pct: number
+  taxa_valor: number
+  created_at: string
+}
+
+export interface VendaTradeIn {
+  id: string
+  venda_id: string
+  user_id: string
+  loja_id: string
+  aparelho_recebido_id: string
+  valor_avaliacao: number
+  created_at: string
+  aparelho_recebido?: Aparelho | null
+}
+
+/** Aparelho completo com itens/pagamentos/trade-in resolvidos — usado na tela de detalhe da venda. */
+export interface VendaCompleta extends Venda {
+  itens: VendaItem[]
+  pagamentos: VendaPagamento[]
+  tradeIn: VendaTradeIn | null
+}
+
+/** Depreciação por modelo/condição, editável no banco — alimenta o simulador de upgrade. */
+export interface DepreciacaoModelo {
+  id: string
+  user_id: string
+  loja_id: string
+  modelo: string
+  condicao: CondicaoAparelho
+  valor_base: number
+  depreciacao_mensal_pct: number
+  vigente_desde: string
   observacoes: string | null
   created_at: string
   updated_at: string
@@ -65,20 +188,22 @@ export interface Configuracoes {
   meta_mensal_lucro: number
   meta_semanal_lucro: number
   dias_estoque_parado_alerta: number
+  comissao_vendedor_pct_padrao: number
   created_at: string
   updated_at: string
 }
 
-/** Item com todos os campos calculados resolvidos. */
-export interface ItemCalculado extends Item {
-  custo_total: number
-  taxa_plataforma_valor: number | null
-  lucro_liquido: number | null
-  margem_pct: number | null
-  roi_pct: number | null
-  dias_em_estoque: number | null
-  preco_minimo: number | null
-  categoria: Categoria | null
-  fornecedor: Fornecedor | null
-  plataforma: Plataforma | null
+export type OperacaoAuditoria = 'INSERT' | 'UPDATE' | 'DELETE'
+
+/** Rastro bruto de toda mutação em tabela do PHONEITZ — gravado só pelo trigger `registrar_auditoria()`, nunca pela aplicação. */
+export interface Auditoria {
+  id: string
+  loja_id: string
+  user_id: string
+  tabela: string
+  registro_id: string
+  operacao: OperacaoAuditoria
+  dados_antes: Record<string, unknown> | null
+  dados_depois: Record<string, unknown> | null
+  created_at: string
 }
