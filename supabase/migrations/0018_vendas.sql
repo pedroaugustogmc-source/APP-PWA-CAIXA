@@ -10,7 +10,7 @@ create type status_venda as enum ('concluida', 'cancelada');
 create table vendas (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null default auth.uid() references auth.users (id) on delete cascade,
-  loja_id uuid not null default current_loja_id() references lojas (id),
+  loja_id uuid not null default phoneitz_current_loja_id() references lojas (id),
   vendedor_user_id uuid not null default auth.uid() references auth.users (id),
   cliente_nome text,
   cliente_contato text,
@@ -47,7 +47,7 @@ create table venda_itens (
   id uuid primary key default gen_random_uuid(),
   venda_id uuid not null references vendas (id) on delete cascade,
   user_id uuid not null default auth.uid() references auth.users (id) on delete cascade,
-  loja_id uuid not null default current_loja_id() references lojas (id),
+  loja_id uuid not null default phoneitz_current_loja_id() references lojas (id),
   aparelho_id uuid references aparelhos (id),
   acessorio_id uuid references acessorios (id),
   quantidade integer not null default 1 check (quantidade > 0),
@@ -88,7 +88,7 @@ create table venda_pagamentos (
   id uuid primary key default gen_random_uuid(),
   venda_id uuid not null references vendas (id) on delete cascade,
   user_id uuid not null default auth.uid() references auth.users (id) on delete cascade,
-  loja_id uuid not null default current_loja_id() references lojas (id),
+  loja_id uuid not null default phoneitz_current_loja_id() references lojas (id),
   forma forma_pagamento not null,
   valor numeric(12, 2) not null check (valor > 0),
   parcelas smallint not null default 1 check (parcelas >= 1),
@@ -117,7 +117,7 @@ create table venda_trade_ins (
   id uuid primary key default gen_random_uuid(),
   venda_id uuid not null references vendas (id) on delete cascade,
   user_id uuid not null default auth.uid() references auth.users (id) on delete cascade,
-  loja_id uuid not null default current_loja_id() references lojas (id),
+  loja_id uuid not null default phoneitz_current_loja_id() references lojas (id),
   aparelho_recebido_id uuid not null references aparelhos (id),
   valor_avaliacao numeric(12, 2) not null check (valor_avaliacao >= 0),
   created_at timestamptz not null default now(),
@@ -139,3 +139,44 @@ create policy "venda_trade_ins_update_own" on venda_trade_ins
 
 create policy "venda_trade_ins_delete_own" on venda_trade_ins
   for delete using (auth.uid() = user_id);
+
+-- Recria, nas tabelas novas, o histórico de venda capturado em
+-- _staging_historico_vendas (0015) antes de apagar as colunas antigas de
+-- venda da linha do aparelho. Roda como escrita direta de migration (não
+-- via RPC concluir_venda — isso é reconstrução de histórico, não uma venda
+-- nova), e não passa pelo trigger de auditoria (só criado em 0021, depois
+-- desta), o que é aceitável para uma correção pontual de schema. forma
+-- 'outro' porque o schema antigo guardava a plataforma/canal de venda e a
+-- taxa dela, não a forma de pagamento (pix/cartão/dinheiro) — informação
+-- que nunca existiu nos dados antigos, então não é inventada aqui.
+do $$
+declare
+  r record;
+  v_venda_id uuid;
+  v_custo numeric(12,2);
+  v_plataforma_nome text;
+begin
+  for r in select * from _staging_historico_vendas loop
+    select nome into v_plataforma_nome from plataformas where id = r.plataforma_id;
+
+    select custo_compra + coalesce(
+      (select sum((extra->>'valor')::numeric) from jsonb_array_elements(custos_extras) extra), 0
+    ) into v_custo
+    from aparelhos where id = r.aparelho_id;
+
+    insert into vendas (user_id, loja_id, vendedor_user_id, observacoes, data_venda, comissao_vendedor_valor)
+    values (r.user_id, r.loja_id, r.user_id,
+      'Venda histórica migrada do Catira Control' || coalesce(' (plataforma original: ' || v_plataforma_nome || ')', ''),
+      r.data_venda, 0)
+    returning id into v_venda_id;
+
+    insert into venda_itens (venda_id, loja_id, aparelho_id, quantidade, preco_unitario, custo_unitario_snapshot)
+    values (v_venda_id, r.loja_id, r.aparelho_id, 1, r.preco_venda, v_custo);
+
+    insert into venda_pagamentos (venda_id, loja_id, forma, valor, taxa_pct, taxa_valor)
+    values (v_venda_id, r.loja_id, 'outro', r.preco_venda, coalesce(r.taxa_plataforma_pct, 0),
+      round(r.preco_venda * coalesce(r.taxa_plataforma_pct, 0), 2));
+  end loop;
+end $$;
+
+drop table _staging_historico_vendas;

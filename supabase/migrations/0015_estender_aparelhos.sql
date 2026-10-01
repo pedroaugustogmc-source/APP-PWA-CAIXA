@@ -26,7 +26,7 @@ from lojas l
 where l.user_id = a.user_id and a.loja_id is null;
 
 alter table aparelhos alter column loja_id set not null;
-alter table aparelhos alter column loja_id set default current_loja_id();
+alter table aparelhos alter column loja_id set default phoneitz_current_loja_id();
 
 -- modelo: sem equivalente no schema antigo — backfill com o próprio nome do
 -- aparelho, pra não deixar linha existente com modelo vazio (usuário edita
@@ -55,11 +55,17 @@ alter table aparelhos drop column status;
 alter table aparelhos rename column status_novo to status;
 
 -- Remove dados de venda da linha do aparelho — agora vivem em
--- vendas/venda_itens/venda_pagamentos (0018). Migrar o histórico de vendas
--- já existente (linhas com status antigo 'vendido') para as tabelas novas é
--- tarefa manual separada, fora do escopo automático desta migration — a
--- contagem real de linhas afetadas é checada antes de aplicar isto em
--- produção (tarefa #69).
+-- vendas/venda_itens/venda_pagamentos (0018). ANTES de apagar as colunas,
+-- captura o histórico de vendas já existente (linhas com status 'vendido')
+-- numa tabela de staging — 0018 usa isso pra recriar essas vendas nas
+-- tabelas novas, depois de dropar a staging. Zero perda de dado: o rename
+-- custo_compra/custos_extras continua na própria linha do aparelho (não é
+-- dado de venda), só os 4 campos abaixo são realmente removidos daqui.
+create table _staging_historico_vendas as
+select id as aparelho_id, user_id, loja_id, data_venda, preco_venda, plataforma_id, taxa_plataforma_pct
+from aparelhos
+where status = 'vendido';
+
 alter table aparelhos drop constraint itens_dados_venda_consistentes;
 alter table aparelhos drop column data_venda;
 alter table aparelhos drop column preco_venda;
@@ -73,9 +79,9 @@ alter table aparelhos drop column taxa_plataforma_pct;
 -- banco não pode forçar NOT NULL aqui sem apagar/inventar dado de linha já
 -- existente.
 alter table aparelhos add constraint aparelhos_imei_formato
-  check (imei is null or (imei ~ '^[0-9]{15}$' and luhn_valido(imei)));
+  check (imei is null or (imei ~ '^[0-9]{15}$' and phoneitz_luhn_valido(imei)));
 alter table aparelhos add constraint aparelhos_imei2_formato
-  check (imei2 is null or (imei2 ~ '^[0-9]{15}$' and luhn_valido(imei2)));
+  check (imei2 is null or (imei2 ~ '^[0-9]{15}$' and phoneitz_luhn_valido(imei2)));
 
 -- Único por loja, só entre aparelhos "ativos" (em_estoque/reservado) — um
 -- IMEI pode reaparecer depois (ex.: trade-in futuro do mesmo aparelho já

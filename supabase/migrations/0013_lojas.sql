@@ -31,7 +31,7 @@ create policy "lojas_delete_own" on lojas
 
 -- Backfill: todo usuário que já tem item cadastrado ganha loja agora, para
 -- a 0015 conseguir popular aparelhos.loja_id via join por user_id. Não dá
--- pra usar current_loja_id()/auth.uid() aqui porque esta migration roda sem
+-- pra usar phoneitz_current_loja_id()/auth.uid() aqui porque esta migration roda sem
 -- contexto de sessão autenticada.
 insert into lojas (user_id)
 select distinct user_id from itens
@@ -39,7 +39,7 @@ on conflict (user_id) do nothing;
 
 -- Garante a loja do usuário atual, criando na primeira chamada (idempotente
 -- sob concorrência via ON CONFLICT). Chamada 1x no login (useAuth.tsx).
-create or replace function garantir_loja()
+create or replace function phoneitz_garantir_loja()
 returns uuid
 language plpgsql
 security invoker
@@ -56,10 +56,10 @@ begin
   return v_loja_id;
 end;
 $$;
-grant execute on function garantir_loja() to authenticated;
+grant execute on function phoneitz_garantir_loja() to authenticated;
 
 -- Função pura (STABLE), usada como default em toda coluna loja_id nova.
-create or replace function current_loja_id()
+create or replace function phoneitz_current_loja_id()
 returns uuid
 language sql
 stable
@@ -68,4 +68,4 @@ set search_path = ''
 as $$
   select id from public.lojas where user_id = auth.uid();
 $$;
-grant execute on function current_loja_id() to authenticated;
+grant execute on function phoneitz_current_loja_id() to authenticated;

@@ -12,14 +12,14 @@
 -- tipos criados em `public` não resolvem por nome com search_path vazio,
 -- diferente de tipos built-in (numeric, uuid, date, ...) que vivem em
 -- pg_catalog e sempre resolvem.
-create or replace function concluir_venda(p_venda jsonb)
+create or replace function phoneitz_concluir_venda(p_venda jsonb)
 returns uuid
 language plpgsql
 security invoker
 set search_path = ''
 as $$
 declare
-  v_loja_id uuid := public.current_loja_id();
+  v_loja_id uuid := public.phoneitz_current_loja_id();
   v_venda_id uuid;
   v_item jsonb;
   v_pagamento jsonb;
@@ -113,4 +113,4 @@ begin
   return v_venda_id;
 end;
 $$;
-grant execute on function concluir_venda(jsonb) to authenticated;
+grant execute on function phoneitz_concluir_venda(jsonb) to authenticated;

@@ -133,7 +133,7 @@ export function useVendas() {
         : null,
     }
 
-    const { data, error } = await supabase.rpc('concluir_venda', { p_venda: payload })
+    const { data, error } = await supabase.rpc('phoneitz_concluir_venda', { p_venda: payload })
     if (!error) await refetch()
     return { error: error?.message ?? null, vendaId: (data as string | null) ?? undefined }
   }

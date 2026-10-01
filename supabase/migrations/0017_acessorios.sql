@@ -2,7 +2,7 @@
 create table acessorios (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null default auth.uid() references auth.users (id) on delete cascade,
-  loja_id uuid not null default current_loja_id() references lojas (id),
+  loja_id uuid not null default phoneitz_current_loja_id() references lojas (id),
   sku text not null,
   nome text not null,
   categoria_id uuid references categorias (id) on delete restrict,

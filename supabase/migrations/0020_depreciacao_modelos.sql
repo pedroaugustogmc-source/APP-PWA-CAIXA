@@ -5,7 +5,7 @@
 create table depreciacao_modelos (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null default auth.uid() references auth.users (id) on delete cascade,
-  loja_id uuid not null default current_loja_id() references lojas (id),
+  loja_id uuid not null default phoneitz_current_loja_id() references lojas (id),
   modelo text not null,
   condicao condicao_aparelho not null,
   valor_base numeric(12, 2) not null check (valor_base >= 0),

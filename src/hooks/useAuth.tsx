@@ -21,12 +21,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     supabase.auth.getSession().then(({ data }) => {
       setSession(data.session)
       setLoading(false)
-      if (data.session) void supabase.rpc('garantir_loja')
+      if (data.session) void supabase.rpc('phoneitz_garantir_loja')
     })
 
     const { data: subscription } = supabase.auth.onAuthStateChange((_event, newSession) => {
       setSession(newSession)
-      if (newSession) void supabase.rpc('garantir_loja')
+      if (newSession) void supabase.rpc('phoneitz_garantir_loja')
     })
 
     return () => subscription.subscription.unsubscribe()

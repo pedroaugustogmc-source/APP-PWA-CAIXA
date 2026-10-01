@@ -25,7 +25,7 @@ create policy "aparelho_eventos_select_own" on aparelho_eventos
 -- edita/apaga histórico pelo client. O insert é feito só pelo trigger abaixo
 -- (SECURITY DEFINER), nunca diretamente pela aplicação.
 
-create or replace function log_aparelho_evento()
+create or replace function phoneitz_log_aparelho_evento()
 returns trigger
 language plpgsql
 security definer
@@ -45,4 +45,4 @@ $$;
 
 create trigger aparelhos_log_evento
   after insert or update on aparelhos
-  for each row execute function log_aparelho_evento();
+  for each row execute function phoneitz_log_aparelho_evento();
