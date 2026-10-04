@@ -5,6 +5,7 @@ import { useFornecedores } from '../hooks/useFornecedores'
 import { useConfiguracoes } from '../hooks/useConfiguracoes'
 import { AparelhoCard } from '../components/AparelhoCard'
 import { AparelhoFormModal } from '../components/AparelhoFormModal'
+import { EstoqueSubNav } from '../components/EstoqueSubNav'
 import { LoadingSpinner } from '../components/LoadingSpinner'
 import { ErrorMessage } from '../components/ErrorMessage'
 import { Button } from '../components/Button'
@@ -47,6 +48,8 @@ export function EstoqueAparelhosPage() {
 
   return (
     <div>
+      <EstoqueSubNav />
+
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-lg font-bold text-slate-900">Aparelhos</h2>
         <Button variant="primary" size="sm" onClick={() => setShowForm(true)}>

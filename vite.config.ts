@@ -12,9 +12,9 @@ export default defineConfig({
       registerType: 'prompt',
       includeAssets: ['apple-touch-icon.png'],
       manifest: {
-        name: 'Catira Control',
-        short_name: 'Catira',
-        description: 'Gestão de compra e venda de produtos — lucro real, na palma da mão.',
+        name: 'PHONEITZ',
+        short_name: 'PHONEITZ',
+        description: 'Gestão de loja de celulares — estoque por IMEI, vendas com margem real e trade-in, na palma da mão.',
         lang: 'pt-BR',
         start_url: '/',
         scope: '/',

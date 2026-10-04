@@ -46,10 +46,10 @@ export function LoginPage() {
       <div className="w-full max-w-sm">
         <div className="mb-8 flex flex-col items-center">
           <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-slate-900 text-lg font-bold text-white">
-            CC
+            Pz
           </div>
-          <h1 className="text-center text-2xl font-bold text-slate-900">Catira Control</h1>
-          <p className="mt-1 text-center text-sm text-slate-500">Gestão de compra e venda de produtos</p>
+          <h1 className="text-center text-2xl font-bold text-slate-900">PHONEITZ</h1>
+          <p className="mt-1 text-center text-sm text-slate-500">Gestão de loja de celulares — estoque, vendas e margem real</p>
         </div>
 
         <div className="mb-4 flex rounded-lg border border-slate-200 bg-white p-1 text-sm font-semibold">

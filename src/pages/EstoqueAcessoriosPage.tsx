@@ -4,6 +4,7 @@ import { useCategorias } from '../hooks/useCategorias'
 import { useFornecedores } from '../hooks/useFornecedores'
 import { AcessorioCard } from '../components/AcessorioCard'
 import { AcessorioFormModal } from '../components/AcessorioFormModal'
+import { EstoqueSubNav } from '../components/EstoqueSubNav'
 import { LoadingSpinner } from '../components/LoadingSpinner'
 import { ErrorMessage } from '../components/ErrorMessage'
 import { Button } from '../components/Button'
@@ -26,6 +27,8 @@ export function EstoqueAcessoriosPage() {
 
   return (
     <div>
+      <EstoqueSubNav />
+
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-lg font-bold text-slate-900">Acessórios</h2>
         <Button variant="primary" size="sm" onClick={() => setShowForm(true)}>

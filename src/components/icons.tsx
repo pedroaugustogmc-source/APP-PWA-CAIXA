@@ -82,6 +82,25 @@ export function IconShare({ className }: IconProps) {
   )
 }
 
+export function IconCart({ className }: IconProps) {
+  return (
+    <svg {...base} className={className} aria-hidden="true">
+      <path d="M3 4h2l2.4 12.2a1.5 1.5 0 0 0 1.47 1.3h8.26a1.5 1.5 0 0 0 1.47-1.2L20 8H6" />
+      <circle cx="9" cy="20" r="1.3" fill="currentColor" stroke="none" />
+      <circle cx="17" cy="20" r="1.3" fill="currentColor" stroke="none" />
+    </svg>
+  )
+}
+
+export function IconCalculator({ className }: IconProps) {
+  return (
+    <svg {...base} className={className} aria-hidden="true">
+      <rect x="4" y="3" width="16" height="18" rx="2" />
+      <path d="M8 7h8M8 11h2M12 11h2M16 11h2M8 15h2M12 15h2M16 15h2M8 19h2M12 19h2M16 19h2" />
+    </svg>
+  )
+}
+
 export function IconTrash({ className }: IconProps) {
   return (
     <svg {...base} className={className} aria-hidden="true">

@@ -1,11 +1,13 @@
 import { NavLink, Outlet } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
-import { IconHome, IconSettings, IconTag } from './icons'
+import { IconCalculator, IconCart, IconHome, IconSettings, IconTag } from './icons'
 import { SyncStatusBadge } from './SyncStatusBadge'
 
 const TABS = [
   { to: '/', label: 'Início', Icon: IconHome },
-  { to: '/itens', label: 'Itens', Icon: IconTag },
+  { to: '/estoque', label: 'Estoque', Icon: IconTag },
+  { to: '/vendas', label: 'Vendas', Icon: IconCart },
+  { to: '/simulador', label: 'Simulador', Icon: IconCalculator },
   { to: '/config', label: 'Ajustes', Icon: IconSettings },
 ]
 
@@ -15,7 +17,12 @@ export function Layout() {
   return (
     <div className="flex min-h-screen flex-col bg-slate-50">
       <header className="sticky top-0 z-40 flex items-center justify-between border-b border-slate-200 bg-white/80 px-4 py-3 backdrop-blur-sm">
-        <h1 className="text-lg font-bold text-slate-900">Catira Control</h1>
+        <div className="flex items-center gap-2">
+          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-slate-900 text-xs font-bold text-white">
+            Pz
+          </div>
+          <h1 className="text-lg font-bold text-slate-900">PHONEITZ</h1>
+        </div>
         <div className="flex items-center gap-3">
           <SyncStatusBadge />
           <button
