@@ -60,6 +60,9 @@ export function AparelhoFormModal({
     aparelhoInicial?.dias_planejados ? String(aparelhoInicial.dias_planejados) : '',
   )
   const [observacoes, setObservacoes] = useState(aparelhoInicial?.observacoes ?? '')
+  const [precoSugerido, setPrecoSugerido] = useState(
+    aparelhoInicial?.preco_sugerido != null ? String(aparelhoInicial.preco_sugerido) : '',
+  )
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
 
@@ -159,6 +162,7 @@ export function AparelhoFormModal({
       custos_extras: custosExtras.filter((c) => c.label.trim() !== ''),
       dias_planejados: diasPlanejados ? Number(diasPlanejados) : null,
       observacoes: observacoes || null,
+      preco_sugerido: precoSugerido ? Number(precoSugerido) : null,
     }
 
     const categoria = categorias.find((c) => c.id === categoriaId) ?? null
@@ -432,6 +436,22 @@ export function AparelhoFormModal({
         <Field label="Observações">
           <textarea value={observacoes} onChange={(e) => setObservacoes(e.target.value)} className={inputClass} rows={2} />
         </Field>
+
+        <Field label="Preço no catálogo público (R$)">
+          <input
+            type="number"
+            min={0}
+            step={0.01}
+            inputMode="decimal"
+            placeholder="Deixe vazio pra não anunciar"
+            value={precoSugerido}
+            onChange={(e) => setPrecoSugerido(e.target.value)}
+            className={inputClass}
+          />
+        </Field>
+        <p className="-mt-2 text-xs text-slate-400">
+          Preenchido = este aparelho aparece no seu link de vitrine, visível sem login. Vazio = fica só no seu estoque interno.
+        </p>
 
         <div className="flex items-center justify-between rounded-lg bg-slate-50 px-3 py-2.5 text-sm text-slate-600">
           <span>Custo total do aparelho</span>

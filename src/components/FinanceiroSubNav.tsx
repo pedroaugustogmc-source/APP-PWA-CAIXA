@@ -4,6 +4,7 @@ const ABAS = [
   { to: '/financeiro/pagar', label: 'A pagar' },
   { to: '/financeiro/receber', label: 'A receber' },
   { to: '/financeiro/cashback', label: 'Cashback' },
+  { to: '/financeiro/clientes', label: 'Clientes' },
 ]
 
 export function FinanceiroSubNav() {

@@ -5,12 +5,14 @@ import { useFornecedores } from '../hooks/useFornecedores'
 import { useConfiguracoes } from '../hooks/useConfiguracoes'
 import { AparelhoCard } from '../components/AparelhoCard'
 import { AparelhoFormModal } from '../components/AparelhoFormModal'
+import { ImportarCsvModal } from '../components/ImportarCsvModal'
 import { EstoqueSubNav } from '../components/EstoqueSubNav'
 import { LoadingSpinner } from '../components/LoadingSpinner'
 import { ErrorMessage } from '../components/ErrorMessage'
 import { Button } from '../components/Button'
 import { IconPlus } from '../components/icons'
 import { inputClass } from '../components/Field'
+import { TEMPLATE_CSV_APARELHOS, validarAparelhos } from '../lib/csvImport'
 import type { StatusAparelho } from '../types/domain'
 
 const STATUS_OPTIONS: { value: StatusAparelho | 'todos'; label: string }[] = [
@@ -23,7 +25,7 @@ const STATUS_OPTIONS: { value: StatusAparelho | 'todos'; label: string }[] = [
 ]
 
 export function EstoqueAparelhosPage() {
-  const { aparelhos, loading, error, criar, editar, alterarStatus, remover } = useAparelhos()
+  const { aparelhos, loading, error, criar, editar, alterarStatus, remover, importarVarios } = useAparelhos()
   const { categorias, criar: criarCategoria } = useCategorias()
   const { fornecedores, criar: criarFornecedor } = useFornecedores()
   const { config } = useConfiguracoes()
@@ -31,6 +33,7 @@ export function EstoqueAparelhosPage() {
   const [statusFiltro, setStatusFiltro] = useState<StatusAparelho | 'todos'>('em_estoque')
   const [categoriaFiltro, setCategoriaFiltro] = useState('')
   const [showForm, setShowForm] = useState(false)
+  const [showImportar, setShowImportar] = useState(false)
   const [aparelhoEditandoId, setAparelhoEditandoId] = useState<string | null>(null)
 
   const aparelhosFiltrados = aparelhos.filter((aparelho) => {
@@ -50,11 +53,16 @@ export function EstoqueAparelhosPage() {
     <div>
       <EstoqueSubNav />
 
-      <div className="mb-4 flex items-center justify-between">
+      <div className="mb-4 flex items-center justify-between gap-2">
         <h2 className="text-lg font-bold text-slate-900">Aparelhos</h2>
-        <Button variant="primary" size="sm" onClick={() => setShowForm(true)}>
-          <IconPlus className="h-3.5 w-3.5" /> Novo
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="secondary" size="sm" onClick={() => setShowImportar(true)}>
+            Importar CSV
+          </Button>
+          <Button variant="primary" size="sm" onClick={() => setShowForm(true)}>
+            <IconPlus className="h-3.5 w-3.5" /> Novo
+          </Button>
+        </div>
       </div>
 
       <div className="mb-4 grid grid-cols-2 gap-2">
@@ -113,6 +121,18 @@ export function EstoqueAparelhosPage() {
           }
           onCriarCategoria={criarCategoria}
           onCriarFornecedor={criarFornecedor}
+        />
+      )}
+
+      {showImportar && (
+        <ImportarCsvModal
+          titulo="Importar aparelhos via CSV"
+          templateCsv={TEMPLATE_CSV_APARELHOS}
+          templateNomeArquivo="aparelhos-modelo.csv"
+          colunasAjuda="nome, modelo, cor, capacidade_gb, bateria_saude, imei, imei2, condicao (novo/seminovo/vitrine/defeito), data_compra (AAAA-MM-DD), custo_compra, preco_sugerido, observacoes. Só nome, modelo, imei, data_compra e custo_compra são obrigatórios."
+          validar={validarAparelhos}
+          onImportar={importarVarios}
+          onClose={() => setShowImportar(false)}
         />
       )}
     </div>

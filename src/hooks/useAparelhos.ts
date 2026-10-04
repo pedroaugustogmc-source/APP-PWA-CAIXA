@@ -23,6 +23,7 @@ export interface AparelhoInput {
   custos_extras: CustoExtra[]
   dias_planejados: number | null
   observacoes: string | null
+  preco_sugerido: number | null
 }
 
 function aparelhoDePendenciaCriada(
@@ -116,5 +117,16 @@ export function useAparelhos() {
     return { error: error?.message ?? null }
   }
 
-  return { aparelhos, loading, error, criar, editar, alterarStatus, remover, refetch }
+  /** Importação CSV: um insert por linha (não em lote) — um IMEI duplicado numa linha nunca derruba as demais. */
+  async function importarVarios(inputs: AparelhoInput[]) {
+    const resultados: { index: number; error: string | null }[] = []
+    for (const [i, input] of inputs.entries()) {
+      const { error } = await supabase.from('aparelhos').insert(input)
+      resultados.push({ index: i, error: error?.message ?? null })
+    }
+    await refetch()
+    return resultados
+  }
+
+  return { aparelhos, loading, error, criar, editar, alterarStatus, remover, importarVarios, refetch }
 }

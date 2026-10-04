@@ -48,6 +48,7 @@ function venda(overrides: Partial<VendaCompleta> = {}): VendaCompleta {
     user_id: 'u1',
     loja_id: 'l1',
     vendedor_user_id: 'u1',
+    cliente_id: null,
     cliente_nome: null,
     cliente_contato: null,
     status: 'concluida',

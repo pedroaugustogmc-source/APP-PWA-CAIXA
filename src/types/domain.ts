@@ -60,6 +60,8 @@ export interface Aparelho {
   custos_extras: CustoExtra[]
   dias_planejados: number | null
   observacoes: string | null
+  /** Nulo = não aparece no catálogo público. Preenchido = preço vitrine, visível sem login. */
+  preco_sugerido: number | null
   created_at: string
   updated_at: string
   categoria?: Categoria | null
@@ -106,6 +108,7 @@ export interface Venda {
   user_id: string
   loja_id: string
   vendedor_user_id: string
+  cliente_id: string | null
   cliente_nome: string | null
   cliente_contato: string | null
   status: StatusVenda
@@ -246,6 +249,49 @@ export interface CashbackLancamento {
   valor: number
   observacoes: string | null
   created_at: string
+}
+
+/** Fase 4: cadastro formal de clientes. Venda.cliente_nome/cliente_contato continuam sendo texto livre independente disto. */
+export interface Cliente {
+  id: string
+  user_id: string
+  loja_id: string
+  nome: string
+  contato: string | null
+  cpf: string | null
+  email: string | null
+  observacoes: string | null
+  created_at: string
+  updated_at: string
+}
+
+export type PapelMembro = 'dono' | 'vendedor'
+
+/** Dono sempre vem de lojas.user_id (nunca muda) — loja_membros é aditivo, abre acesso pra quem aceitar um convite. */
+export interface LojaMembro {
+  id: string
+  loja_id: string
+  user_id: string | null
+  papel: PapelMembro
+  codigo_convite: string | null
+  convidado_por: string | null
+  convidado_em: string
+  aceito_em: string | null
+  created_at: string
+}
+
+/** Linha da view `catalogo_publico` — só os campos de vitrine, sem IMEI/custo/user_id. Lida sem login. */
+export interface CatalogoPublicoItem {
+  loja_id: string
+  aparelho_id: string
+  nome: string
+  modelo: string
+  cor: string | null
+  capacidade_gb: number | null
+  condicao: CondicaoAparelho
+  bateria_saude: number | null
+  preco_sugerido: number | null
+  loja_nome: string
 }
 
 export type OperacaoAuditoria = 'INSERT' | 'UPDATE' | 'DELETE'

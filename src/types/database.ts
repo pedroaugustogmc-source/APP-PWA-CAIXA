@@ -191,6 +191,7 @@ export type Database = {
           nome: string
           observacoes: string | null
           plataforma_id_antigo: string | null
+          preco_sugerido: number | null
           preco_venda_antigo: number | null
           status: Database["public"]["Enums"]["status_aparelho"]
           status_antigo: "em_estoque" | "reservado" | "vendido" | "perdido_danificado"
@@ -221,6 +222,7 @@ export type Database = {
           nome: string
           observacoes?: string | null
           plataforma_id_antigo?: string | null
+          preco_sugerido?: number | null
           preco_venda_antigo?: number | null
           status?: Database["public"]["Enums"]["status_aparelho"]
           status_antigo?: "em_estoque" | "reservado" | "vendido" | "perdido_danificado"
@@ -251,6 +253,7 @@ export type Database = {
           nome?: string
           observacoes?: string | null
           plataforma_id_antigo?: string | null
+          preco_sugerido?: number | null
           preco_venda_antigo?: number | null
           status?: Database["public"]["Enums"]["status_aparelho"]
           status_antigo?: "em_estoque" | "reservado" | "vendido" | "perdido_danificado"
@@ -420,6 +423,7 @@ export type Database = {
       vendas: {
         Row: {
           cliente_contato: string | null
+          cliente_id: string | null
           cliente_nome: string | null
           comissao_vendedor_pct: number | null
           comissao_vendedor_valor: number
@@ -435,6 +439,7 @@ export type Database = {
         }
         Insert: {
           cliente_contato?: string | null
+          cliente_id?: string | null
           cliente_nome?: string | null
           comissao_vendedor_pct?: number | null
           comissao_vendedor_valor?: number
@@ -450,6 +455,7 @@ export type Database = {
         }
         Update: {
           cliente_contato?: string | null
+          cliente_id?: string | null
           cliente_nome?: string | null
           comissao_vendedor_pct?: number | null
           comissao_vendedor_valor?: number
@@ -465,7 +471,105 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "vendas_cliente_id_fkey"
+            columns: ["cliente_id"]
+            isOneToOne: false
+            referencedRelation: "clientes"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "vendas_loja_id_fkey"
+            columns: ["loja_id"]
+            isOneToOne: false
+            referencedRelation: "lojas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      clientes: {
+        Row: {
+          contato: string | null
+          cpf: string | null
+          created_at: string
+          email: string | null
+          id: string
+          loja_id: string
+          nome: string
+          observacoes: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          contato?: string | null
+          cpf?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          loja_id?: string
+          nome: string
+          observacoes?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Update: {
+          contato?: string | null
+          cpf?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          loja_id?: string
+          nome?: string
+          observacoes?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "clientes_loja_id_fkey"
+            columns: ["loja_id"]
+            isOneToOne: false
+            referencedRelation: "lojas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      loja_membros: {
+        Row: {
+          aceito_em: string | null
+          codigo_convite: string | null
+          convidado_em: string
+          convidado_por: string | null
+          created_at: string
+          id: string
+          loja_id: string
+          papel: Database["public"]["Enums"]["papel_membro"]
+          user_id: string | null
+        }
+        Insert: {
+          aceito_em?: string | null
+          codigo_convite?: string | null
+          convidado_em?: string
+          convidado_por?: string | null
+          created_at?: string
+          id?: string
+          loja_id: string
+          papel?: Database["public"]["Enums"]["papel_membro"]
+          user_id?: string | null
+        }
+        Update: {
+          aceito_em?: string | null
+          codigo_convite?: string | null
+          convidado_em?: string
+          convidado_por?: string | null
+          created_at?: string
+          id?: string
+          loja_id?: string
+          papel?: Database["public"]["Enums"]["papel_membro"]
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "loja_membros_loja_id_fkey"
             columns: ["loja_id"]
             isOneToOne: false
             referencedRelation: "lojas"
@@ -926,6 +1030,21 @@ export type Database = {
       }
       }
     Views: {
+      catalogo_publico: {
+        Row: {
+          aparelho_id: string
+          bateria_saude: number | null
+          capacidade_gb: number | null
+          condicao: Database["public"]["Enums"]["condicao_aparelho"]
+          cor: string | null
+          loja_id: string
+          loja_nome: string
+          modelo: string
+          nome: string
+          preco_sugerido: number | null
+        }
+        Relationships: []
+      }
       }
     Functions: {
       phoneitz_garantir_loja: { Args: never; Returns: string }
@@ -936,6 +1055,9 @@ export type Database = {
         Args: { p_cliente_contato: string; p_observacoes?: string; p_valor: number }
         Returns: string
       }
+      phoneitz_tem_acesso_loja: { Args: { p_loja_id: string }; Returns: boolean }
+      phoneitz_criar_convite_loja: { Args: never; Returns: string }
+      phoneitz_aceitar_convite_loja: { Args: { p_codigo: string }; Returns: string }
       }
     Enums: {
       condicao_aparelho: "novo" | "seminovo" | "vitrine" | "defeito"
@@ -956,6 +1078,7 @@ export type Database = {
       status_venda: "concluida" | "cancelada"
       status_conta: "pendente" | "quitada" | "cancelada"
       tipo_lancamento_cashback: "credito" | "resgate"
+      papel_membro: "dono" | "vendedor"
       }
     CompositeTypes: {
       [_ in never]: never
@@ -1103,6 +1226,7 @@ export const Constants = {
       status_venda: ["concluida", "cancelada"],
       status_conta: ["pendente", "quitada", "cancelada"],
       tipo_lancamento_cashback: ["credito", "resgate"],
+      papel_membro: ["dono", "vendedor"],
     }
   },
 } as const
