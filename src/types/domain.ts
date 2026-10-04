@@ -134,7 +134,8 @@ export interface VendaItem {
   acessorio?: Acessorio | null
 }
 
-export type FormaPagamento = 'dinheiro' | 'pix' | 'cartao_debito' | 'cartao_credito' | 'boleto' | 'financiamento'
+/** 'outro' cobre venda histórica migrada do Catira Control, sem forma de pagamento original registrada. */
+export type FormaPagamento = 'dinheiro' | 'pix' | 'cartao_debito' | 'cartao_credito' | 'boleto' | 'financiamento' | 'outro'
 
 export interface VendaPagamento {
   id: string
