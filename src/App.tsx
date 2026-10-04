@@ -18,6 +18,11 @@ const EstoqueAcessoriosPage = lazy(() =>
 )
 const VendasPage = lazy(() => import('./pages/VendasPage').then((m) => ({ default: m.VendasPage })))
 const NovaVendaPage = lazy(() => import('./pages/NovaVendaPage').then((m) => ({ default: m.NovaVendaPage })))
+const ContasPagarPage = lazy(() => import('./pages/ContasPagarPage').then((m) => ({ default: m.ContasPagarPage })))
+const ContasReceberPage = lazy(() =>
+  import('./pages/ContasReceberPage').then((m) => ({ default: m.ContasReceberPage })),
+)
+const CashbackPage = lazy(() => import('./pages/CashbackPage').then((m) => ({ default: m.CashbackPage })))
 const SimuladorUpgradePage = lazy(() =>
   import('./pages/SimuladorUpgradePage').then((m) => ({ default: m.SimuladorUpgradePage })),
 )
@@ -41,6 +46,10 @@ function App() {
                 <Route path="/estoque/acessorios" element={<EstoqueAcessoriosPage />} />
                 <Route path="/vendas" element={<VendasPage />} />
                 <Route path="/vendas/nova" element={<NovaVendaPage />} />
+                <Route path="/financeiro" element={<Navigate to="/financeiro/pagar" replace />} />
+                <Route path="/financeiro/pagar" element={<ContasPagarPage />} />
+                <Route path="/financeiro/receber" element={<ContasReceberPage />} />
+                <Route path="/financeiro/cashback" element={<CashbackPage />} />
                 <Route path="/simulador" element={<SimuladorUpgradePage />} />
                 <Route path="/config" element={<ConfiguracoesPage />} />
               </Route>

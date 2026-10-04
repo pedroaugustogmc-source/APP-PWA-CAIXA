@@ -190,8 +190,62 @@ export interface Configuracoes {
   meta_semanal_lucro: number
   dias_estoque_parado_alerta: number
   comissao_vendedor_pct_padrao: number
+  cashback_pct_padrao: number
   created_at: string
   updated_at: string
+}
+
+/** 'atrasada' nunca é armazenado — é derivado (pendente + vencimento no passado), ver lib/financeiro.ts. */
+export type StatusConta = 'pendente' | 'quitada' | 'cancelada'
+
+export interface ContaPagar {
+  id: string
+  user_id: string
+  loja_id: string
+  fornecedor_id: string | null
+  descricao: string
+  categoria: string | null
+  valor: number
+  data_vencimento: string
+  data_pagamento: string | null
+  status: StatusConta
+  recorrente: boolean
+  observacoes: string | null
+  created_at: string
+  updated_at: string
+  fornecedor?: Fornecedor | null
+}
+
+export interface ContaReceber {
+  id: string
+  user_id: string
+  loja_id: string
+  venda_id: string | null
+  cliente_nome: string | null
+  cliente_contato: string | null
+  descricao: string
+  valor: number
+  data_vencimento: string
+  data_recebimento: string | null
+  status: StatusConta
+  observacoes: string | null
+  created_at: string
+  updated_at: string
+}
+
+export type TipoLancamentoCashback = 'credito' | 'resgate'
+
+/** Ledger append-only — saldo do cliente é sempre SUM(credito) - SUM(resgate), nunca uma coluna cacheada. */
+export interface CashbackLancamento {
+  id: string
+  user_id: string
+  loja_id: string
+  cliente_contato: string
+  venda_id: string | null
+  tipo: TipoLancamentoCashback
+  valor: number
+  observacoes: string | null
+  created_at: string
 }
 
 export type OperacaoAuditoria = 'INSERT' | 'UPDATE' | 'DELETE'

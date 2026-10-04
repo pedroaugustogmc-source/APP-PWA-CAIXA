@@ -54,6 +54,7 @@ interface Props {
   categorias: Categoria[]
   depreciacoes: DepreciacaoModelo[]
   comissaoPctPadrao: number
+  cashbackPctPadrao: number
   onConcluir: (input: NovaVendaInput) => Promise<{ error: string | null; vendaId?: string }>
   onSucesso: () => void
 }
@@ -64,6 +65,7 @@ export function NovaVendaWizard({
   categorias,
   depreciacoes,
   comissaoPctPadrao,
+  cashbackPctPadrao,
   onConcluir,
   onSucesso,
 }: Props) {
@@ -72,6 +74,7 @@ export function NovaVendaWizard({
   const [observacoes, setObservacoes] = useState('')
   const [dataVenda, setDataVenda] = useState(todayISO())
   const [comissaoPct, setComissaoPct] = useState(comissaoPctPadrao * 100)
+  const [cashbackPct, setCashbackPct] = useState(cashbackPctPadrao * 100)
 
   const [carrinho, setCarrinho] = useState<ItemCarrinho[]>([])
   const [pagamentos, setPagamentos] = useState<PagamentoLinha[]>([])
@@ -177,6 +180,11 @@ export function NovaVendaWizard({
     [receitaTotal, comissaoPct],
   )
 
+  const cashbackValor = useMemo(
+    () => receitaTotal.times(cashbackPct).dividedBy(100).toDecimalPlaces(2),
+    [receitaTotal, cashbackPct],
+  )
+
   const margem = useMemo(
     () =>
       calcularMargemVenda({
@@ -229,6 +237,7 @@ export function NovaVendaWizard({
       dataVenda,
       comissaoVendedorPct: comissaoPct / 100,
       comissaoVendedorValor: comissaoValor,
+      cashbackPct: clienteContato.trim() ? cashbackPct / 100 : null,
       itens: carrinho.map((i) => ({
         aparelhoId: i.aparelhoId,
         acessorioId: i.acessorioId,
@@ -598,6 +607,30 @@ export function NovaVendaWizard({
         <div className="flex items-center justify-between text-sm text-slate-600">
           <span>Valor da comissão</span>
           <strong className="tabular-nums text-slate-900">{formatBRL(comissaoValor)}</strong>
+        </div>
+      </Card>
+
+      <Card className="space-y-3">
+        <CardLabel>Cashback</CardLabel>
+        {!clienteContato.trim() && (
+          <p className="text-xs text-slate-400">Preencha o contato do cliente (acima) pra poder creditar cashback nesta venda.</p>
+        )}
+        <Field label="Percentual sobre a receita (%)">
+          <input
+            type="number"
+            min={0}
+            max={100}
+            step={0.01}
+            inputMode="decimal"
+            disabled={!clienteContato.trim()}
+            value={cashbackPct || ''}
+            onChange={(e) => setCashbackPct(Number(e.target.value))}
+            className={inputClass}
+          />
+        </Field>
+        <div className="flex items-center justify-between text-sm text-slate-600">
+          <span>Cashback creditado ao cliente</span>
+          <strong className="tabular-nums text-slate-900">{formatBRL(clienteContato.trim() ? cashbackValor : 0)}</strong>
         </div>
       </Card>
 

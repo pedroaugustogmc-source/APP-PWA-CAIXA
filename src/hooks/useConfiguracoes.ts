@@ -4,7 +4,11 @@ import type { Configuracoes } from '../types/domain'
 
 type ConfigValues = Pick<
   Configuracoes,
-  'meta_mensal_lucro' | 'meta_semanal_lucro' | 'dias_estoque_parado_alerta' | 'comissao_vendedor_pct_padrao'
+  | 'meta_mensal_lucro'
+  | 'meta_semanal_lucro'
+  | 'dias_estoque_parado_alerta'
+  | 'comissao_vendedor_pct_padrao'
+  | 'cashback_pct_padrao'
 >
 
 const PADRAO: ConfigValues = {
@@ -12,6 +16,7 @@ const PADRAO: ConfigValues = {
   meta_semanal_lucro: 0,
   dias_estoque_parado_alerta: 30,
   comissao_vendedor_pct_padrao: 0,
+  cashback_pct_padrao: 0,
 }
 
 export function useConfiguracoes() {

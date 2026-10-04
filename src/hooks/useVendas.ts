@@ -66,6 +66,8 @@ export interface NovaVendaInput {
   dataVenda?: string
   comissaoVendedorPct?: MoneyInput | null
   comissaoVendedorValor?: MoneyInput
+  /** Só credita cashback (ver 0025) se clienteContato também for informado. */
+  cashbackPct?: MoneyInput | null
   itens: NovaVendaItemInput[]
   pagamentos: NovaVendaPagamentoInput[]
   tradeIn?: NovaVendaTradeInInput | null
@@ -103,6 +105,7 @@ export function useVendas() {
       comissao_vendedor_pct:
         input.comissaoVendedorPct != null ? toMoney(input.comissaoVendedorPct).toFixed(4) : null,
       comissao_vendedor_valor: toMoney(input.comissaoVendedorValor ?? 0).toFixed(2),
+      cashback_pct: input.cashbackPct != null ? toMoney(input.cashbackPct).toFixed(4) : null,
       itens: input.itens.map((item) => ({
         aparelho_id: item.aparelhoId ?? null,
         acessorio_id: item.acessorioId ?? null,

@@ -103,6 +103,7 @@ export type Database = {
       }
       configuracoes: {
         Row: {
+          cashback_pct_padrao: number
           comissao_vendedor_pct_padrao: number
           created_at: string
           dias_estoque_parado_alerta: number
@@ -114,6 +115,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          cashback_pct_padrao?: number
           comissao_vendedor_pct_padrao?: number
           created_at?: string
           dias_estoque_parado_alerta?: number
@@ -125,6 +127,7 @@ export type Database = {
           user_id?: string
         }
         Update: {
+          cashback_pct_padrao?: number
           comissao_vendedor_pct_padrao?: number
           created_at?: string
           dias_estoque_parado_alerta?: number
@@ -738,6 +741,189 @@ export type Database = {
           },
         ]
       }
+      contas_pagar: {
+        Row: {
+          categoria: string | null
+          created_at: string
+          data_pagamento: string | null
+          data_vencimento: string
+          descricao: string
+          fornecedor_id: string | null
+          id: string
+          loja_id: string
+          observacoes: string | null
+          recorrente: boolean
+          status: Database["public"]["Enums"]["status_conta"]
+          updated_at: string
+          user_id: string
+          valor: number
+        }
+        Insert: {
+          categoria?: string | null
+          created_at?: string
+          data_pagamento?: string | null
+          data_vencimento: string
+          descricao: string
+          fornecedor_id?: string | null
+          id?: string
+          loja_id?: string
+          observacoes?: string | null
+          recorrente?: boolean
+          status?: Database["public"]["Enums"]["status_conta"]
+          updated_at?: string
+          user_id?: string
+          valor: number
+        }
+        Update: {
+          categoria?: string | null
+          created_at?: string
+          data_pagamento?: string | null
+          data_vencimento?: string
+          descricao?: string
+          fornecedor_id?: string | null
+          id?: string
+          loja_id?: string
+          observacoes?: string | null
+          recorrente?: boolean
+          status?: Database["public"]["Enums"]["status_conta"]
+          updated_at?: string
+          user_id?: string
+          valor?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contas_pagar_fornecedor_id_fkey"
+            columns: ["fornecedor_id"]
+            isOneToOne: false
+            referencedRelation: "fornecedores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contas_pagar_loja_id_fkey"
+            columns: ["loja_id"]
+            isOneToOne: false
+            referencedRelation: "lojas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      contas_receber: {
+        Row: {
+          cliente_contato: string | null
+          cliente_nome: string | null
+          created_at: string
+          data_recebimento: string | null
+          data_vencimento: string
+          descricao: string
+          id: string
+          loja_id: string
+          observacoes: string | null
+          status: Database["public"]["Enums"]["status_conta"]
+          updated_at: string
+          user_id: string
+          valor: number
+          venda_id: string | null
+        }
+        Insert: {
+          cliente_contato?: string | null
+          cliente_nome?: string | null
+          created_at?: string
+          data_recebimento?: string | null
+          data_vencimento: string
+          descricao: string
+          id?: string
+          loja_id?: string
+          observacoes?: string | null
+          status?: Database["public"]["Enums"]["status_conta"]
+          updated_at?: string
+          user_id?: string
+          valor: number
+          venda_id?: string | null
+        }
+        Update: {
+          cliente_contato?: string | null
+          cliente_nome?: string | null
+          created_at?: string
+          data_recebimento?: string | null
+          data_vencimento?: string
+          descricao?: string
+          id?: string
+          loja_id?: string
+          observacoes?: string | null
+          status?: Database["public"]["Enums"]["status_conta"]
+          updated_at?: string
+          user_id?: string
+          valor?: number
+          venda_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contas_receber_loja_id_fkey"
+            columns: ["loja_id"]
+            isOneToOne: false
+            referencedRelation: "lojas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contas_receber_venda_id_fkey"
+            columns: ["venda_id"]
+            isOneToOne: false
+            referencedRelation: "vendas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cashback_lancamentos: {
+        Row: {
+          cliente_contato: string
+          created_at: string
+          id: string
+          loja_id: string
+          observacoes: string | null
+          tipo: Database["public"]["Enums"]["tipo_lancamento_cashback"]
+          user_id: string
+          valor: number
+          venda_id: string | null
+        }
+        Insert: {
+          cliente_contato: string
+          created_at?: string
+          id?: string
+          loja_id?: string
+          observacoes?: string | null
+          tipo: Database["public"]["Enums"]["tipo_lancamento_cashback"]
+          user_id?: string
+          valor: number
+          venda_id?: string | null
+        }
+        Update: {
+          cliente_contato?: string
+          created_at?: string
+          id?: string
+          loja_id?: string
+          observacoes?: string | null
+          tipo?: Database["public"]["Enums"]["tipo_lancamento_cashback"]
+          user_id?: string
+          valor?: number
+          venda_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cashback_lancamentos_loja_id_fkey"
+            columns: ["loja_id"]
+            isOneToOne: false
+            referencedRelation: "lojas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cashback_lancamentos_venda_id_fkey"
+            columns: ["venda_id"]
+            isOneToOne: false
+            referencedRelation: "vendas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       }
     Views: {
       }
@@ -746,6 +932,10 @@ export type Database = {
       phoneitz_current_loja_id: { Args: never; Returns: string }
       phoneitz_luhn_valido: { Args: { p_numero: string }; Returns: boolean }
       phoneitz_concluir_venda: { Args: { p_venda: Json }; Returns: string }
+      phoneitz_resgatar_cashback: {
+        Args: { p_cliente_contato: string; p_observacoes?: string; p_valor: number }
+        Returns: string
+      }
       }
     Enums: {
       condicao_aparelho: "novo" | "seminovo" | "vitrine" | "defeito"
@@ -764,6 +954,8 @@ export type Database = {
         | "financiamento"
         | "outro"
       status_venda: "concluida" | "cancelada"
+      status_conta: "pendente" | "quitada" | "cancelada"
+      tipo_lancamento_cashback: "credito" | "resgate"
       }
     CompositeTypes: {
       [_ in never]: never
@@ -909,6 +1101,8 @@ export const Constants = {
         "outro",
       ],
       status_venda: ["concluida", "cancelada"],
+      status_conta: ["pendente", "quitada", "cancelada"],
+      tipo_lancamento_cashback: ["credito", "resgate"],
     }
   },
 } as const

@@ -11,6 +11,7 @@ export function AjustesForm() {
   const [metaSemanal, setMetaSemanal] = useState(0)
   const [diasAlerta, setDiasAlerta] = useState(30)
   const [comissaoPadrao, setComissaoPadrao] = useState(0)
+  const [cashbackPadrao, setCashbackPadrao] = useState(0)
   const [error, setError] = useState<string | null>(null)
   const [salvando, setSalvando] = useState(false)
   const [salvo, setSalvo] = useState(false)
@@ -20,6 +21,7 @@ export function AjustesForm() {
     setMetaSemanal(config.meta_semanal_lucro)
     setDiasAlerta(config.dias_estoque_parado_alerta)
     setComissaoPadrao(config.comissao_vendedor_pct_padrao * 100)
+    setCashbackPadrao(config.cashback_pct_padrao * 100)
   }, [config])
 
   async function handleSubmit(e: FormEvent) {
@@ -32,6 +34,7 @@ export function AjustesForm() {
       meta_semanal_lucro: metaSemanal,
       dias_estoque_parado_alerta: diasAlerta,
       comissao_vendedor_pct_padrao: comissaoPadrao / 100,
+      cashback_pct_padrao: cashbackPadrao / 100,
     })
     setSalvando(false)
     if (error) setError(error)
@@ -93,6 +96,22 @@ export function AjustesForm() {
           />
         </Field>
         <p className="-mt-2 text-xs text-slate-400">Sugerida ao abrir uma nova venda — pode ser ajustada venda a venda.</p>
+
+        <Field label="Cashback padrão por venda (%)">
+          <input
+            type="number"
+            min={0}
+            max={100}
+            step={0.01}
+            inputMode="decimal"
+            value={cashbackPadrao || ''}
+            onChange={(e) => setCashbackPadrao(Number(e.target.value))}
+            className={inputClass}
+          />
+        </Field>
+        <p className="-mt-2 text-xs text-slate-400">
+          Creditado automaticamente quando a venda tem contato do cliente — veja saldos em Financeiro › Cashback.
+        </p>
 
         {error && <ErrorMessage message={error} />}
         {salvo && <p className="text-sm font-medium text-profit">Salvo.</p>}

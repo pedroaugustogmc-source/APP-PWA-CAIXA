@@ -101,6 +101,15 @@ export function IconCalculator({ className }: IconProps) {
   )
 }
 
+export function IconWallet({ className }: IconProps) {
+  return (
+    <svg {...base} className={className} aria-hidden="true">
+      <path d="M3 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z" />
+      <path d="M3 10h14a2 2 0 0 1 2 2v1a2 2 0 0 1-2 2h-3a1.5 1.5 0 0 1 0-3h3" />
+    </svg>
+  )
+}
+
 export function IconTrash({ className }: IconProps) {
   return (
     <svg {...base} className={className} aria-hidden="true">

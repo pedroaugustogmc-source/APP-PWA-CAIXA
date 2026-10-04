@@ -1,12 +1,13 @@
 import { NavLink, Outlet } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
-import { IconCalculator, IconCart, IconHome, IconSettings, IconTag } from './icons'
+import { IconCalculator, IconCart, IconHome, IconSettings, IconTag, IconWallet } from './icons'
 import { SyncStatusBadge } from './SyncStatusBadge'
 
 const TABS = [
   { to: '/', label: 'Início', Icon: IconHome },
   { to: '/estoque', label: 'Estoque', Icon: IconTag },
   { to: '/vendas', label: 'Vendas', Icon: IconCart },
+  { to: '/financeiro', label: 'Financeiro', Icon: IconWallet },
   { to: '/simulador', label: 'Simulador', Icon: IconCalculator },
   { to: '/config', label: 'Ajustes', Icon: IconSettings },
 ]
@@ -46,7 +47,7 @@ export function Layout() {
             to={to}
             end={to === '/'}
             className={({ isActive }) =>
-              `relative flex flex-1 flex-col items-center gap-0.5 py-2.5 text-xs transition-colors ${
+              `relative flex min-w-0 flex-1 flex-col items-center gap-0.5 px-0.5 py-2.5 text-[10px] transition-colors ${
                 isActive ? 'font-semibold text-slate-900' : 'text-slate-400 hover:text-slate-600'
               }`
             }
@@ -54,8 +55,8 @@ export function Layout() {
             {({ isActive }) => (
               <>
                 {isActive && <span className="absolute top-0 h-0.5 w-8 rounded-full bg-slate-900" />}
-                <Icon className="h-5 w-5" />
-                {label}
+                <Icon className="h-5 w-5 shrink-0" />
+                <span className="w-full truncate text-center">{label}</span>
               </>
             )}
           </NavLink>

@@ -32,6 +32,7 @@ export function NovaVendaPage() {
           categorias={categorias}
           depreciacoes={depreciacoes}
           comissaoPctPadrao={config.comissao_vendedor_pct_padrao}
+          cashbackPctPadrao={config.cashback_pct_padrao}
           onConcluir={concluirVenda}
           onSucesso={() => navigate('/vendas')}
         />

@@ -42,7 +42,7 @@ export function periodoSemanaAtual(referencia = todayISO()): PeriodoFiltro {
   return { inicio: domingo.toISOString().slice(0, 10), fim: sabado.toISOString().slice(0, 10) }
 }
 
-function dentroDoPeriodo(dataISO: string, periodo?: PeriodoFiltro): boolean {
+export function dentroDoPeriodo(dataISO: string, periodo?: PeriodoFiltro): boolean {
   if (!periodo) return true
   return dataISO >= periodo.inicio && dataISO <= periodo.fim
 }
