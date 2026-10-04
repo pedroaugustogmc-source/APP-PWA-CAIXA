@@ -4,6 +4,7 @@ import { FornecedoresManager } from '../components/FornecedoresManager'
 import { DepreciacaoModelosManager } from '../components/DepreciacaoModelosManager'
 import { MembrosLojaManager } from '../components/MembrosLojaManager'
 import { CatalogoPublicoLink } from '../components/CatalogoPublicoLink'
+import { IntegracoesPanel } from '../components/IntegracoesPanel'
 
 export function ConfiguracoesPage() {
   return (
@@ -15,6 +16,7 @@ export function ConfiguracoesPage() {
       <CategoriasManager />
       <FornecedoresManager />
       <DepreciacaoModelosManager />
+      <IntegracoesPanel />
     </div>
   )
 }
