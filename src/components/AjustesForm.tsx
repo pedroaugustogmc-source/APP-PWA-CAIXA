@@ -10,6 +10,7 @@ export function AjustesForm() {
   const [metaMensal, setMetaMensal] = useState(0)
   const [metaSemanal, setMetaSemanal] = useState(0)
   const [diasAlerta, setDiasAlerta] = useState(30)
+  const [comissaoPadrao, setComissaoPadrao] = useState(0)
   const [error, setError] = useState<string | null>(null)
   const [salvando, setSalvando] = useState(false)
   const [salvo, setSalvo] = useState(false)
@@ -18,6 +19,7 @@ export function AjustesForm() {
     setMetaMensal(config.meta_mensal_lucro)
     setMetaSemanal(config.meta_semanal_lucro)
     setDiasAlerta(config.dias_estoque_parado_alerta)
+    setComissaoPadrao(config.comissao_vendedor_pct_padrao * 100)
   }, [config])
 
   async function handleSubmit(e: FormEvent) {
@@ -29,6 +31,7 @@ export function AjustesForm() {
       meta_mensal_lucro: metaMensal,
       meta_semanal_lucro: metaSemanal,
       dias_estoque_parado_alerta: diasAlerta,
+      comissao_vendedor_pct_padrao: comissaoPadrao / 100,
     })
     setSalvando(false)
     if (error) setError(error)
@@ -76,6 +79,20 @@ export function AjustesForm() {
           />
         </Field>
         <p className="-mt-2 text-xs text-slate-400">Vale só pra itens sem prazo próprio definido no cadastro.</p>
+
+        <Field label="Comissão padrão do vendedor (%)">
+          <input
+            type="number"
+            min={0}
+            max={100}
+            step={0.01}
+            inputMode="decimal"
+            value={comissaoPadrao || ''}
+            onChange={(e) => setComissaoPadrao(Number(e.target.value))}
+            className={inputClass}
+          />
+        </Field>
+        <p className="-mt-2 text-xs text-slate-400">Sugerida ao abrir uma nova venda — pode ser ajustada venda a venda.</p>
 
         {error && <ErrorMessage message={error} />}
         {salvo && <p className="text-sm font-medium text-profit">Salvo.</p>}
