@@ -3,7 +3,6 @@ import { useAuth } from '../hooks/useAuth'
 import { useLojaMembros } from '../hooks/useLojaMembros'
 import { Card } from './Card'
 import { Button } from './Button'
-import { Field, inputClass } from './Field'
 import { ErrorMessage } from './ErrorMessage'
 import { formatDate } from '../lib/format'
 
@@ -11,12 +10,16 @@ import { formatDate } from '../lib/format'
  * Convite é por código (ver migration 0027) — não há como resolver
  * nome/e-mail de um membro aqui (auth.users não é legível via REST por
  * segurança), então a lista mostra só papel + status, não identidade.
+ *
+ * Quem chega aqui já passou pela tela de onboarding (EscolherLojaScreen) —
+ * é sempre dono de uma loja ou vendedor com convite já aceito. Não há mais
+ * UI de "inserir código" neste componente, isso agora só acontece no
+ * primeiro acesso (ver useAuth.tsx / ProtectedRoute.tsx).
  */
 export function MembrosLojaManager() {
   const { session } = useAuth()
-  const { membros, loading, criarConvite, aceitarConvite, revogarMembro } = useLojaMembros()
+  const { membros, loading, criarConvite, revogarMembro } = useLojaMembros()
   const [codigoGerado, setCodigoGerado] = useState<string | null>(null)
-  const [codigoParaAceitar, setCodigoParaAceitar] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
 
@@ -32,16 +35,6 @@ export function MembrosLojaManager() {
     setSubmitting(false)
     if (error) setError(error)
     else setCodigoGerado(codigo ?? null)
-  }
-
-  async function handleAceitarConvite() {
-    if (!codigoParaAceitar.trim()) return
-    setSubmitting(true)
-    setError(null)
-    const { error } = await aceitarConvite(codigoParaAceitar.trim())
-    setSubmitting(false)
-    if (error) setError(error)
-    else setCodigoParaAceitar('')
   }
 
   if (souDono) {
@@ -108,27 +101,10 @@ export function MembrosLojaManager() {
   return (
     <Card as="section" className="space-y-3">
       <h3 className="font-semibold text-slate-900">Acesso à loja</h3>
-      {meuVinculo?.aceito_em ? (
-        <p className="text-sm text-slate-600">Você tem acesso como vendedor desde {formatDate(meuVinculo.aceito_em.slice(0, 10))}.</p>
-      ) : (
-        <>
-          <p className="text-xs text-slate-400">
-            Recebeu um código de convite de uma loja? Insira abaixo pra ter acesso ao estoque e às vendas dela.
-          </p>
-          <Field label="Código de convite">
-            <input
-              type="text"
-              value={codigoParaAceitar}
-              onChange={(e) => setCodigoParaAceitar(e.target.value.toUpperCase())}
-              className={inputClass}
-            />
-          </Field>
-          {error && <ErrorMessage message={error} />}
-          <Button variant="primary" fullWidth disabled={submitting} onClick={handleAceitarConvite}>
-            Entrar na loja
-          </Button>
-        </>
-      )}
+      <p className="text-sm text-slate-600">
+        Você tem acesso como vendedor
+        {meuVinculo?.aceito_em ? ` desde ${formatDate(meuVinculo.aceito_em.slice(0, 10))}` : ''}.
+      </p>
     </Card>
   )
 }

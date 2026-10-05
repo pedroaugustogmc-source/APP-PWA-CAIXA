@@ -108,6 +108,7 @@ export type Database = {
           created_at: string
           dias_estoque_parado_alerta: number
           id: string
+          loja_id: string
           margem_alvo_pct: number
           meta_mensal_lucro: number
           meta_semanal_lucro: number
@@ -120,6 +121,7 @@ export type Database = {
           created_at?: string
           dias_estoque_parado_alerta?: number
           id?: string
+          loja_id?: string
           margem_alvo_pct?: number
           meta_mensal_lucro?: number
           meta_semanal_lucro?: number
@@ -132,13 +134,22 @@ export type Database = {
           created_at?: string
           dias_estoque_parado_alerta?: number
           id?: string
+          loja_id?: string
           margem_alvo_pct?: number
           meta_mensal_lucro?: number
           meta_semanal_lucro?: number
           updated_at?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "configuracoes_loja_id_fkey"
+            columns: ["loja_id"]
+            isOneToOne: false
+            referencedRelation: "lojas"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       plataformas: {
         Row: {

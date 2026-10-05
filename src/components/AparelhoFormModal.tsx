@@ -4,7 +4,7 @@ import { Field, inputClass } from './Field'
 import { ErrorMessage } from './ErrorMessage'
 import { Button } from './Button'
 import { IconPlus } from './icons'
-import { todayISO } from '../lib/calculations'
+import { custoTotalAparelho, todayISO } from '../lib/calculations'
 import { formatBRL } from '../lib/format'
 import { imeiValido } from '../lib/luhn'
 import type { Aparelho, Categoria, CondicaoAparelho, CustoExtra, Fornecedor } from '../types/domain'
@@ -74,7 +74,7 @@ export function AparelhoFormModal({
   const [novoFornecedorNome, setNovoFornecedorNome] = useState('')
   const [criandoFornecedorSubmitting, setCriandoFornecedorSubmitting] = useState(false)
 
-  const custoTotal = custoCompra + custosExtras.reduce((acc, c) => acc + c.valor, 0)
+  const custoTotal = custoTotalAparelho({ custo_compra: custoCompra, custos_extras: custosExtras })
   const imeiPreenchido = imei.trim().length > 0
   const imeiOk = !imeiPreenchido || imeiValido(imei.trim())
   const imei2Preenchido = imei2.trim().length > 0

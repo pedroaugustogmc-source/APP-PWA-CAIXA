@@ -3,13 +3,15 @@ import { createContext, use, useEffect, useRef, useState, type ReactNode } from 
 import { supabase } from '../lib/supabase'
 import { senhaVazada } from '../lib/senhaVazada'
 
-export type LojaStatus = 'ociosa' | 'preparando' | 'pronta' | 'erro'
+export type LojaStatus = 'ociosa' | 'preparando' | 'pronta' | 'erro' | 'escolher'
 
 interface AuthContextValue {
   session: Session | null
   loading: boolean
   lojaStatus: LojaStatus
   tentarNovamenteLoja: () => void
+  criarMinhaLoja: () => Promise<{ error: string | null }>
+  vincularComConvite: (codigo: string) => Promise<{ error: string | null }>
   signIn: (email: string, password: string) => Promise<{ error: string | null }>
   signUp: (email: string, password: string) => Promise<{ error: string | null; precisaConfirmarEmail: boolean }>
   signOut: () => Promise<void>
@@ -18,10 +20,11 @@ interface AuthContextValue {
 const AuthContext = createContext<AuthContextValue | null>(null)
 
 // Toda tabela de dado novo (aparelhos, acessorios, vendas...) tem loja_id not
-// null default phoneitz_current_loja_id() — sem a linha em `lojas`, todo
-// INSERT falha. RPC é idempotente (ON CONFLICT DO NOTHING), então retry
-// simples resolve blip de rede sem risco de duplicar.
-const TENTATIVAS_GARANTIR_LOJA = 3
+// null default phoneitz_current_loja_id() — sem uma linha em `lojas` (dono)
+// ou um vínculo aceito em `loja_membros` (vendedor), todo INSERT falha.
+// phoneitz_garantir_loja()/phoneitz_aceitar_convite_loja() são idempotentes,
+// então retry simples resolve blip de rede sem risco de duplicar.
+const TENTATIVAS = 3
 const ATRASOS_MS = [500, 1500, 4000]
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -30,26 +33,60 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [lojaStatus, setLojaStatus] = useState<LojaStatus>('ociosa')
   const userIdPreparado = useRef<string | null>(null)
 
-  async function garantirLoja(userId: string) {
+  /**
+   * Só verifica se o usuário já tem vínculo (dono de uma loja, ou vendedor
+   * com convite aceito) — NUNCA cria loja sozinho. Criar automaticamente
+   * aqui quebrava o fluxo de convite: todo usuário novo ganhava uma loja
+   * própria já no primeiro login, antes de ter qualquer chance de inserir
+   * um código, e phoneitz_aceitar_convite_loja() rejeita quem já é dono de
+   * uma loja — ou seja, convite de vendedor nunca funcionava.
+   */
+  async function verificarVinculo(userId: string) {
     setLojaStatus('preparando')
-    for (let tentativa = 0; tentativa < TENTATIVAS_GARANTIR_LOJA; tentativa++) {
-      const { error } = await supabase.rpc('phoneitz_garantir_loja')
-      if (!error) {
+    for (let tentativa = 0; tentativa < TENTATIVAS; tentativa++) {
+      const [{ data: lojaPropria, error: erroLoja }, { data: vinculo, error: erroVinculo }] = await Promise.all([
+        supabase.from('lojas').select('id').eq('user_id', userId).maybeSingle(),
+        supabase.from('loja_membros').select('id').eq('user_id', userId).not('aceito_em', 'is', null).maybeSingle(),
+      ])
+      if (!erroLoja && !erroVinculo) {
         userIdPreparado.current = userId
-        setLojaStatus('pronta')
+        setLojaStatus(lojaPropria || vinculo ? 'pronta' : 'escolher')
         return
       }
-      if (tentativa < TENTATIVAS_GARANTIR_LOJA - 1) {
+      if (tentativa < TENTATIVAS - 1) {
         await new Promise((resolve) => setTimeout(resolve, ATRASOS_MS[tentativa]))
       }
     }
     setLojaStatus('erro')
   }
 
+  async function criarMinhaLoja() {
+    for (let tentativa = 0; tentativa < TENTATIVAS; tentativa++) {
+      const { error } = await supabase.rpc('phoneitz_garantir_loja')
+      if (!error) {
+        if (session) userIdPreparado.current = session.user.id
+        setLojaStatus('pronta')
+        return { error: null }
+      }
+      if (tentativa < TENTATIVAS - 1) {
+        await new Promise((resolve) => setTimeout(resolve, ATRASOS_MS[tentativa]))
+      }
+    }
+    return { error: 'Não foi possível criar sua loja agora. Verifique sua conexão e tente de novo.' }
+  }
+
+  async function vincularComConvite(codigo: string) {
+    const { error } = await supabase.rpc('phoneitz_aceitar_convite_loja', { p_codigo: codigo })
+    if (error) return { error: error.message }
+    if (session) userIdPreparado.current = session.user.id
+    setLojaStatus('pronta')
+    return { error: null }
+  }
+
   function onSessionChange(newSession: Session | null) {
     setSession(newSession)
     if (newSession && userIdPreparado.current !== newSession.user.id) {
-      void garantirLoja(newSession.user.id)
+      void verificarVinculo(newSession.user.id)
     } else if (!newSession) {
       userIdPreparado.current = null
       setLojaStatus('ociosa')
@@ -70,7 +107,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   function tentarNovamenteLoja() {
-    if (session) void garantirLoja(session.user.id)
+    if (session) void verificarVinculo(session.user.id)
   }
 
   async function signIn(email: string, password: string) {
@@ -94,7 +131,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <AuthContext value={{ session, loading, lojaStatus, tentarNovamenteLoja, signIn, signUp, signOut }}>
+    <AuthContext
+      value={{
+        session,
+        loading,
+        lojaStatus,
+        tentarNovamenteLoja,
+        criarMinhaLoja,
+        vincularComConvite,
+        signIn,
+        signUp,
+        signOut,
+      }}
+    >
       {children}
     </AuthContext>
   )

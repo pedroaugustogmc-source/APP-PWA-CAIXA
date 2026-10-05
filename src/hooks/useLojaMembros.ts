@@ -20,17 +20,11 @@ export function useLojaMembros() {
     return { error: error?.message ?? null, codigo: (data as string | null) ?? undefined }
   }
 
-  async function aceitarConvite(codigo: string) {
-    const { data, error } = await supabase.rpc('phoneitz_aceitar_convite_loja', { p_codigo: codigo })
-    if (!error) await refetch()
-    return { error: error?.message ?? null, lojaId: (data as string | null) ?? undefined }
-  }
-
   async function revogarMembro(id: string) {
     const { error } = await supabase.from('loja_membros').delete().eq('id', id)
     if (!error) await refetch()
     return { error: error?.message ?? null }
   }
 
-  return { membros: data, loading, error, criarConvite, aceitarConvite, revogarMembro, refetch }
+  return { membros: data, loading, error, criarConvite, revogarMembro, refetch }
 }

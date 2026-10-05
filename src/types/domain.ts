@@ -189,6 +189,7 @@ export interface DepreciacaoModelo {
 export interface Configuracoes {
   id: string
   user_id: string
+  loja_id: string
   meta_mensal_lucro: number
   meta_semanal_lucro: number
   dias_estoque_parado_alerta: number

@@ -2,6 +2,7 @@ import { Navigate, Outlet } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { LoadingSpinner } from './LoadingSpinner'
 import { Button } from './Button'
+import { EscolherLojaScreen } from './EscolherLojaScreen'
 
 export function ProtectedRoute() {
   const { session, loading, lojaStatus, tentarNovamenteLoja } = useAuth()
@@ -21,6 +22,10 @@ export function ProtectedRoute() {
         <LoadingSpinner label="Preparando sua loja…" />
       </div>
     )
+  }
+
+  if (lojaStatus === 'escolher') {
+    return <EscolherLojaScreen />
   }
 
   if (lojaStatus === 'erro') {
