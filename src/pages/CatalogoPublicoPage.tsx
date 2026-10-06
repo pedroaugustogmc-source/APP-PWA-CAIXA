@@ -20,7 +20,7 @@ export function CatalogoPublicoPage() {
     <div className="min-h-screen bg-slate-50 px-4 py-6">
       <div className="mx-auto max-w-md">
         <div className="mb-6 flex flex-col items-center text-center">
-          <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-slate-900 text-sm font-bold text-white">
+          <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-brand text-sm font-bold text-white">
             Pz
           </div>
           <h1 className="text-xl font-bold text-slate-900">{lojaNome ?? 'Catálogo'}</h1>

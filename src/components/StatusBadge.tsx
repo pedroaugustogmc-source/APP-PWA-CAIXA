@@ -5,7 +5,8 @@ const LABELS: Record<StatusAparelho, string> = {
   reservado: 'Reservado',
   vendido: 'Vendido',
   devolvido: 'Devolvido',
-  baixado: 'Baixado',
+  baixado: 'Vendido (baixa manual)',
+  perdido_danificado: 'Perdido/danificado',
 }
 
 const CLASSES: Record<StatusAparelho, string> = {
@@ -14,6 +15,7 @@ const CLASSES: Record<StatusAparelho, string> = {
   vendido: 'bg-profit/10 text-profit',
   devolvido: 'bg-amber-100 text-amber-700',
   baixado: 'bg-loss/10 text-loss',
+  perdido_danificado: 'bg-loss/10 text-loss',
 }
 
 export function StatusBadge({ status }: { status: StatusAparelho }) {

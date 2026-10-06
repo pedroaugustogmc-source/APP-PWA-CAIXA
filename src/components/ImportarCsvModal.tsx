@@ -99,7 +99,7 @@ export function ImportarCsvModal<T>({
               type="file"
               accept=".csv,text/csv"
               onChange={handleArquivo}
-              className="block w-full text-sm text-slate-600 file:mr-3 file:rounded-lg file:border-0 file:bg-slate-900 file:px-3 file:py-2 file:text-xs file:font-semibold file:text-white"
+              className="block w-full text-sm text-slate-600 file:mr-3 file:rounded-lg file:border-0 file:bg-brand file:px-3 file:py-2 file:text-xs file:font-semibold file:text-white"
             />
           </div>
         )}

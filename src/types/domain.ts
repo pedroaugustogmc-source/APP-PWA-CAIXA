@@ -32,7 +32,7 @@ export interface CustoExtra {
 
 export type CondicaoAparelho = 'novo' | 'seminovo' | 'vitrine' | 'defeito'
 
-export type StatusAparelho = 'em_estoque' | 'reservado' | 'vendido' | 'devolvido' | 'baixado'
+export type StatusAparelho = 'em_estoque' | 'reservado' | 'vendido' | 'devolvido' | 'baixado' | 'perdido_danificado'
 
 /**
  * 1 linha = 1 unidade física (serializado por IMEI). Dados de venda NÃO

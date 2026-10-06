@@ -1078,6 +1078,7 @@ export type Database = {
         | "vendido"
         | "devolvido"
         | "baixado"
+        | "perdido_danificado"
       forma_pagamento:
         | "dinheiro"
         | "pix"
@@ -1224,6 +1225,7 @@ export const Constants = {
         "vendido",
         "devolvido",
         "baixado",
+        "perdido_danificado",
       ],
       forma_pagamento: [
         "dinheiro",

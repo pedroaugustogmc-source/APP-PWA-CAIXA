@@ -4,9 +4,11 @@ import { Card } from './Card'
 export function IntegracoesPanel() {
   return (
     <Card as="section">
-      <h3 className="mb-1 font-semibold text-slate-900">Integrações</h3>
+      <h3 className="mb-1 font-semibold text-slate-900">Integrações extras</h3>
       <p className="mb-3 text-xs text-slate-500">
-        Conexões com serviços de terceiros. Nenhuma está ativa ainda — fale com o suporte PHONEITZ pra contratar e habilitar.
+        Recursos opcionais que conectam o PHONEITZ a serviços externos (emissor de nota fiscal, bureau de crédito, etc.).
+        Tudo o que você precisa pra operar a loja — estoque, vendas, financeiro — já funciona sem nenhum deles. Ative só
+        quando fizer sentido pro seu negócio.
       </p>
       <ul className="space-y-2">
         {PROVIDERS_INFO.map((provider) => (
@@ -16,7 +18,7 @@ export function IntegracoesPanel() {
               <p className="text-xs text-slate-500">{provider.descricao}</p>
             </div>
             <span className="shrink-0 whitespace-nowrap rounded-full bg-slate-200 px-2 py-0.5 text-[10px] font-semibold uppercase text-slate-600">
-              Não configurado
+              Disponível sob consulta
             </span>
           </li>
         ))}

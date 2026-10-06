@@ -1,6 +1,6 @@
 import type { AuthChangeEvent, Session } from '@supabase/supabase-js'
 import { createContext, use, useEffect, useRef, useState, type ReactNode } from 'react'
-import { supabase } from '../lib/supabase'
+import { definirManterConectado, supabase } from '../lib/supabase'
 import { senhaVazada } from '../lib/senhaVazada'
 
 export type LojaStatus = 'ociosa' | 'preparando' | 'pronta' | 'erro' | 'escolher'
@@ -12,7 +12,7 @@ interface AuthContextValue {
   tentarNovamenteLoja: () => void
   criarMinhaLoja: () => Promise<{ error: string | null }>
   vincularComConvite: (codigo: string) => Promise<{ error: string | null }>
-  signIn: (email: string, password: string) => Promise<{ error: string | null }>
+  signIn: (email: string, password: string, manterConectado?: boolean) => Promise<{ error: string | null }>
   signUp: (email: string, password: string) => Promise<{ error: string | null; precisaConfirmarEmail: boolean }>
   signOut: () => Promise<void>
 }
@@ -167,7 +167,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (session) void verificarVinculo(session.user.id)
   }
 
-  async function signIn(email: string, password: string) {
+  async function signIn(email: string, password: string, manterConectado = true) {
+    // Precisa ser setado ANTES do signIn — é o próprio signInWithPassword que
+    // dispara a escrita da sessão no storage, via onAuthStateChange interno
+    // do supabase-js.
+    definirManterConectado(manterConectado)
     const { error } = await supabase.auth.signInWithPassword({ email, password })
     return { error: error?.message ?? null }
   }

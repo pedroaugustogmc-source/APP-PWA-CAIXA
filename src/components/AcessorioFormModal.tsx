@@ -8,6 +8,20 @@ import type { Acessorio, Categoria, Fornecedor } from '../types/domain'
 import type { AcessorioInput } from '../hooks/useAcessorios'
 import type { FornecedorInput } from '../hooks/useFornecedores'
 
+/** SKU não aparece mais no formulário — gerado aqui só pra satisfazer a coluna not null/unique(loja_id, sku) do banco. */
+function gerarSkuAutomatico(nome: string): string {
+  const slug = nome
+    .trim()
+    .toUpperCase()
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .replace(/[^A-Z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 20)
+  const sufixo = crypto.randomUUID().slice(0, 6).toUpperCase()
+  return `${slug || 'ACESS'}-${sufixo}`
+}
+
 interface Props {
   categorias: Categoria[]
   fornecedores: Fornecedor[]
@@ -27,7 +41,6 @@ export function AcessorioFormModal({
   onCriarCategoria,
   onCriarFornecedor,
 }: Props) {
-  const [sku, setSku] = useState(acessorioInicial?.sku ?? '')
   const [nome, setNome] = useState(acessorioInicial?.nome ?? '')
   const [categoriaId, setCategoriaId] = useState(acessorioInicial?.categoria_id ?? '')
   const [fornecedorId, setFornecedorId] = useState(acessorioInicial?.fornecedor_id ?? '')
@@ -79,10 +92,6 @@ export function AcessorioFormModal({
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
-    if (!sku.trim()) {
-      setError('Informe o SKU.')
-      return
-    }
     if (!nome.trim()) {
       setError('Dê um nome pro acessório.')
       return
@@ -91,7 +100,7 @@ export function AcessorioFormModal({
     setError(null)
 
     const input: AcessorioInput = {
-      sku: sku.trim(),
+      sku: acessorioInicial?.sku ?? gerarSkuAutomatico(nome),
       nome: nome.trim(),
       categoria_id: categoriaId || null,
       fornecedor_id: fornecedorId || null,
@@ -111,21 +120,17 @@ export function AcessorioFormModal({
   return (
     <Modal title={acessorioInicial ? 'Editar acessório' : 'Novo acessório'} onClose={onClose}>
       <form onSubmit={handleSubmit} className="space-y-3">
-        <div className="grid grid-cols-2 gap-2">
-          <Field label="SKU">
-            <input type="text" required autoFocus value={sku} onChange={(e) => setSku(e.target.value)} className={inputClass} />
-          </Field>
-          <Field label="Nome">
-            <input
-              type="text"
-              required
-              placeholder="Ex.: Capa transparente"
-              value={nome}
-              onChange={(e) => setNome(e.target.value)}
-              className={inputClass}
-            />
-          </Field>
-        </div>
+        <Field label="Nome">
+          <input
+            type="text"
+            required
+            autoFocus
+            placeholder="Ex.: Capa transparente"
+            value={nome}
+            onChange={(e) => setNome(e.target.value)}
+            className={inputClass}
+          />
+        </Field>
 
         <div>
           <div className="mb-1 flex items-center justify-between">

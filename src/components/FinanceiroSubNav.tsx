@@ -16,7 +16,7 @@ export function FinanceiroSubNav() {
           to={aba.to}
           className={({ isActive }) =>
             `flex-1 rounded-md py-1.5 text-center transition-colors ${
-              isActive ? 'bg-slate-900 text-white' : 'text-slate-500 hover:text-slate-900'
+              isActive ? 'bg-brand text-white' : 'text-slate-500 hover:text-slate-900'
             }`
           }
         >

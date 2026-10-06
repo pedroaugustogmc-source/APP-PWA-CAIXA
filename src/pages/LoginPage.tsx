@@ -12,6 +12,7 @@ export function LoginPage() {
   const [modo, setModo] = useState<Modo>('entrar')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [manterConectado, setManterConectado] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
   const [contaCriada, setContaCriada] = useState(false)
@@ -30,7 +31,7 @@ export function LoginPage() {
     setError(null)
 
     if (modo === 'entrar') {
-      const { error } = await signIn(email, password)
+      const { error } = await signIn(email, password, manterConectado)
       if (error) setError(error)
     } else {
       const { error, precisaConfirmarEmail } = await signUp(email, password)
@@ -45,7 +46,7 @@ export function LoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
       <div className="w-full max-w-sm">
         <div className="mb-8 flex flex-col items-center">
-          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-slate-900 text-lg font-bold text-white">
+          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-brand text-lg font-bold text-white">
             Pz
           </div>
           <h1 className="text-center text-2xl font-bold text-slate-900">PHONEITZ</h1>
@@ -57,7 +58,7 @@ export function LoginPage() {
             type="button"
             onClick={() => trocarModo('entrar')}
             className={`flex-1 rounded-md py-1.5 transition-colors ${
-              modo === 'entrar' ? 'bg-slate-900 text-white' : 'text-slate-500 hover:text-slate-900'
+              modo === 'entrar' ? 'bg-brand text-white' : 'text-slate-500 hover:text-slate-900'
             }`}
           >
             Entrar
@@ -66,7 +67,7 @@ export function LoginPage() {
             type="button"
             onClick={() => trocarModo('criar')}
             className={`flex-1 rounded-md py-1.5 transition-colors ${
-              modo === 'criar' ? 'bg-slate-900 text-white' : 'text-slate-500 hover:text-slate-900'
+              modo === 'criar' ? 'bg-brand text-white' : 'text-slate-500 hover:text-slate-900'
             }`}
           >
             Criar conta
@@ -98,6 +99,18 @@ export function LoginPage() {
               className={inputClass}
             />
           </Field>
+
+          {modo === 'entrar' && (
+            <label className="flex items-center gap-2 text-sm text-slate-600">
+              <input
+                type="checkbox"
+                checked={manterConectado}
+                onChange={(e) => setManterConectado(e.target.checked)}
+                className="h-4 w-4 rounded border-slate-300 text-brand focus:ring-2 focus:ring-brand/30"
+              />
+              Manter conectado neste dispositivo
+            </label>
+          )}
 
           {error && <ErrorMessage message={error} />}
           {contaCriada && (

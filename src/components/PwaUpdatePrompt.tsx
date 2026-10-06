@@ -15,7 +15,7 @@ export function PwaUpdatePrompt() {
 
   if (needRefresh) {
     return (
-      <div className="fixed inset-x-4 bottom-20 z-50 flex items-center justify-between gap-3 rounded-xl bg-slate-900 px-4 py-3 text-white shadow-lg">
+      <div className="fixed inset-x-4 bottom-20 z-50 flex items-center justify-between gap-3 rounded-xl bg-brand px-4 py-3 text-white shadow-lg">
         <span className="text-sm">Nova versão disponível.</span>
         <div className="flex gap-2">
           <button

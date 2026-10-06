@@ -21,7 +21,8 @@ const STATUS_OPTIONS: { value: StatusAparelho | 'todos'; label: string }[] = [
   { value: 'reservado', label: 'Reservado' },
   { value: 'vendido', label: 'Vendido' },
   { value: 'devolvido', label: 'Devolvido' },
-  { value: 'baixado', label: 'Baixado' },
+  { value: 'baixado', label: 'Vendido (baixa manual)' },
+  { value: 'perdido_danificado', label: 'Perdido/danificado' },
 ]
 
 export function EstoqueAparelhosPage() {
@@ -65,7 +66,7 @@ export function EstoqueAparelhosPage() {
         </div>
       </div>
 
-      <div className="mb-4 grid grid-cols-2 gap-2">
+      <div className="mb-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
         <select
           value={statusFiltro}
           onChange={(e) => setStatusFiltro(e.target.value as StatusAparelho | 'todos')}

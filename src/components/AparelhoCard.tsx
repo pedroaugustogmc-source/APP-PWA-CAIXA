@@ -15,7 +15,7 @@ const CONDICAO_LABELS: Record<Aparelho['condicao'], string> = {
 interface Props {
   aparelho: Aparelho & { pendenteSync?: boolean }
   diasAlerta: number
-  onAlterarStatus: (status: 'em_estoque' | 'reservado' | 'devolvido' | 'baixado') => void
+  onAlterarStatus: (status: 'em_estoque' | 'reservado' | 'devolvido' | 'baixado' | 'perdido_danificado') => void
   onEditar: () => void
   onExcluir: () => void
 }
@@ -40,7 +40,7 @@ export function AparelhoCard({ aparelho, diasAlerta, onAlterarStatus, onEditar, 
             {aparelho.cor ? ` · ${aparelho.cor}` : ''}
             {aparelho.capacidade_gb ? ` · ${aparelho.capacidade_gb}GB` : ''} · {CONDICAO_LABELS[aparelho.condicao]}
           </p>
-          <p className="truncate text-xs text-slate-400">
+          <p className="text-xs text-slate-400">
             IMEI {aparelho.imei ?? 'não informado'} · custo {formatBRL(custoTotalAparelho(aparelho))}
           </p>
         </div>
@@ -103,13 +103,21 @@ export function AparelhoCard({ aparelho, diasAlerta, onAlterarStatus, onEditar, 
               </Button>
             )}
             <Button variant="danger" size="sm" onClick={() => onAlterarStatus('baixado')}>
-              Baixar
+              Vendido
+            </Button>
+            <Button variant="danger" size="sm" onClick={() => onAlterarStatus('perdido_danificado')}>
+              Perdido/danificado
             </Button>
           </>
         )}
         {aparelho.status === 'vendido' && (
           <Button variant="secondary" size="sm" onClick={() => onAlterarStatus('devolvido')}>
             Registrar devolução
+          </Button>
+        )}
+        {(aparelho.status === 'baixado' || aparelho.status === 'devolvido' || aparelho.status === 'perdido_danificado') && (
+          <Button variant="secondary" size="sm" onClick={() => onAlterarStatus('em_estoque')}>
+            Desfazer — voltar ao estoque
           </Button>
         )}
       </div>

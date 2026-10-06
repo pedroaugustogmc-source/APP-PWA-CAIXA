@@ -104,7 +104,7 @@ export function useAparelhos() {
   /** Transições manuais. `vendido` só é setado pelo RPC `concluir_venda` (atômico). */
   async function alterarStatus(
     aparelhoId: string,
-    status: Extract<StatusAparelho, 'em_estoque' | 'reservado' | 'devolvido' | 'baixado'>,
+    status: Extract<StatusAparelho, 'em_estoque' | 'reservado' | 'devolvido' | 'baixado' | 'perdido_danificado'>,
   ) {
     const { error } = await supabase.from('aparelhos').update({ status }).eq('id', aparelhoId)
     if (!error) await refetch()

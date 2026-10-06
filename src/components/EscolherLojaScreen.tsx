@@ -41,7 +41,7 @@ export function EscolherLojaScreen() {
     <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
       <div className="w-full max-w-sm">
         <div className="mb-8 flex flex-col items-center">
-          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-slate-900 text-lg font-bold text-white">
+          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-brand text-lg font-bold text-white">
             Pz
           </div>
           <h1 className="text-center text-2xl font-bold text-slate-900">Bem-vindo ao PHONEITZ</h1>

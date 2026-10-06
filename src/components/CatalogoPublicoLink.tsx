@@ -35,7 +35,7 @@ export function CatalogoPublicoLink() {
         <button
           type="button"
           onClick={copiarLink}
-          className="shrink-0 rounded-lg bg-slate-900 px-3 py-2 text-xs font-semibold text-white transition-colors hover:bg-slate-700"
+          className="shrink-0 rounded-lg bg-brand px-3 py-2 text-xs font-semibold text-white transition-colors hover:bg-brand-hover"
         >
           {copiado ? 'Copiado!' : 'Copiar'}
         </button>

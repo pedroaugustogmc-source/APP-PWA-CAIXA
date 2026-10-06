@@ -10,7 +10,7 @@ export function MetaMensalCard({ lucroMes, metaMensal, variacaoMesAnterior }: Pr
   const progresso = metaMensal > 0 ? lucroMes / metaMensal : null
 
   return (
-    <div className="rounded-xl bg-slate-900 p-5 text-white shadow-sm">
+    <div className="rounded-xl bg-gradient-to-br from-brand to-brand-active p-5 text-white shadow-sm">
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="text-xs font-medium text-slate-400">Lucro do mês</p>

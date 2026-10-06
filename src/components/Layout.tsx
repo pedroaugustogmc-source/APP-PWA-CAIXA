@@ -18,7 +18,7 @@ export function Layout() {
     <div className="flex min-h-screen flex-col bg-slate-50">
       <header className="sticky top-0 z-40 flex items-center justify-between border-b border-slate-200 bg-white/80 px-4 py-3 backdrop-blur-sm">
         <div className="flex items-center gap-2">
-          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-slate-900 text-xs font-bold text-white">
+          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-brand text-xs font-bold text-white">
             Pz
           </div>
           <h1 className="text-lg font-bold text-slate-900">PHONEITZ</h1>
@@ -35,7 +35,7 @@ export function Layout() {
         </div>
       </header>
 
-      <main className="flex-1 overflow-y-auto px-4 py-4 pb-24">
+      <main className="flex-1 overflow-y-auto px-4 py-4 pb-28 [scroll-padding-bottom:7rem]">
         <Outlet />
       </main>
 
@@ -47,13 +47,13 @@ export function Layout() {
             end={to === '/'}
             className={({ isActive }) =>
               `relative flex min-w-0 flex-1 flex-col items-center gap-0.5 px-0.5 py-2.5 text-[10px] transition-colors ${
-                isActive ? 'font-semibold text-slate-900' : 'text-slate-400 hover:text-slate-600'
+                isActive ? 'font-semibold text-brand' : 'text-slate-400 hover:text-slate-600'
               }`
             }
           >
             {({ isActive }) => (
               <>
-                {isActive && <span className="absolute top-0 h-0.5 w-8 rounded-full bg-slate-900" />}
+                {isActive && <span className="absolute top-0 h-0.5 w-8 rounded-full bg-brand" />}
                 <Icon className="h-5 w-5 shrink-0" />
                 <span className="w-full truncate text-center">{label}</span>
               </>

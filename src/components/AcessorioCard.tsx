@@ -20,9 +20,7 @@ export function AcessorioCard({ acessorio, onEditar, onExcluir }: Props) {
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
           <p className="truncate font-semibold text-slate-900">{acessorio.nome}</p>
-          <p className="text-xs text-slate-500">
-            SKU {acessorio.sku} · {acessorio.categoria?.nome ?? 'Sem categoria'}
-          </p>
+          <p className="text-xs text-slate-500">{acessorio.categoria?.nome ?? 'Sem categoria'}</p>
           <p className="text-xs text-slate-400">
             custo {formatBRL(acessorio.custo_unitario)} · venda {formatBRL(acessorio.preco_venda)}
           </p>
