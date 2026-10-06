@@ -171,7 +171,7 @@ export interface VendaCompleta extends Venda {
   tradeIn: VendaTradeIn | null
 }
 
-/** Depreciação por modelo/condição, editável no banco — alimenta o simulador de upgrade. */
+/** Depreciação por modelo/condição, editável no banco — alimenta a sugestão de valor de trade-in em vendas. */
 export interface DepreciacaoModelo {
   id: string
   user_id: string

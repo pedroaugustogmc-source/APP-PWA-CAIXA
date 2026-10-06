@@ -44,7 +44,9 @@ export function DepreciacaoModelosManager() {
   return (
     <Card as="section">
       <h3 className="mb-1 font-semibold text-slate-900">Depreciação de modelos</h3>
-      <p className="mb-3 text-xs text-slate-400">Alimenta o Simulador de upgrade — quanto um modelo usado perde de valor por mês.</p>
+      <p className="mb-3 text-xs text-slate-400">
+        Usada na sugestão de valor de trade-in ao registrar uma venda — quanto um modelo usado perde de valor por mês.
+      </p>
 
       <ul className="mb-3 space-y-2">
         {depreciacoes.map((d) => (

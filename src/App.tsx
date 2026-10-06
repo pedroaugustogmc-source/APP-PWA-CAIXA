@@ -24,9 +24,6 @@ const ContasReceberPage = lazy(() =>
 )
 const CashbackPage = lazy(() => import('./pages/CashbackPage').then((m) => ({ default: m.CashbackPage })))
 const ClientesPage = lazy(() => import('./pages/ClientesPage').then((m) => ({ default: m.ClientesPage })))
-const SimuladorUpgradePage = lazy(() =>
-  import('./pages/SimuladorUpgradePage').then((m) => ({ default: m.SimuladorUpgradePage })),
-)
 const ConfiguracoesPage = lazy(() =>
   import('./pages/ConfiguracoesPage').then((m) => ({ default: m.ConfiguracoesPage })),
 )
@@ -56,7 +53,6 @@ function App() {
                 <Route path="/financeiro/receber" element={<ContasReceberPage />} />
                 <Route path="/financeiro/cashback" element={<CashbackPage />} />
                 <Route path="/financeiro/clientes" element={<ClientesPage />} />
-                <Route path="/simulador" element={<SimuladorUpgradePage />} />
                 <Route path="/config" element={<ConfiguracoesPage />} />
               </Route>
             </Route>

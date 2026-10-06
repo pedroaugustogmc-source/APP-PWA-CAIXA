@@ -49,9 +49,9 @@ export function diasEmEstoque(dataCompraISO: string, dataReferenciaISO: string):
 }
 
 /**
- * Simulador de upgrade — depreciação LINEAR (não exponencial): decisão
- * deliberada, menos superfície de erro de arredondamento que um expoente
- * fracionário, e cobre o requisito sem complexidade extra.
+ * Valor de avaliação de trade-in — depreciação LINEAR (não exponencial):
+ * decisão deliberada, menos superfície de erro de arredondamento que um
+ * expoente fracionário, e cobre o requisito sem complexidade extra.
  */
 export function valorAvaliacaoDepreciacaoLinear(
   valorBase: MoneyInput,

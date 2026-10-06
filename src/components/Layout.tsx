@@ -1,6 +1,6 @@
 import { NavLink, Outlet } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
-import { IconCalculator, IconCart, IconHome, IconSettings, IconTag, IconWallet } from './icons'
+import { IconCart, IconHome, IconSettings, IconTag, IconWallet } from './icons'
 import { SyncStatusBadge } from './SyncStatusBadge'
 
 const TABS = [
@@ -8,7 +8,6 @@ const TABS = [
   { to: '/estoque', label: 'Estoque', Icon: IconTag },
   { to: '/vendas', label: 'Vendas', Icon: IconCart },
   { to: '/financeiro', label: 'Financeiro', Icon: IconWallet },
-  { to: '/simulador', label: 'Simulador', Icon: IconCalculator },
   { to: '/config', label: 'Ajustes', Icon: IconSettings },
 ]
 

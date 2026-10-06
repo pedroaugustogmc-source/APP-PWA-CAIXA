@@ -72,7 +72,7 @@ describe('diasEntre / diasEmEstoque', () => {
   })
 })
 
-describe('valorAvaliacaoDepreciacaoLinear (simulador de upgrade)', () => {
+describe('valorAvaliacaoDepreciacaoLinear (trade-in de vendas)', () => {
   it('aplica depreciação linear sobre o valor base', () => {
     // R$5.000 base, 2% ao mês, 10 meses de uso -> 5000 * (1 - 0.02*10) = 4000
     expect(valorAvaliacaoDepreciacaoLinear('5000', '0.02', 10).toFixed(2)).toBe('4000.00')
