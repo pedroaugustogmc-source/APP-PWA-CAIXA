@@ -1062,6 +1062,7 @@ export type Database = {
       phoneitz_current_loja_id: { Args: never; Returns: string }
       phoneitz_luhn_valido: { Args: { p_numero: string }; Returns: boolean }
       phoneitz_concluir_venda: { Args: { p_venda: Json }; Returns: string }
+      phoneitz_cancelar_venda: { Args: { p_venda_id: string }; Returns: undefined }
       phoneitz_resgatar_cashback: {
         Args: { p_cliente_contato: string; p_observacoes?: string; p_valor: number }
         Returns: string

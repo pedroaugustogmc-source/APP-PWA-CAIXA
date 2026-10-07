@@ -1,7 +1,10 @@
+import { useState } from 'react'
 import { calcularMargemVenda } from '../../lib/calculations'
 import { formatBRL, formatDate } from '../../lib/format'
 import { toMoney } from '../../lib/money'
 import type { FormaPagamento, VendaCompleta } from '../../types/domain'
+import { Button } from '../Button'
+import { ErrorMessage } from '../ErrorMessage'
 
 const FORMA_PAGAMENTO_LABELS: Record<FormaPagamento, string> = {
   dinheiro: 'Dinheiro',
@@ -13,7 +16,26 @@ const FORMA_PAGAMENTO_LABELS: Record<FormaPagamento, string> = {
   outro: 'Outro',
 }
 
-export function VendaResumoCard({ venda }: { venda: VendaCompleta }) {
+interface Props {
+  venda: VendaCompleta
+  onCancelar: (vendaId: string) => Promise<{ error: string | null }>
+}
+
+export function VendaResumoCard({ venda, onCancelar }: Props) {
+  const [cancelando, setCancelando] = useState(false)
+  const [erroCancelar, setErroCancelar] = useState<string | null>(null)
+
+  async function handleCancelar() {
+    if (!confirm('Cancelar esta venda? O(s) aparelho(s)/acessório(s) voltam pro estoque e o registro é apagado. Essa ação não pode ser desfeita.')) {
+      return
+    }
+    setCancelando(true)
+    setErroCancelar(null)
+    const { error } = await onCancelar(venda.id)
+    setCancelando(false)
+    if (error) setErroCancelar(error)
+  }
+
   const margem = calcularMargemVenda({
     itens: venda.itens.map((item) => ({
       precoUnitario: item.preco_unitario,
@@ -74,6 +96,17 @@ export function VendaResumoCard({ venda }: { venda: VendaCompleta }) {
           Atenção: pagamentos + trade-in não batem com o total da venda.
         </p>
       )}
+
+      <div className="mt-3 border-t border-slate-100 pt-3">
+        <Button variant="danger" size="sm" onClick={handleCancelar} disabled={cancelando}>
+          {cancelando ? 'Cancelando…' : 'Cancelar venda'}
+        </Button>
+        {erroCancelar && (
+          <div className="mt-2">
+            <ErrorMessage message={erroCancelar} />
+          </div>
+        )}
+      </div>
     </li>
   )
 }

@@ -7,7 +7,7 @@ import { Button } from '../components/Button'
 import { IconPlus } from '../components/icons'
 
 export function VendasPage() {
-  const { vendas, loading, error } = useVendas()
+  const { vendas, loading, error, cancelarVenda } = useVendas()
   const navigate = useNavigate()
 
   return (
@@ -27,7 +27,7 @@ export function VendasPage() {
 
       <ul className="space-y-3">
         {vendas.map((venda) => (
-          <VendaResumoCard key={venda.id} venda={venda} />
+          <VendaResumoCard key={venda.id} venda={venda} onCancelar={cancelarVenda} />
         ))}
       </ul>
     </div>

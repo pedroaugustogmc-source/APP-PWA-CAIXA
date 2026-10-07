@@ -141,5 +141,17 @@ export function useVendas() {
     return { error: error?.message ?? null, vendaId: (data as string | null) ?? undefined }
   }
 
-  return { vendas, loading, error, concluirVenda, refetch }
+  /**
+   * Cancela uma venda já concluída: devolve aparelho(s) pro estoque, devolve
+   * quantidade de acessório(s), reverte cashback automático e apaga o
+   * registro — tudo atômico via RPC (ver supabase/migrations/0036). Só o
+   * dono consegue (checado dentro do RPC, com mensagem clara).
+   */
+  async function cancelarVenda(vendaId: string) {
+    const { error } = await supabase.rpc('phoneitz_cancelar_venda', { p_venda_id: vendaId })
+    if (!error) await refetch()
+    return { error: error?.message ?? null }
+  }
+
+  return { vendas, loading, error, concluirVenda, cancelarVenda, refetch }
 }
