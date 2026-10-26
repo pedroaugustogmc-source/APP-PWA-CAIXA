@@ -1,6 +1,6 @@
 import type { AuthChangeEvent, Session } from '@supabase/supabase-js'
 import { createContext, use, useEffect, useRef, useState, type ReactNode } from 'react'
-import { mensagemErroAmigavel } from '../lib/erros'
+import { mensagemErroAmigavel, mensagemErroAuth } from '../lib/erros'
 import { definirManterConectado, supabase } from '../lib/supabase'
 import { senhaVazada } from '../lib/senhaVazada'
 
@@ -174,7 +174,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // do supabase-js.
     definirManterConectado(manterConectado)
     const { error } = await supabase.auth.signInWithPassword({ email, password })
-    return { error: error?.message ?? null }
+    return { error: mensagemErroAuth(error) }
   }
 
   async function signUp(email: string, password: string) {
@@ -185,7 +185,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     }
     const { data, error } = await supabase.auth.signUp({ email, password })
-    return { error: error?.message ?? null, precisaConfirmarEmail: !error && !data.session }
+    return { error: mensagemErroAuth(error), precisaConfirmarEmail: !error && !data.session }
   }
 
   async function signOut() {

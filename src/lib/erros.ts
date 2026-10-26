@@ -11,3 +11,31 @@ export function mensagemErroAmigavel(error: { message: string; code?: string } |
   if (error.code === 'P0001') return error.message
   return FALLBACK
 }
+
+// supabase-js nunca traduz os erros do Auth (GoTrue) — vêm sempre em inglês,
+// direto da API. error.code é o identificador estável (ver
+// https://supabase.com/docs/guides/auth/debugging/error-codes); a mensagem
+// em si pode mudar entre versões, então nunca é usada pra decidir o texto.
+const MENSAGENS_AUTH: Record<string, string> = {
+  invalid_credentials: 'E-mail ou senha incorretos.',
+  email_not_confirmed: 'Confirme seu e-mail antes de entrar — veja sua caixa de entrada.',
+  user_already_exists: 'Já existe uma conta com esse e-mail. Tente entrar em vez de criar uma nova.',
+  user_not_found: 'Não encontramos uma conta com esse e-mail.',
+  weak_password: 'Senha muito fraca. Use pelo menos 6 caracteres.',
+  same_password: 'A nova senha precisa ser diferente da atual.',
+  email_address_invalid: 'Esse e-mail não é válido.',
+  email_exists: 'Já existe uma conta com esse e-mail. Tente entrar em vez de criar uma nova.',
+  validation_failed: 'Confira os dados preenchidos e tente de novo.',
+  over_request_rate_limit: 'Muitas tentativas seguidas. Aguarde um instante e tente de novo.',
+  over_email_send_rate_limit: 'Muitas tentativas seguidas. Aguarde um instante e tente de novo.',
+  signup_disabled: 'Criação de contas está temporariamente desativada.',
+}
+
+const FALLBACK_AUTH = 'Não foi possível concluir. Verifique os dados e tente de novo.'
+
+export function mensagemErroAuth(error: { message: string; code?: string } | null | undefined): string | null {
+  if (!error) return null
+  const traduzida = error.code ? MENSAGENS_AUTH[error.code] : undefined
+  if (traduzida) return traduzida
+  return FALLBACK_AUTH
+}
