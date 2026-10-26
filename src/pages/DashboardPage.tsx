@@ -53,7 +53,7 @@ export function DashboardPage() {
   const resumoPagar = resumoContas(contasPagar)
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       <h2 className="text-lg font-bold text-slate-900">Dashboard</h2>
 
       <MetaMensalCard

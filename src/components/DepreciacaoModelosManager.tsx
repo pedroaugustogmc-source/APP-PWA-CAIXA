@@ -3,7 +3,7 @@ import { useDepreciacaoModelos, type DepreciacaoModeloInput } from '../hooks/use
 import { inputClass } from './Field'
 import { ErrorMessage } from './ErrorMessage'
 import { Button } from './Button'
-import { Card } from './Card'
+import { Card, CardLabel } from './Card'
 import { todayISO } from '../lib/calculations'
 import { formatBRL, formatPercent } from '../lib/format'
 import type { CondicaoAparelho } from '../types/domain'
@@ -50,7 +50,7 @@ export function DepreciacaoModelosManager() {
 
   return (
     <Card as="section">
-      <h3 className="mb-1 font-semibold text-slate-900">Depreciação de modelos</h3>
+      <CardLabel>Depreciação de modelos</CardLabel>
       <p className="mb-3 text-xs text-slate-400">
         Usada na sugestão de valor de trade-in ao registrar uma venda — quanto um modelo usado perde de valor por mês.
       </p>

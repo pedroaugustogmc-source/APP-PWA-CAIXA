@@ -3,7 +3,7 @@ import { useCategorias } from '../hooks/useCategorias'
 import { inputClass } from './Field'
 import { ErrorMessage } from './ErrorMessage'
 import { Button } from './Button'
-import { Card } from './Card'
+import { Card, CardLabel } from './Card'
 import { IconEdit } from './icons'
 
 export function CategoriasManager() {
@@ -50,7 +50,7 @@ export function CategoriasManager() {
 
   return (
     <Card as="section">
-      <h3 className="mb-3 font-semibold text-slate-900">Categorias</h3>
+      <CardLabel>Categorias</CardLabel>
       <ul className="mb-3 flex flex-wrap gap-2">
         {categorias.map((c) => (
           <li key={c.id} className="flex items-center gap-0.5 rounded-full bg-slate-100 py-1 pr-1 pl-3 text-sm text-slate-700">

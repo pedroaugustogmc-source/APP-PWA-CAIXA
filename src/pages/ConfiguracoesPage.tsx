@@ -23,7 +23,7 @@ export function ConfiguracoesPage() {
   const souDono = membros.some((m) => m.user_id === session?.user.id && m.papel === 'dono')
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       <h2 className="text-lg font-bold text-slate-900">Ajustes</h2>
       {souDono && <AjustesForm />}
       {souDono && <NotificacoesPanel />}

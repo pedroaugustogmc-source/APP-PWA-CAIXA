@@ -3,7 +3,7 @@ import { useConfiguracoes } from '../hooks/useConfiguracoes'
 import { Field, inputClass } from './Field'
 import { ErrorMessage } from './ErrorMessage'
 import { Button } from './Button'
-import { Card } from './Card'
+import { Card, CardLabel } from './Card'
 
 export function AjustesForm() {
   const { config, salvar, loading } = useConfiguracoes()
@@ -45,7 +45,7 @@ export function AjustesForm() {
 
   return (
     <Card as="section">
-      <h3 className="mb-3 font-semibold text-slate-900">Preferências</h3>
+      <CardLabel>Preferências</CardLabel>
       <form onSubmit={handleSubmit} className="space-y-3">
         <Field label="Meta mensal de lucro (R$)">
           <input

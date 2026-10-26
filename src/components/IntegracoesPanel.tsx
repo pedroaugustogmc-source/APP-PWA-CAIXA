@@ -1,10 +1,10 @@
 import { PROVIDERS_INFO } from '../lib/providers'
-import { Card } from './Card'
+import { Card, CardLabel } from './Card'
 
 export function IntegracoesPanel() {
   return (
     <Card as="section">
-      <h3 className="mb-1 font-semibold text-slate-900">Integrações extras</h3>
+      <CardLabel>Integrações extras</CardLabel>
       <p className="mb-3 text-xs text-slate-500">
         Recursos opcionais que conectam o PHONEITZ a serviços externos (emissor de nota fiscal, bureau de crédito, etc.).
         Tudo o que você precisa pra operar a loja — estoque, vendas, financeiro — já funciona sem nenhum deles. Ative só

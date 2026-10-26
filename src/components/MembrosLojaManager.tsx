@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useAuth } from '../hooks/useAuth'
 import { useLojaMembros } from '../hooks/useLojaMembros'
-import { Card } from './Card'
+import { Card, CardLabel } from './Card'
 import { Button } from './Button'
 import { ErrorMessage } from './ErrorMessage'
 import { formatDate } from '../lib/format'
@@ -49,7 +49,7 @@ export function MembrosLojaManager() {
 
     return (
       <Card as="section" className="space-y-3">
-        <h3 className="font-semibold text-slate-900">Membros da loja</h3>
+        <CardLabel>Membros da loja</CardLabel>
         <p className="text-xs text-slate-400">
           Vendedores convidados cadastram aparelhos/acessórios e registram vendas, mas não veem configurações, fornecedores nem financeiro.
         </p>
@@ -106,7 +106,7 @@ export function MembrosLojaManager() {
 
   return (
     <Card as="section" className="space-y-3">
-      <h3 className="font-semibold text-slate-900">Acesso à loja</h3>
+      <CardLabel>Acesso à loja</CardLabel>
       <p className="text-sm text-slate-600">
         Você tem acesso como vendedor
         {meuVinculo?.aceito_em ? ` desde ${formatDate(meuVinculo.aceito_em.slice(0, 10))}` : ''}.

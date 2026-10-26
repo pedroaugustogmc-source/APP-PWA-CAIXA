@@ -3,7 +3,7 @@ import { useFornecedores } from '../hooks/useFornecedores'
 import { inputClass } from './Field'
 import { ErrorMessage } from './ErrorMessage'
 import { Button } from './Button'
-import { Card } from './Card'
+import { Card, CardLabel } from './Card'
 
 export function FornecedoresManager() {
   const { fornecedores, criar, remover, error } = useFornecedores()
@@ -25,7 +25,7 @@ export function FornecedoresManager() {
 
   return (
     <Card as="section">
-      <h3 className="mb-3 font-semibold text-slate-900">Fornecedores</h3>
+      <CardLabel>Fornecedores</CardLabel>
       <ul className="mb-3 flex flex-wrap gap-2">
         {fornecedores.map((f) => (
           <li key={f.id} className="flex items-center gap-0.5 rounded-full bg-slate-100 py-1 pr-1 pl-3 text-sm text-slate-700">

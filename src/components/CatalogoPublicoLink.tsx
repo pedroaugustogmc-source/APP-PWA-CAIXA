@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useLojaMembros } from '../hooks/useLojaMembros'
-import { Card } from './Card'
+import { Card, CardLabel } from './Card'
 import { IconShare } from './icons'
 
 export function CatalogoPublicoLink() {
@@ -24,9 +24,9 @@ export function CatalogoPublicoLink() {
 
   return (
     <Card as="section">
-      <h3 className="mb-1 flex items-center gap-2 font-semibold text-slate-900">
+      <CardLabel>
         <IconShare className="h-4 w-4" /> Catálogo público
-      </h3>
+      </CardLabel>
       <p className="mb-3 text-xs text-slate-500">
         Link de vitrine, sem login — mostra só os aparelhos com preço preenchido no cadastro. Compartilhe nas redes ou com clientes.
       </p>
