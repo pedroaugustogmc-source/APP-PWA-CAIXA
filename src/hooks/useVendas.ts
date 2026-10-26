@@ -1,4 +1,5 @@
 import { todayISO } from '../lib/calculations'
+import { mensagemErroAmigavel } from '../lib/erros'
 import { toMoney, type MoneyInput } from '../lib/money'
 import { supabase } from '../lib/supabase'
 import type {
@@ -138,7 +139,7 @@ export function useVendas() {
 
     const { data, error } = await supabase.rpc('phoneitz_concluir_venda', { p_venda: payload })
     if (!error) await refetch()
-    return { error: error?.message ?? null, vendaId: (data as string | null) ?? undefined }
+    return { error: mensagemErroAmigavel(error), vendaId: (data as string | null) ?? undefined }
   }
 
   /**
@@ -150,7 +151,7 @@ export function useVendas() {
   async function cancelarVenda(vendaId: string) {
     const { error } = await supabase.rpc('phoneitz_cancelar_venda', { p_venda_id: vendaId })
     if (!error) await refetch()
-    return { error: error?.message ?? null }
+    return { error: mensagemErroAmigavel(error) }
   }
 
   return { vendas, loading, error, concluirVenda, cancelarVenda, refetch }

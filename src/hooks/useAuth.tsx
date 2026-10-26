@@ -1,5 +1,6 @@
 import type { AuthChangeEvent, Session } from '@supabase/supabase-js'
 import { createContext, use, useEffect, useRef, useState, type ReactNode } from 'react'
+import { mensagemErroAmigavel } from '../lib/erros'
 import { definirManterConectado, supabase } from '../lib/supabase'
 import { senhaVazada } from '../lib/senhaVazada'
 
@@ -127,7 +128,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   async function vincularComConvite(codigo: string) {
     const userIdDaChamada = sessionUserId.current
     const { error } = await supabase.rpc('phoneitz_aceitar_convite_loja', { p_codigo: codigo })
-    if (error) return { error: error.message }
+    if (error) return { error: mensagemErroAmigavel(error) }
     if (sessionUserId.current === userIdDaChamada) {
       userIdPreparado.current = userIdDaChamada
       setLojaStatus('pronta')

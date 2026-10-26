@@ -1,5 +1,6 @@
 import type Decimal from 'decimal.js'
 import { supabase } from '../lib/supabase'
+import { mensagemErroAmigavel } from '../lib/erros'
 import { toMoney } from '../lib/money'
 import type { CashbackLancamento } from '../types/domain'
 import { useSupabaseList } from './useSupabaseList'
@@ -36,7 +37,7 @@ export function useCashback() {
       .from('cashback_lancamentos')
       .insert({ cliente_contato: clienteContato, tipo: 'credito', valor, observacoes })
     if (!error) await refetch()
-    return { error: error?.message ?? null }
+    return { error: mensagemErroAmigavel(error) }
   }
 
   async function resgatar(clienteContato: string, valor: number, observacoes: string | null = null) {
@@ -46,7 +47,7 @@ export function useCashback() {
       p_observacoes: observacoes ?? undefined,
     })
     if (!error) await refetch()
-    return { error: error?.message ?? null }
+    return { error: mensagemErroAmigavel(error) }
   }
 
   return { lancamentos: data, loading, error, saldosPorCliente, saldoDoCliente, creditar, resgatar, refetch }

@@ -1,4 +1,5 @@
 import { supabase } from '../lib/supabase'
+import { mensagemErroAmigavel } from '../lib/erros'
 import type { LojaMembro } from '../types/domain'
 import { useSupabaseList } from './useSupabaseList'
 
@@ -17,13 +18,13 @@ export function useLojaMembros() {
   async function criarConvite() {
     const { data, error } = await supabase.rpc('phoneitz_criar_convite_loja')
     if (!error) await refetch()
-    return { error: error?.message ?? null, codigo: (data as string | null) ?? undefined }
+    return { error: mensagemErroAmigavel(error), codigo: (data as string | null) ?? undefined }
   }
 
   async function revogarMembro(id: string) {
     const { error } = await supabase.from('loja_membros').delete().eq('id', id)
     if (!error) await refetch()
-    return { error: error?.message ?? null }
+    return { error: mensagemErroAmigavel(error) }
   }
 
   return { membros: data, loading, error, criarConvite, revogarMembro, refetch }
