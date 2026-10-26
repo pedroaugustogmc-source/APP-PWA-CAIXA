@@ -1,4 +1,5 @@
 import { supabase } from '../lib/supabase'
+import { mensagemErroAmigavel, mensagemErroExclusao } from '../lib/erros'
 import type { ContaPagar, Fornecedor } from '../types/domain'
 import { useSupabaseList } from './useSupabaseList'
 
@@ -22,13 +23,13 @@ export function useContasPagar() {
   async function criar(input: ContaPagarInput) {
     const { error } = await supabase.from('contas_pagar').insert(input)
     if (!error) await refetch()
-    return { error: error?.message ?? null }
+    return { error: mensagemErroAmigavel(error) }
   }
 
   async function editar(id: string, input: ContaPagarInput) {
     const { error } = await supabase.from('contas_pagar').update(input).eq('id', id)
     if (!error) await refetch()
-    return { error: error?.message ?? null }
+    return { error: mensagemErroAmigavel(error) }
   }
 
   /** data_pagamento sempre acompanha a mudança de status — o CHECK no banco exige: quitada <-> tem data, senão null. */
@@ -38,25 +39,25 @@ export function useContasPagar() {
       .update({ status: 'quitada', data_pagamento: dataPagamentoISO })
       .eq('id', id)
     if (!error) await refetch()
-    return { error: error?.message ?? null }
+    return { error: mensagemErroAmigavel(error) }
   }
 
   async function reabrir(id: string) {
     const { error } = await supabase.from('contas_pagar').update({ status: 'pendente', data_pagamento: null }).eq('id', id)
     if (!error) await refetch()
-    return { error: error?.message ?? null }
+    return { error: mensagemErroAmigavel(error) }
   }
 
   async function cancelar(id: string) {
     const { error } = await supabase.from('contas_pagar').update({ status: 'cancelada', data_pagamento: null }).eq('id', id)
     if (!error) await refetch()
-    return { error: error?.message ?? null }
+    return { error: mensagemErroAmigavel(error) }
   }
 
   async function remover(id: string) {
     const { error } = await supabase.from('contas_pagar').delete().eq('id', id)
     if (!error) await refetch()
-    return { error: error?.message ?? null }
+    return { error: mensagemErroExclusao(error) }
   }
 
   return { contas: data, loading, error, criar, editar, marcarQuitada, reabrir, cancelar, remover, refetch }

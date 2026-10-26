@@ -1,4 +1,5 @@
 import { supabase } from '../lib/supabase'
+import { mensagemErroExclusao } from '../lib/erros'
 import type { Acessorio, Categoria, Fornecedor } from '../types/domain'
 import { useSupabaseList } from './useSupabaseList'
 
@@ -36,7 +37,7 @@ export function useAcessorios() {
   async function remover(id: string) {
     const { error } = await supabase.from('acessorios').delete().eq('id', id)
     if (!error) await refetch()
-    return { error: error?.message ?? null }
+    return { error: mensagemErroExclusao(error) }
   }
 
   return { acessorios: data, loading, error, criar, editar, remover, refetch }

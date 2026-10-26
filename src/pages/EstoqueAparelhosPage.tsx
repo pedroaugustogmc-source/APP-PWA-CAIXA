@@ -36,6 +36,14 @@ export function EstoqueAparelhosPage() {
   const [showForm, setShowForm] = useState(false)
   const [showImportar, setShowImportar] = useState(false)
   const [aparelhoEditandoId, setAparelhoEditandoId] = useState<string | null>(null)
+  const [erroExclusao, setErroExclusao] = useState<string | null>(null)
+
+  async function handleExcluir(id: string, nome: string) {
+    if (!confirm(`Excluir "${nome}" definitivamente? Essa ação não pode ser desfeita.`)) return
+    setErroExclusao(null)
+    const { error } = await remover(id)
+    if (error) setErroExclusao(error)
+  }
 
   const aparelhosFiltrados = aparelhos.filter((aparelho) => {
     if (statusFiltro !== 'todos' && aparelho.status !== statusFiltro) return false
@@ -90,6 +98,7 @@ export function EstoqueAparelhosPage() {
 
       {loading && <LoadingSpinner />}
       {error && <ErrorMessage message={error} />}
+      {erroExclusao && <ErrorMessage message={erroExclusao} />}
       {!loading && aparelhosFiltrados.length === 0 && (
         <p className="py-8 text-center text-sm text-slate-400">Nenhum aparelho encontrado com esse filtro.</p>
       )}
@@ -102,11 +111,7 @@ export function EstoqueAparelhosPage() {
             diasAlerta={config.dias_estoque_parado_alerta}
             onAlterarStatus={(status) => alterarStatus(aparelho.id, status)}
             onEditar={() => setAparelhoEditandoId(aparelho.id)}
-            onExcluir={() => {
-              if (confirm(`Excluir "${aparelho.nome}" definitivamente? Essa ação não pode ser desfeita.`)) {
-                remover(aparelho.id)
-              }
-            }}
+            onExcluir={() => handleExcluir(aparelho.id, aparelho.nome)}
           />
         ))}
       </ul>

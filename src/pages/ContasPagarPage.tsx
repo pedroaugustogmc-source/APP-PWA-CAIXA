@@ -19,6 +19,7 @@ export function ContasPagarPage() {
   const [mostrarQuitadas, setMostrarQuitadas] = useState(false)
   const [showForm, setShowForm] = useState(false)
   const [editandoId, setEditandoId] = useState<string | null>(null)
+  const [erroAcao, setErroAcao] = useState<string | null>(null)
 
   const resumo = resumoContas(contas)
   const visiveis = contas.filter((c) => (mostrarQuitadas ? true : c.status !== 'cancelada'))
@@ -27,6 +28,17 @@ export function ContasPagarPage() {
   function fechar() {
     setShowForm(false)
     setEditandoId(null)
+  }
+
+  async function executarAcao(acao: () => Promise<{ error: string | null }>) {
+    setErroAcao(null)
+    const { error } = await acao()
+    if (error) setErroAcao(error)
+  }
+
+  async function handleExcluir(id: string, descricao: string) {
+    if (!confirm(`Excluir "${descricao}" definitivamente?`)) return
+    await executarAcao(() => remover(id))
   }
 
   return (
@@ -58,6 +70,7 @@ export function ContasPagarPage() {
 
       {loading && <LoadingSpinner />}
       {error && <ErrorMessage message={error} />}
+      {erroAcao && <ErrorMessage message={erroAcao} />}
       {!loading && visiveis.length === 0 && <p className="py-8 text-center text-sm text-slate-400">Nenhuma conta a pagar cadastrada.</p>}
 
       <ul className="space-y-3">
@@ -82,27 +95,25 @@ export function ContasPagarPage() {
             <div className="mt-3 flex flex-wrap gap-2">
               {conta.status === 'pendente' && (
                 <>
-                  <Button variant="primary" size="sm" onClick={() => marcarQuitada(conta.id, todayISO())}>
+                  <Button variant="primary" size="sm" onClick={() => executarAcao(() => marcarQuitada(conta.id, todayISO()))}>
                     Marcar paga
                   </Button>
                   <Button variant="secondary" size="sm" onClick={() => setEditandoId(conta.id)}>
                     Editar
                   </Button>
-                  <Button variant="danger" size="sm" onClick={() => cancelar(conta.id)}>
+                  <Button variant="danger" size="sm" onClick={() => executarAcao(() => cancelar(conta.id))}>
                     Cancelar
                   </Button>
                 </>
               )}
               {conta.status === 'quitada' && (
-                <Button variant="secondary" size="sm" onClick={() => reabrir(conta.id)}>
+                <Button variant="secondary" size="sm" onClick={() => executarAcao(() => reabrir(conta.id))}>
                   Reabrir
                 </Button>
               )}
               <button
                 type="button"
-                onClick={() => {
-                  if (confirm(`Excluir "${conta.descricao}" definitivamente?`)) remover(conta.id)
-                }}
+                onClick={() => handleExcluir(conta.id, conta.descricao)}
                 aria-label="Excluir"
                 className="ml-auto rounded-md p-1.5 text-slate-400 transition-colors hover:bg-loss/10 hover:text-loss"
               >

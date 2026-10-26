@@ -8,12 +8,19 @@ import { Card } from './Card'
 export function FornecedoresManager() {
   const { fornecedores, criar, remover, error } = useFornecedores()
   const [nome, setNome] = useState('')
+  const [erroExclusao, setErroExclusao] = useState<string | null>(null)
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
     if (!nome.trim()) return
     const { error } = await criar({ nome: nome.trim() })
     if (!error) setNome('')
+  }
+
+  async function handleRemover(id: string) {
+    setErroExclusao(null)
+    const { error } = await remover(id)
+    if (error) setErroExclusao(error)
   }
 
   return (
@@ -25,7 +32,7 @@ export function FornecedoresManager() {
             {f.nome}
             <button
               type="button"
-              onClick={() => remover(f.id)}
+              onClick={() => handleRemover(f.id)}
               className="rounded-full p-1 text-base leading-none text-slate-400 transition-colors hover:bg-slate-200 hover:text-loss"
               aria-label={`Remover ${f.nome}`}
             >
@@ -36,6 +43,7 @@ export function FornecedoresManager() {
         {fornecedores.length === 0 && <li className="text-sm text-slate-400">Nenhum fornecedor ainda.</li>}
       </ul>
       {error && <ErrorMessage message={error} />}
+      {erroExclusao && <ErrorMessage message={erroExclusao} />}
       <form onSubmit={handleSubmit} className="flex gap-2">
         <input
           type="text"

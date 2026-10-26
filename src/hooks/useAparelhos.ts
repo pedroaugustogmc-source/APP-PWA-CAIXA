@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
+import { mensagemErroExclusao } from '../lib/erros'
 import { enqueueMutation, listPendingMutations, type PendingMutation } from '../lib/offlineOutbox'
 import type { Aparelho, Categoria, CondicaoAparelho, CustoExtra, Fornecedor, StatusAparelho } from '../types/domain'
 import { useSupabaseList } from './useSupabaseList'
@@ -114,7 +115,7 @@ export function useAparelhos() {
   async function remover(aparelhoId: string) {
     const { error } = await supabase.from('aparelhos').delete().eq('id', aparelhoId)
     if (!error) await refetch()
-    return { error: error?.message ?? null }
+    return { error: mensagemErroExclusao(error) }
   }
 
   /** Importação CSV: um insert por linha (não em lote) — um IMEI duplicado numa linha nunca derruba as demais. */

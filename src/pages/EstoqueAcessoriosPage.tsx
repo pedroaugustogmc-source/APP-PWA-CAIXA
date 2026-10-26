@@ -17,12 +17,20 @@ export function EstoqueAcessoriosPage() {
 
   const [showForm, setShowForm] = useState(false)
   const [acessorioEditandoId, setAcessorioEditandoId] = useState<string | null>(null)
+  const [erroExclusao, setErroExclusao] = useState<string | null>(null)
 
   const acessorioEditando = acessorios.find((a) => a.id === acessorioEditandoId) ?? null
 
   function fecharFormulario() {
     setShowForm(false)
     setAcessorioEditandoId(null)
+  }
+
+  async function handleExcluir(id: string, nome: string) {
+    if (!confirm(`Excluir "${nome}" definitivamente? Essa ação não pode ser desfeita.`)) return
+    setErroExclusao(null)
+    const { error } = await remover(id)
+    if (error) setErroExclusao(error)
   }
 
   return (
@@ -38,6 +46,7 @@ export function EstoqueAcessoriosPage() {
 
       {loading && <LoadingSpinner />}
       {error && <ErrorMessage message={error} />}
+      {erroExclusao && <ErrorMessage message={erroExclusao} />}
       {!loading && acessorios.length === 0 && (
         <p className="py-8 text-center text-sm text-slate-400">Nenhum acessório cadastrado ainda.</p>
       )}
@@ -48,11 +57,7 @@ export function EstoqueAcessoriosPage() {
             key={acessorio.id}
             acessorio={acessorio}
             onEditar={() => setAcessorioEditandoId(acessorio.id)}
-            onExcluir={() => {
-              if (confirm(`Excluir "${acessorio.nome}" definitivamente? Essa ação não pode ser desfeita.`)) {
-                remover(acessorio.id)
-              }
-            }}
+            onExcluir={() => handleExcluir(acessorio.id, acessorio.nome)}
           />
         ))}
       </ul>

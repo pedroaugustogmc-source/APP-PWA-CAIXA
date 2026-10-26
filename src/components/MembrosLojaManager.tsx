@@ -37,6 +37,12 @@ export function MembrosLojaManager() {
     else setCodigoGerado(codigo ?? null)
   }
 
+  async function handleRevogar(id: string) {
+    setError(null)
+    const { error } = await revogarMembro(id)
+    if (error) setError(error)
+  }
+
   if (souDono) {
     const pendentes = membros.filter((m) => m.papel === 'vendedor' && !m.aceito_em)
     const ativos = membros.filter((m) => m.papel === 'vendedor' && m.aceito_em)
@@ -59,7 +65,7 @@ export function MembrosLojaManager() {
                 <span className="text-slate-700">Vendedor desde {formatDate(m.aceito_em!.slice(0, 10))}</span>
                 <button
                   type="button"
-                  onClick={() => confirm('Remover o acesso deste vendedor?') && revogarMembro(m.id)}
+                  onClick={() => confirm('Remover o acesso deste vendedor?') && handleRevogar(m.id)}
                   className="text-xs font-semibold text-loss hover:underline"
                 >
                   Remover
@@ -74,7 +80,7 @@ export function MembrosLojaManager() {
             {pendentes.map((m) => (
               <li key={m.id} className="flex items-center justify-between text-sm">
                 <span className="text-slate-500">Convite pendente: {m.codigo_convite}</span>
-                <button type="button" onClick={() => revogarMembro(m.id)} className="text-xs font-semibold text-loss hover:underline">
+                <button type="button" onClick={() => handleRevogar(m.id)} className="text-xs font-semibold text-loss hover:underline">
                   Cancelar
                 </button>
               </li>

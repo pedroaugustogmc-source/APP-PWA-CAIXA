@@ -11,6 +11,7 @@ export function CategoriasManager() {
   const [nome, setNome] = useState('')
   const [editandoId, setEditandoId] = useState<string | null>(null)
   const [editandoNome, setEditandoNome] = useState('')
+  const [erroAcao, setErroAcao] = useState<string | null>(null)
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
@@ -26,8 +27,17 @@ export function CategoriasManager() {
 
   async function salvarEdicao() {
     const nomeTrim = editandoNome.trim()
-    if (editandoId && nomeTrim) await editar(editandoId, nomeTrim)
+    if (editandoId && nomeTrim) {
+      const { error } = await editar(editandoId, nomeTrim)
+      if (error) setErroAcao(error)
+    }
     setEditandoId(null)
+  }
+
+  async function handleRemover(id: string) {
+    setErroAcao(null)
+    const { error } = await remover(id)
+    if (error) setErroAcao(error)
   }
 
   function handleEdicaoKeyDown(e: KeyboardEvent<HTMLInputElement>) {
@@ -69,7 +79,7 @@ export function CategoriasManager() {
             )}
             <button
               type="button"
-              onClick={() => remover(c.id)}
+              onClick={() => handleRemover(c.id)}
               className="rounded-full p-1 text-base leading-none text-slate-400 transition-colors hover:bg-slate-200 hover:text-loss"
               aria-label={`Remover ${c.nome}`}
             >
@@ -80,6 +90,7 @@ export function CategoriasManager() {
         {categorias.length === 0 && <li className="text-sm text-slate-400">Nenhuma categoria ainda.</li>}
       </ul>
       {error && <ErrorMessage message={error} />}
+      {erroAcao && <ErrorMessage message={erroAcao} />}
       <form onSubmit={handleSubmit} className="flex gap-2">
         <input
           type="text"

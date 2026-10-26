@@ -21,6 +21,13 @@ export function DepreciacaoModelosManager() {
   const [condicao, setCondicao] = useState<CondicaoAparelho>('seminovo')
   const [valorBase, setValorBase] = useState(0)
   const [depreciacaoMensalPct, setDepreciacaoMensalPct] = useState(0)
+  const [erroExclusao, setErroExclusao] = useState<string | null>(null)
+
+  async function handleRemover(id: string) {
+    setErroExclusao(null)
+    const { error } = await remover(id)
+    if (error) setErroExclusao(error)
+  }
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
@@ -61,7 +68,7 @@ export function DepreciacaoModelosManager() {
             </div>
             <button
               type="button"
-              onClick={() => remover(d.id)}
+              onClick={() => handleRemover(d.id)}
               className="rounded-md p-1.5 text-lg leading-none text-slate-400 transition-colors hover:bg-loss/10 hover:text-loss"
               aria-label={`Remover regra de ${d.modelo}`}
             >
@@ -73,6 +80,7 @@ export function DepreciacaoModelosManager() {
       </ul>
 
       {error && <ErrorMessage message={error} />}
+      {erroExclusao && <ErrorMessage message={erroExclusao} />}
 
       <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-2">
         <input

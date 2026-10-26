@@ -1,5 +1,5 @@
 import { supabase } from '../lib/supabase'
-import { mensagemErroAmigavel } from '../lib/erros'
+import { mensagemErroAmigavel, mensagemErroExclusao } from '../lib/erros'
 import type { LojaMembro } from '../types/domain'
 import { useSupabaseList } from './useSupabaseList'
 
@@ -24,7 +24,7 @@ export function useLojaMembros() {
   async function revogarMembro(id: string) {
     const { error } = await supabase.from('loja_membros').delete().eq('id', id)
     if (!error) await refetch()
-    return { error: mensagemErroAmigavel(error) }
+    return { error: mensagemErroExclusao(error) }
   }
 
   return { membros: data, loading, error, criarConvite, revogarMembro, refetch }

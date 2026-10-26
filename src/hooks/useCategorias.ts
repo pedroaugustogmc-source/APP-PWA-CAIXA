@@ -1,4 +1,5 @@
 import { supabase } from '../lib/supabase'
+import { mensagemErroAmigavel, mensagemErroExclusao } from '../lib/erros'
 import type { Categoria } from '../types/domain'
 import { useSupabaseList } from './useSupabaseList'
 
@@ -10,19 +11,19 @@ export function useCategorias() {
   async function criar(nome: string) {
     const { data, error } = await supabase.from('categorias').insert({ nome }).select().single()
     if (!error) await refetch()
-    return { error: error?.message ?? null, categoria: (data as Categoria | null) ?? undefined }
+    return { error: mensagemErroAmigavel(error), categoria: (data as Categoria | null) ?? undefined }
   }
 
   async function editar(id: string, nome: string) {
     const { error } = await supabase.from('categorias').update({ nome }).eq('id', id)
     if (!error) await refetch()
-    return { error: error?.message ?? null }
+    return { error: mensagemErroAmigavel(error) }
   }
 
   async function remover(id: string) {
     const { error } = await supabase.from('categorias').delete().eq('id', id)
     if (!error) await refetch()
-    return { error: error?.message ?? null }
+    return { error: mensagemErroExclusao(error) }
   }
 
   return { categorias: data, loading, error, criar, editar, remover, refetch }

@@ -1,4 +1,5 @@
 import { supabase } from '../lib/supabase'
+import { mensagemErroAmigavel, mensagemErroExclusao } from '../lib/erros'
 import type { Cliente } from '../types/domain'
 import { useSupabaseList } from './useSupabaseList'
 
@@ -18,19 +19,19 @@ export function useClientes() {
   async function criar(input: ClienteInput) {
     const { data, error } = await supabase.from('clientes').insert(input).select().single()
     if (!error) await refetch()
-    return { error: error?.message ?? null, cliente: (data as Cliente | null) ?? undefined }
+    return { error: mensagemErroAmigavel(error), cliente: (data as Cliente | null) ?? undefined }
   }
 
   async function editar(id: string, input: ClienteInput) {
     const { error } = await supabase.from('clientes').update(input).eq('id', id)
     if (!error) await refetch()
-    return { error: error?.message ?? null }
+    return { error: mensagemErroAmigavel(error) }
   }
 
   async function remover(id: string) {
     const { error } = await supabase.from('clientes').delete().eq('id', id)
     if (!error) await refetch()
-    return { error: error?.message ?? null }
+    return { error: mensagemErroExclusao(error) }
   }
 
   /** Importação CSV: um insert por linha — uma linha problemática nunca derruba as demais. */

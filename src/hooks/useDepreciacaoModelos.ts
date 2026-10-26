@@ -1,4 +1,5 @@
 import { supabase } from '../lib/supabase'
+import { mensagemErroAmigavel, mensagemErroExclusao } from '../lib/erros'
 import type { CondicaoAparelho, DepreciacaoModelo } from '../types/domain'
 import { useSupabaseList } from './useSupabaseList'
 
@@ -23,19 +24,19 @@ export function useDepreciacaoModelos() {
   async function criar(input: DepreciacaoModeloInput) {
     const { data, error } = await supabase.from('depreciacao_modelos').insert(input).select().single()
     if (!error) await refetch()
-    return { error: error?.message ?? null, depreciacao: (data as DepreciacaoModelo | null) ?? undefined }
+    return { error: mensagemErroAmigavel(error), depreciacao: (data as DepreciacaoModelo | null) ?? undefined }
   }
 
   async function editar(id: string, input: DepreciacaoModeloInput) {
     const { error } = await supabase.from('depreciacao_modelos').update(input).eq('id', id)
     if (!error) await refetch()
-    return { error: error?.message ?? null }
+    return { error: mensagemErroAmigavel(error) }
   }
 
   async function remover(id: string) {
     const { error } = await supabase.from('depreciacao_modelos').delete().eq('id', id)
     if (!error) await refetch()
-    return { error: error?.message ?? null }
+    return { error: mensagemErroExclusao(error) }
   }
 
   /** Regra vigente mais recente pra modelo+condição, na data de referência (hoje por padrão). */

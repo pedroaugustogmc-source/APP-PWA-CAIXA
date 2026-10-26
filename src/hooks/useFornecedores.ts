@@ -1,4 +1,5 @@
 import { supabase } from '../lib/supabase'
+import { mensagemErroAmigavel, mensagemErroExclusao } from '../lib/erros'
 import type { Fornecedor } from '../types/domain'
 import { useSupabaseList } from './useSupabaseList'
 
@@ -16,13 +17,13 @@ export function useFornecedores() {
   async function criar(input: FornecedorInput) {
     const { data, error } = await supabase.from('fornecedores').insert(input).select().single()
     if (!error) await refetch()
-    return { error: error?.message ?? null, fornecedor: (data as Fornecedor | null) ?? undefined }
+    return { error: mensagemErroAmigavel(error), fornecedor: (data as Fornecedor | null) ?? undefined }
   }
 
   async function remover(id: string) {
     const { error } = await supabase.from('fornecedores').delete().eq('id', id)
     if (!error) await refetch()
-    return { error: error?.message ?? null }
+    return { error: mensagemErroExclusao(error) }
   }
 
   return { fornecedores: data, loading, error, criar, remover, refetch }

@@ -12,6 +12,20 @@ export function mensagemErroAmigavel(error: { message: string; code?: string } |
   return FALLBACK
 }
 
+// Excluir um registro referenciado em outra tabela (ex.: aparelho que já
+// entrou numa venda ou foi recebido como trade-in) é bloqueado pela
+// foreign key, SQLSTATE 23503 — esperado e comum o bastante pra merecer
+// mensagem própria, não o fallback genérico.
+const FALLBACK_EXCLUSAO = 'Não foi possível excluir. Tente novamente em instantes.'
+
+export function mensagemErroExclusao(error: { message: string; code?: string } | null | undefined): string | null {
+  if (!error) return null
+  if (error.code === '23503') {
+    return 'Não dá pra excluir: esse registro está vinculado a outro (uma venda, conta ou troca, por exemplo). Remova o vínculo primeiro.'
+  }
+  return FALLBACK_EXCLUSAO
+}
+
 // supabase-js nunca traduz os erros do Auth (GoTrue) — vêm sempre em inglês,
 // direto da API. error.code é o identificador estável (ver
 // https://supabase.com/docs/guides/auth/debugging/error-codes); a mensagem

@@ -18,12 +18,20 @@ export function ClientesPage() {
   const [showForm, setShowForm] = useState(false)
   const [showImportar, setShowImportar] = useState(false)
   const [editandoId, setEditandoId] = useState<string | null>(null)
+  const [erroExclusao, setErroExclusao] = useState<string | null>(null)
 
   const editando = clientes.find((c) => c.id === editandoId) ?? null
 
   function fechar() {
     setShowForm(false)
     setEditandoId(null)
+  }
+
+  async function handleExcluir(id: string, nome: string) {
+    if (!confirm(`Excluir "${nome}" definitivamente?`)) return
+    setErroExclusao(null)
+    const { error } = await remover(id)
+    if (error) setErroExclusao(error)
   }
 
   function historicoDoCliente(clienteId: string, contato: string | null) {
@@ -48,6 +56,7 @@ export function ClientesPage() {
 
       {loading && <LoadingSpinner />}
       {error && <ErrorMessage message={error} />}
+      {erroExclusao && <ErrorMessage message={erroExclusao} />}
       {!loading && clientes.length === 0 && <p className="py-8 text-center text-sm text-slate-400">Nenhum cliente cadastrado ainda.</p>}
 
       <ul className="space-y-3">
@@ -78,9 +87,7 @@ export function ClientesPage() {
                   </button>
                   <button
                     type="button"
-                    onClick={() => {
-                      if (confirm(`Excluir "${cliente.nome}" definitivamente?`)) remover(cliente.id)
-                    }}
+                    onClick={() => handleExcluir(cliente.id, cliente.nome)}
                     aria-label="Excluir cliente"
                     className="rounded-md p-1.5 text-slate-400 transition-colors hover:bg-loss/10 hover:text-loss"
                   >
