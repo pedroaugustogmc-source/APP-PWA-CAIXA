@@ -1039,6 +1039,88 @@ export type Database = {
           },
         ]
       }
+      push_subscriptions: {
+        Row: {
+          auth_key: string
+          created_at: string
+          endpoint: string
+          id: string
+          loja_id: string
+          p256dh: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          auth_key: string
+          created_at?: string
+          endpoint: string
+          id?: string
+          loja_id?: string
+          p256dh: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Update: {
+          auth_key?: string
+          created_at?: string
+          endpoint?: string
+          id?: string
+          loja_id?: string
+          p256dh?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "push_subscriptions_loja_id_fkey"
+            columns: ["loja_id"]
+            isOneToOne: false
+            referencedRelation: "lojas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notificacoes_log: {
+        Row: {
+          chave_dedupe: string
+          corpo: string
+          enviado_em: string
+          id: string
+          loja_id: string
+          tipo: string
+          titulo: string
+          user_id: string
+        }
+        Insert: {
+          chave_dedupe: string
+          corpo: string
+          enviado_em?: string
+          id?: string
+          loja_id: string
+          tipo: string
+          titulo: string
+          user_id: string
+        }
+        Update: {
+          chave_dedupe?: string
+          corpo?: string
+          enviado_em?: string
+          id?: string
+          loja_id?: string
+          tipo?: string
+          titulo?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notificacoes_log_loja_id_fkey"
+            columns: ["loja_id"]
+            isOneToOne: false
+            referencedRelation: "lojas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       }
     Views: {
       catalogo_publico: {
@@ -1070,6 +1152,8 @@ export type Database = {
       phoneitz_tem_acesso_loja: { Args: { p_loja_id: string }; Returns: boolean }
       phoneitz_criar_convite_loja: { Args: never; Returns: string }
       phoneitz_aceitar_convite_loja: { Args: { p_codigo: string }; Returns: string }
+      phoneitz_segredo_push: { Args: { p_nome: string }; Returns: string }
+      phoneitz_verificar_notificacoes: { Args: never; Returns: undefined }
       }
     Enums: {
       condicao_aparelho: "novo" | "seminovo" | "vitrine" | "defeito"

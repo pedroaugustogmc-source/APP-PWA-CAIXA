@@ -7,6 +7,7 @@ import { DepreciacaoModelosManager } from '../components/DepreciacaoModelosManag
 import { MembrosLojaManager } from '../components/MembrosLojaManager'
 import { CatalogoPublicoLink } from '../components/CatalogoPublicoLink'
 import { IntegracoesPanel } from '../components/IntegracoesPanel'
+import { NotificacoesPanel } from '../components/NotificacoesPanel'
 import { LoadingSpinner } from '../components/LoadingSpinner'
 
 export function ConfiguracoesPage() {
@@ -25,6 +26,7 @@ export function ConfiguracoesPage() {
     <div className="space-y-4">
       <h2 className="text-lg font-bold text-slate-900">Ajustes</h2>
       {souDono && <AjustesForm />}
+      {souDono && <NotificacoesPanel />}
       {souDono && <CatalogoPublicoLink />}
       <MembrosLojaManager />
       {souDono && <CategoriasManager />}
