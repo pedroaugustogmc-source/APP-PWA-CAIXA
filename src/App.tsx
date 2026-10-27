@@ -30,6 +30,11 @@ const ConfiguracoesPage = lazy(() =>
 const CatalogoPublicoPage = lazy(() =>
   import('./pages/CatalogoPublicoPage').then((m) => ({ default: m.CatalogoPublicoPage })),
 )
+const RendaPage = lazy(() => import('./pages/RendaPage').then((m) => ({ default: m.RendaPage })))
+const MesadaPage = lazy(() => import('./pages/MesadaPage').then((m) => ({ default: m.MesadaPage })))
+const InvestimentosPage = lazy(() =>
+  import('./pages/InvestimentosPage').then((m) => ({ default: m.InvestimentosPage })),
+)
 
 function App() {
   return (
@@ -54,6 +59,10 @@ function App() {
                 <Route path="/financeiro/cashback" element={<CashbackPage />} />
                 <Route path="/financeiro/clientes" element={<ClientesPage />} />
                 <Route path="/config" element={<ConfiguracoesPage />} />
+                <Route path="/pessoal" element={<Navigate to="/pessoal/renda" replace />} />
+                <Route path="/pessoal/renda" element={<RendaPage />} />
+                <Route path="/pessoal/mesada" element={<MesadaPage />} />
+                <Route path="/pessoal/investimentos" element={<InvestimentosPage />} />
               </Route>
             </Route>
           </Routes>

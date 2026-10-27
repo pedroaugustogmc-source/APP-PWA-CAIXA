@@ -309,3 +309,67 @@ export interface Auditoria {
   dados_depois: Record<string, unknown> | null
   created_at: string
 }
+
+// --- Vida financeira pessoal do dono (unificada do "Meu Gestor", migration 0038) ---
+
+export type TipoCarteira = 'pessoal' | 'previdencia' | 'outro'
+
+export interface CarteiraInvestimento {
+  id: string
+  user_id: string
+  loja_id: string
+  nome: string
+  tipo: TipoCarteira
+  created_at: string
+}
+
+export type TipoFonteRenda = 'salario' | 'freelance' | 'aluguel' | 'pro_labore' | 'comissao' | 'beneficio' | 'rendimento_extra' | 'outro'
+export type FrequenciaRenda = 'semanal' | 'quinzenal' | 'mensal' | 'anual' | 'eventual'
+
+export interface FonteRenda {
+  id: string
+  user_id: string
+  loja_id: string
+  nome: string
+  tipo: TipoFonteRenda
+  frequencia: FrequenciaRenda
+  dia_recebimento: number | null
+  moeda: string
+  data_inicio: string
+  data_fim: string | null
+  observacoes: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface FonteRendaValor {
+  id: string
+  fonte_renda_id: string
+  user_id: string
+  loja_id: string
+  valor_bruto_esperado: number
+  valor_liquido_esperado: number
+  vigente_desde: string
+  motivo: string | null
+  created_at: string
+}
+
+export interface ChecklistMesada {
+  id: string
+  user_id: string
+  loja_id: string
+  nome: string
+  mes_inicio: string
+  valor_mensal: number
+  created_at: string
+}
+
+export interface ChecklistMesadaItem {
+  id: string
+  checklist_id: string
+  user_id: string
+  loja_id: string
+  indice: number
+  recebido: boolean
+  updated_at: string
+}

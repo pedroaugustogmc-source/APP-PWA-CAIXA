@@ -1121,6 +1121,231 @@ export type Database = {
           },
         ]
       }
+      carteiras_investimento: {
+        Row: {
+          created_at: string
+          id: string
+          loja_id: string
+          nome: string
+          tipo: Database["public"]["Enums"]["tipo_carteira"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          loja_id?: string
+          nome: string
+          tipo?: Database["public"]["Enums"]["tipo_carteira"]
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          loja_id?: string
+          nome?: string
+          tipo?: Database["public"]["Enums"]["tipo_carteira"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "carteiras_investimento_loja_id_fkey"
+            columns: ["loja_id"]
+            isOneToOne: false
+            referencedRelation: "lojas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fontes_renda: {
+        Row: {
+          created_at: string
+          data_fim: string | null
+          data_inicio: string
+          dia_recebimento: number | null
+          frequencia: Database["public"]["Enums"]["frequencia_renda"]
+          id: string
+          loja_id: string
+          moeda: string
+          nome: string
+          observacoes: string | null
+          tipo: Database["public"]["Enums"]["tipo_fonte_renda"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          data_fim?: string | null
+          data_inicio: string
+          dia_recebimento?: number | null
+          frequencia?: Database["public"]["Enums"]["frequencia_renda"]
+          id?: string
+          loja_id?: string
+          moeda?: string
+          nome: string
+          observacoes?: string | null
+          tipo?: Database["public"]["Enums"]["tipo_fonte_renda"]
+          updated_at?: string
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          data_fim?: string | null
+          data_inicio?: string
+          dia_recebimento?: number | null
+          frequencia?: Database["public"]["Enums"]["frequencia_renda"]
+          id?: string
+          loja_id?: string
+          moeda?: string
+          nome?: string
+          observacoes?: string | null
+          tipo?: Database["public"]["Enums"]["tipo_fonte_renda"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fontes_renda_loja_id_fkey"
+            columns: ["loja_id"]
+            isOneToOne: false
+            referencedRelation: "lojas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fontes_renda_valores: {
+        Row: {
+          created_at: string
+          fonte_renda_id: string
+          id: string
+          loja_id: string
+          motivo: string | null
+          user_id: string
+          valor_bruto_esperado: number
+          valor_liquido_esperado: number
+          vigente_desde: string
+        }
+        Insert: {
+          created_at?: string
+          fonte_renda_id: string
+          id?: string
+          loja_id?: string
+          motivo?: string | null
+          user_id?: string
+          valor_bruto_esperado: number
+          valor_liquido_esperado: number
+          vigente_desde: string
+        }
+        Update: {
+          created_at?: string
+          fonte_renda_id?: string
+          id?: string
+          loja_id?: string
+          motivo?: string | null
+          user_id?: string
+          valor_bruto_esperado?: number
+          valor_liquido_esperado?: number
+          vigente_desde?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fontes_renda_valores_fonte_renda_id_fkey"
+            columns: ["fonte_renda_id"]
+            isOneToOne: false
+            referencedRelation: "fontes_renda"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fontes_renda_valores_loja_id_fkey"
+            columns: ["loja_id"]
+            isOneToOne: false
+            referencedRelation: "lojas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      checklists_mesada: {
+        Row: {
+          created_at: string
+          id: string
+          loja_id: string
+          mes_inicio: string
+          nome: string
+          user_id: string
+          valor_mensal: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          loja_id?: string
+          mes_inicio: string
+          nome: string
+          user_id?: string
+          valor_mensal?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          loja_id?: string
+          mes_inicio?: string
+          nome?: string
+          user_id?: string
+          valor_mensal?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "checklists_mesada_loja_id_fkey"
+            columns: ["loja_id"]
+            isOneToOne: false
+            referencedRelation: "lojas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      checklist_mesada_itens: {
+        Row: {
+          checklist_id: string
+          id: string
+          indice: number
+          loja_id: string
+          recebido: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          checklist_id: string
+          id?: string
+          indice: number
+          loja_id?: string
+          recebido?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Update: {
+          checklist_id?: string
+          id?: string
+          indice?: number
+          loja_id?: string
+          recebido?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "checklist_mesada_itens_checklist_id_fkey"
+            columns: ["checklist_id"]
+            isOneToOne: false
+            referencedRelation: "checklists_mesada"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "checklist_mesada_itens_loja_id_fkey"
+            columns: ["loja_id"]
+            isOneToOne: false
+            referencedRelation: "lojas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       }
     Views: {
       catalogo_publico: {
@@ -1176,6 +1401,17 @@ export type Database = {
       status_conta: "pendente" | "quitada" | "cancelada"
       tipo_lancamento_cashback: "credito" | "resgate"
       papel_membro: "dono" | "vendedor"
+      tipo_carteira: "pessoal" | "previdencia" | "outro"
+      frequencia_renda: "semanal" | "quinzenal" | "mensal" | "anual" | "eventual"
+      tipo_fonte_renda:
+        | "salario"
+        | "freelance"
+        | "aluguel"
+        | "pro_labore"
+        | "comissao"
+        | "beneficio"
+        | "rendimento_extra"
+        | "outro"
       }
     CompositeTypes: {
       [_ in never]: never
@@ -1325,6 +1561,18 @@ export const Constants = {
       status_conta: ["pendente", "quitada", "cancelada"],
       tipo_lancamento_cashback: ["credito", "resgate"],
       papel_membro: ["dono", "vendedor"],
+      tipo_carteira: ["pessoal", "previdencia", "outro"],
+      frequencia_renda: ["semanal", "quinzenal", "mensal", "anual", "eventual"],
+      tipo_fonte_renda: [
+        "salario",
+        "freelance",
+        "aluguel",
+        "pro_labore",
+        "comissao",
+        "beneficio",
+        "rendimento_extra",
+        "outro",
+      ],
     }
   },
 } as const
