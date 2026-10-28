@@ -1,41 +1,25 @@
+import { useEffect } from 'react'
 import { useRegisterSW } from 'virtual:pwa-register/react'
 
 /**
- * registerType: 'prompt' não troca a versão sozinha — o usuário decide quando
- * atualizar, para não perder um formulário aberto no meio da troca.
+ * registerType: 'autoUpdate' — versão nova aplica sozinha assim que
+ * detectada, sem esperar o usuário notar e clicar num banner (o modo
+ * 'prompt' anterior tinha um botão "Depois" que, uma vez clicado, deixava a
+ * pessoa presa numa versão antiga até o próximo deploy — o usuário real
+ * relatou estar vendo correções que já tinham sido publicadas há tempo).
  */
 export function PwaUpdatePrompt() {
   const {
-    needRefresh: [needRefresh, setNeedRefresh],
+    needRefresh: [needRefresh],
     offlineReady: [offlineReady, setOfflineReady],
     updateServiceWorker,
   } = useRegisterSW()
 
-  if (!needRefresh && !offlineReady) return null
+  useEffect(() => {
+    if (needRefresh) void updateServiceWorker(true)
+  }, [needRefresh, updateServiceWorker])
 
-  if (needRefresh) {
-    return (
-      <div className="fixed inset-x-4 bottom-20 z-50 flex items-center justify-between gap-3 rounded-xl bg-brand px-4 py-3 text-white shadow-lg">
-        <span className="text-sm">Nova versão disponível.</span>
-        <div className="flex gap-2">
-          <button
-            type="button"
-            onClick={() => setNeedRefresh(false)}
-            className="rounded-lg px-2 py-1 text-xs text-slate-300 transition-colors hover:text-white"
-          >
-            Depois
-          </button>
-          <button
-            type="button"
-            onClick={() => updateServiceWorker(true)}
-            className="rounded-lg bg-white px-3 py-1 text-xs font-semibold text-slate-900 transition-opacity hover:opacity-90"
-          >
-            Atualizar
-          </button>
-        </div>
-      </div>
-    )
-  }
+  if (!offlineReady) return null
 
   return (
     <div className="fixed inset-x-4 bottom-20 z-50 flex items-center justify-between gap-3 rounded-xl bg-emerald-700 px-4 py-3 text-white shadow-lg">
