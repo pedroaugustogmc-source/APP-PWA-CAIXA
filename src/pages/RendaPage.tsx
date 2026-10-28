@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useFontesRenda, valorVigente } from '../hooks/useFontesRenda'
 import { FonteRendaFormModal } from '../components/FonteRendaFormModal'
 import { PessoalSubNav } from '../components/PessoalSubNav'
+import { Card } from '../components/Card'
 import { Button } from '../components/Button'
 import { LoadingSpinner } from '../components/LoadingSpinner'
 import { ErrorMessage } from '../components/ErrorMessage'
@@ -23,6 +24,7 @@ export function RendaPage() {
   const [erroExclusao, setErroExclusao] = useState<string | null>(null)
 
   const editando = fontes.find((f) => f.id === editandoId) ?? null
+  const hoje = new Date().toISOString().slice(0, 10)
 
   function fechar() {
     setShowForm(false)
@@ -36,19 +38,25 @@ export function RendaPage() {
     if (error) setErroExclusao(error)
   }
 
-  const totalMensal = fontes
-    .filter((f) => f.frequencia === 'mensal' && !f.data_fim)
+  const fontesAtivas = fontes.filter((f) => !f.data_fim || f.data_fim >= hoje)
+  const totalMensal = fontesAtivas
+    .filter((f) => f.frequencia === 'mensal')
     .reduce((acc, f) => acc + (valorVigente(f.valores)?.valor_liquido_esperado ?? 0), 0)
 
   return (
-    <div>
+    <div className="space-y-5">
       <PessoalSubNav />
 
-      <div className="mb-4 flex items-center justify-between">
-        <div>
-          <h2 className="text-lg font-bold text-slate-900">Renda</h2>
-          <p className="text-xs text-slate-500">Total mensal ativo: {formatBRL(totalMensal)}</p>
-        </div>
+      <div className="rounded-xl bg-gradient-to-br from-brand to-brand-active p-5 text-white shadow-sm">
+        <p className="text-xs font-medium text-slate-300">Renda mensal ativa</p>
+        <p className="mt-1 text-3xl font-bold tabular-nums">{formatBRL(totalMensal)}</p>
+        <p className="mt-2 text-xs text-slate-300">
+          {fontesAtivas.length} {fontesAtivas.length === 1 ? 'fonte ativa' : 'fontes ativas'} de {fontes.length} cadastradas
+        </p>
+      </div>
+
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-bold text-slate-900">Fontes de renda</h2>
         <Button variant="primary" size="sm" onClick={() => setShowForm(true)}>
           <IconPlus className="h-3.5 w-3.5" /> Nova
         </Button>
@@ -62,21 +70,24 @@ export function RendaPage() {
       <ul className="space-y-3">
         {fontes.map((fonte) => {
           const valor = valorVigente(fonte.valores)
-          const encerrada = !!fonte.data_fim && fonte.data_fim < new Date().toISOString().slice(0, 10)
+          const encerrada = !!fonte.data_fim && fonte.data_fim < hoje
           return (
-            <li key={fonte.id} className="rounded-xl border border-slate-200/70 bg-white p-4 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_8px_16px_-12px_rgba(15,23,42,0.12)]">
+            <Card as="li" key={fonte.id}>
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
                   <p className="truncate font-semibold text-slate-900">{fonte.nome}</p>
                   <p className="text-xs text-slate-500">
                     {FREQUENCIA_LABELS[fonte.frequencia]}
                     {fonte.dia_recebimento ? ` · dia ${fonte.dia_recebimento}` : ''}
-                    {encerrada ? ' · encerrada' : ''}
                   </p>
                 </div>
                 <div className="shrink-0 text-right">
                   <p className="font-semibold tabular-nums text-slate-900">{valor ? formatBRL(valor.valor_liquido_esperado) : '—'}</p>
-                  <p className="text-xs text-slate-400">desde {formatDate(fonte.data_inicio)}</p>
+                  {encerrada ? (
+                    <span className="inline-block rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-500">Encerrada</span>
+                  ) : (
+                    <p className="text-xs text-slate-400">desde {formatDate(fonte.data_inicio)}</p>
+                  )}
                 </div>
               </div>
               {fonte.observacoes && <p className="mt-2 text-xs text-slate-500">{fonte.observacoes}</p>}
@@ -93,7 +104,7 @@ export function RendaPage() {
                   <IconTrash className="h-4 w-4" />
                 </button>
               </div>
-            </li>
+            </Card>
           )
         })}
       </ul>

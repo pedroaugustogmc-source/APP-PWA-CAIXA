@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { useChecklistsMesada } from '../hooks/useChecklistsMesada'
 import { PessoalSubNav } from '../components/PessoalSubNav'
+import { Card } from '../components/Card'
 import { Button } from '../components/Button'
 import { Field, inputClass } from '../components/Field'
 import { LoadingSpinner } from '../components/LoadingSpinner'
@@ -49,12 +50,29 @@ export function MesadaPage() {
     if (error) setErroAcao(error)
   }
 
+  const totalItens = checklists.reduce((acc, c) => acc + c.itens.length, 0)
+  const totalRecebidos = checklists.reduce((acc, c) => acc + c.itens.filter((i) => i.recebido).length, 0)
+  const progressoGeral = totalItens > 0 ? totalRecebidos / totalItens : 0
+
   return (
-    <div>
+    <div className="space-y-5">
       <PessoalSubNav />
 
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-lg font-bold text-slate-900">Mesada</h2>
+      <div className="rounded-xl bg-gradient-to-br from-brand to-brand-active p-5 text-white shadow-sm">
+        <p className="text-xs font-medium text-slate-300">Progresso geral da mesada</p>
+        <p className="mt-1 text-3xl font-bold tabular-nums">
+          {totalRecebidos}/{totalItens || 0}
+        </p>
+        <div className="mt-4 h-1.5 w-full overflow-hidden rounded-full bg-white/10">
+          <div className="h-full rounded-full bg-white transition-[width] duration-500" style={{ width: `${progressoGeral * 100}%` }} />
+        </div>
+        <p className="mt-2 text-xs text-slate-300">
+          {checklists.length} {checklists.length === 1 ? 'checklist ativo' : 'checklists ativos'}
+        </p>
+      </div>
+
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-bold text-slate-900">Checklists</h2>
         <Button variant="primary" size="sm" onClick={() => setShowForm((v) => !v)}>
           <IconPlus className="h-3.5 w-3.5" /> Novo
         </Button>
@@ -65,7 +83,10 @@ export function MesadaPage() {
       {erroAcao && <ErrorMessage message={erroAcao} />}
 
       {showForm && (
-        <form onSubmit={handleCriar} className="mb-4 space-y-3 rounded-xl border border-slate-200/70 bg-white p-4 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_8px_16px_-12px_rgba(15,23,42,0.12)]">
+        <form
+          onSubmit={handleCriar}
+          className="space-y-3 rounded-xl border border-slate-200/70 bg-white p-4 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_8px_16px_-12px_rgba(15,23,42,0.12)]"
+        >
           <Field label="Nome do checklist">
             <input type="text" autoFocus value={nome} onChange={(e) => setNome(e.target.value)} className={inputClass} />
           </Field>
@@ -93,8 +114,9 @@ export function MesadaPage() {
         {checklists.map((checklist) => {
           const itensOrdenados = [...checklist.itens].sort((a, b) => a.indice - b.indice)
           const recebidos = itensOrdenados.filter((i) => i.recebido).length
+          const progresso = itensOrdenados.length > 0 ? recebidos / itensOrdenados.length : 0
           return (
-            <li key={checklist.id} className="rounded-xl border border-slate-200/70 bg-white p-4 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_8px_16px_-12px_rgba(15,23,42,0.12)]">
+            <Card as="li" key={checklist.id}>
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
                   <p className="truncate font-semibold text-slate-900">{checklist.nome}</p>
@@ -103,7 +125,9 @@ export function MesadaPage() {
                   </p>
                 </div>
                 <div className="flex shrink-0 items-center gap-2">
-                  <p className="text-xs font-semibold text-slate-600">{recebidos}/{itensOrdenados.length}</p>
+                  <p className="text-xs font-semibold text-slate-600">
+                    {recebidos}/{itensOrdenados.length}
+                  </p>
                   <button
                     type="button"
                     onClick={() => handleExcluir(checklist.id, checklist.nome)}
@@ -113,6 +137,10 @@ export function MesadaPage() {
                     <IconTrash className="h-4 w-4" />
                   </button>
                 </div>
+              </div>
+
+              <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
+                <div className="h-full rounded-full bg-brand transition-[width] duration-500" style={{ width: `${progresso * 100}%` }} />
               </div>
 
               <div className="mt-3 grid grid-cols-10 gap-1">
@@ -130,7 +158,7 @@ export function MesadaPage() {
                   </button>
                 ))}
               </div>
-            </li>
+            </Card>
           )
         })}
       </ul>
