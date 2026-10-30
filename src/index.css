@@ -14,12 +14,12 @@
   --color-profit: #16a34a;
   --color-loss: #dc2626;
   --color-stale: #f59e0b;
-  /* Cor de marca — violeta vívido, intencionalmente longe do preto/slate-900
-     neutro usado no resto da UI, pra dar identidade visual própria ao
-     PHONEITZ sem comprometer a legibilidade (contraste >4.5:1 com branco). */
-  --color-brand: #6d28d9;
-  --color-brand-hover: #5b21b6;
-  --color-brand-active: #4c1d95;
+  /* Cor de marca — terracota vívido extraído direto da logo oficial do
+     PHONEITZ (ícone do app), pra identidade visual consistente entre logo
+     e UI sem comprometer a legibilidade (contraste >4.5:1 com branco). */
+  --color-brand: #ad5c2f;
+  --color-brand-hover: #914d27;
+  --color-brand-active: #7a4121;
   --font-sans:
     'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
 }

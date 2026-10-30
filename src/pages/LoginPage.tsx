@@ -104,7 +104,7 @@ export function LoginPage() {
                 type="checkbox"
                 checked={manterConectado}
                 onChange={(e) => setManterConectado(e.target.checked)}
-                className="h-4 w-4 rounded border-slate-300 text-brand focus:ring-2 focus:ring-brand/30"
+                className="h-4 w-4 rounded border-slate-300 accent-brand focus:ring-2 focus:ring-brand/30"
               />
               Manter conectado neste dispositivo
             </label>
