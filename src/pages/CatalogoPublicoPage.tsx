@@ -20,9 +20,7 @@ export function CatalogoPublicoPage() {
     <div className="min-h-screen bg-slate-50 px-4 py-6">
       <div className="mx-auto max-w-md">
         <div className="mb-6 flex flex-col items-center text-center">
-          <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-brand text-sm font-bold text-white">
-            Pz
-          </div>
+          <img src="/logo-mark.png" alt="PHONEITZ" className="mb-3 h-11 w-11 rounded-xl border border-slate-200/70 object-cover shadow-sm" />
           <h1 className="text-xl font-bold text-slate-900">{lojaNome ?? 'Catálogo'}</h1>
           <p className="mt-1 text-sm text-slate-500">Aparelhos disponíveis</p>
         </div>

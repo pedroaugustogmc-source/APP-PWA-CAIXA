@@ -18,9 +18,7 @@ export function Layout() {
     <div className="flex min-h-screen flex-col bg-slate-50">
       <header className="sticky top-0 z-40 flex items-center justify-between border-b border-slate-200 bg-white/80 px-4 py-3 backdrop-blur-sm">
         <div className="flex items-center gap-2">
-          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-brand text-xs font-bold text-white">
-            Pz
-          </div>
+          <img src="/logo-mark.png" alt="PHONEITZ" className="h-7 w-7 rounded-lg border border-slate-200/70 object-cover" />
           <h1 className="text-lg font-bold text-slate-900">PHONEITZ</h1>
         </div>
         <div className="flex items-center gap-3">

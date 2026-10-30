@@ -46,9 +46,7 @@ export function LoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
       <div className="w-full max-w-sm">
         <div className="mb-8 flex flex-col items-center">
-          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-brand text-lg font-bold text-white">
-            Pz
-          </div>
+          <img src="/logo-mark.png" alt="PHONEITZ" className="mb-4 h-14 w-14 rounded-xl border border-slate-200/70 object-cover shadow-sm" />
           <h1 className="text-center text-2xl font-bold text-slate-900">PHONEITZ</h1>
           <p className="mt-1 text-center text-sm text-slate-500">Gestão de loja de celulares — estoque, vendas e margem real</p>
         </div>
