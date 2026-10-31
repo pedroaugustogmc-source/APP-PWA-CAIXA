@@ -9,6 +9,11 @@ const FALLBACK = 'Não foi possível concluir a operação. Tente novamente em i
 export function mensagemErroAmigavel(error: { message: string; code?: string } | null | undefined): string | null {
   if (!error) return null
   if (error.code === 'P0001') return error.message
+  // 23505/23514 são erro de dado (duplicado ou fora do formato esperado), não
+  // falha transitória — "tente novamente" seria enganoso e a pessoa ficaria
+  // tentando de novo sem nunca funcionar.
+  if (error.code === '23505') return 'Já existe um registro com esse valor — confira se não é duplicado.'
+  if (error.code === '23514') return 'Algum campo não está no formato esperado. Confira os dados e tente de novo.'
   return FALLBACK
 }
 

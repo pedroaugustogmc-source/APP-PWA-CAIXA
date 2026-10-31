@@ -1,5 +1,5 @@
 import { supabase } from '../lib/supabase'
-import { mensagemErroExclusao } from '../lib/erros'
+import { mensagemErroAmigavel, mensagemErroExclusao } from '../lib/erros'
 import type { Acessorio, Categoria, Fornecedor } from '../types/domain'
 import { useSupabaseList } from './useSupabaseList'
 
@@ -25,13 +25,13 @@ export function useAcessorios() {
   async function criar(input: AcessorioInput) {
     const { data, error } = await supabase.from('acessorios').insert(input).select().single()
     if (!error) await refetch()
-    return { error: error?.message ?? null, acessorio: (data as Acessorio | null) ?? undefined }
+    return { error: mensagemErroAmigavel(error), acessorio: (data as Acessorio | null) ?? undefined }
   }
 
   async function editar(id: string, input: AcessorioInput) {
     const { error } = await supabase.from('acessorios').update(input).eq('id', id)
     if (!error) await refetch()
-    return { error: error?.message ?? null }
+    return { error: mensagemErroAmigavel(error) }
   }
 
   async function remover(id: string) {

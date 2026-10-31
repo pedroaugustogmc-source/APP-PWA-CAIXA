@@ -5,7 +5,11 @@ export const inputClass =
 
 export function Field({ label, children }: { label: string; children: ReactNode }) {
   return (
-    <label className="block text-sm">
+    // min-w-0: sem isso, um item de grid/flex nunca encolhe abaixo do
+    // tamanho intrínseco do conteúdo — e um <input type="date"> em pt-BR
+    // (ex.: "19 de out. de 2026") é largo o bastante pra estourar a coluna
+    // numa grid-cols-2, empurrando o layout inteiro.
+    <label className="block min-w-0 text-sm">
       <span className="mb-1 block font-medium text-slate-700">{label}</span>
       {children}
     </label>

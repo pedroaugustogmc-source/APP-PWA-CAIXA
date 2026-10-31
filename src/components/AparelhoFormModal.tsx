@@ -154,7 +154,7 @@ export function AparelhoFormModal({
       cor: cor.trim() || null,
       capacidade_gb: capacidadeGb ? Number(capacidadeGb) : null,
       bateria_saude: bateriaSaude ? Number(bateriaSaude) : null,
-      imei: imeiPreenchido ? imei.trim() : '',
+      imei: imeiPreenchido ? imei.trim() : null,
       imei2: imei2Preenchido ? imei2.trim() : null,
       condicao,
       data_compra: dataCompra,

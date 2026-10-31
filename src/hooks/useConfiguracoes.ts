@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
+import { mensagemErroAmigavel } from '../lib/erros'
 import type { Configuracoes } from '../types/domain'
 
 type ConfigValues = Pick<
@@ -29,7 +30,7 @@ export function useConfiguracoes() {
     setError(null)
     const { data, error } = await supabase.from('configuracoes').select('*').maybeSingle()
     if (error) {
-      setError(error.message)
+      setError(mensagemErroAmigavel(error))
     } else {
       setConfig(data)
     }
@@ -50,7 +51,7 @@ export function useConfiguracoes() {
       .from('configuracoes')
       .upsert({ user_id: user.id, ...PADRAO, ...config, ...input }, { onConflict: 'user_id' })
     if (!error) await refetch()
-    return { error: error?.message ?? null }
+    return { error: mensagemErroAmigavel(error) }
   }
 
   return { config: config ?? { ...PADRAO }, loading, error, salvar, refetch }

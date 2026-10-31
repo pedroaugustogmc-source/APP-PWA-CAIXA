@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
-import { mensagemErroExclusao } from '../lib/erros'
+import { mensagemErroAmigavel, mensagemErroExclusao } from '../lib/erros'
 import { enqueueMutation, listPendingMutations, type PendingMutation } from '../lib/offlineOutbox'
 import type { Aparelho, Categoria, CondicaoAparelho, CustoExtra, Fornecedor, StatusAparelho } from '../types/domain'
 import { useSupabaseList } from './useSupabaseList'
@@ -16,7 +16,7 @@ export interface AparelhoInput {
   cor: string | null
   capacidade_gb: number | null
   bateria_saude: number | null
-  imei: string
+  imei: string | null
   imei2: string | null
   condicao: CondicaoAparelho
   data_compra: string
@@ -93,13 +93,13 @@ export function useAparelhos() {
 
     const { error } = await supabase.from('aparelhos').insert(input)
     if (!error) await refetch()
-    return { error: error?.message ?? null }
+    return { error: mensagemErroAmigavel(error) }
   }
 
   async function editar(aparelhoId: string, input: AparelhoInput) {
     const { error } = await supabase.from('aparelhos').update(input).eq('id', aparelhoId)
     if (!error) await refetch()
-    return { error: error?.message ?? null }
+    return { error: mensagemErroAmigavel(error) }
   }
 
   /** Transições manuais. `vendido` só é setado pelo RPC `concluir_venda` (atômico). */
@@ -109,7 +109,7 @@ export function useAparelhos() {
   ) {
     const { error } = await supabase.from('aparelhos').update({ status }).eq('id', aparelhoId)
     if (!error) await refetch()
-    return { error: error?.message ?? null }
+    return { error: mensagemErroAmigavel(error) }
   }
 
   async function remover(aparelhoId: string) {
@@ -123,7 +123,7 @@ export function useAparelhos() {
     const resultados: { index: number; error: string | null }[] = []
     for (const [i, input] of inputs.entries()) {
       const { error } = await supabase.from('aparelhos').insert(input)
-      resultados.push({ index: i, error: error?.message ?? null })
+      resultados.push({ index: i, error: mensagemErroAmigavel(error) })
     }
     await refetch()
     return resultados

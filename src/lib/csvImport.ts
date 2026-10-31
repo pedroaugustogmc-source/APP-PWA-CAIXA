@@ -105,11 +105,16 @@ export function validarAparelhos(linhas: Record<string, string>[]): LinhaImporta
 
   return validadas.map((resultado) => {
     if (!resultado.dados) return resultado
-    const primeiraLinha = imeisVistos.get(resultado.dados.imei)
+    // validarLinhaAparelho já garante IMEI preenchido sempre que `dados` existe
+    // (ver "IMEI é obrigatório" acima) — a checagem aqui é só pro TypeScript,
+    // já que AparelhoInput aceita null pros cadastros feitos à mão sem IMEI.
+    const imei = resultado.dados.imei
+    if (!imei) return resultado
+    const primeiraLinha = imeisVistos.get(imei)
     if (primeiraLinha !== undefined) {
       return { linha: resultado.linha, erro: `IMEI duplicado — já aparece na linha ${primeiraLinha} deste arquivo.` }
     }
-    imeisVistos.set(resultado.dados.imei, resultado.linha)
+    imeisVistos.set(imei, resultado.linha)
     return resultado
   })
 }

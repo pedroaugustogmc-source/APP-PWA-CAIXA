@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
+import { mensagemErroAmigavel } from '../lib/erros'
 import type { CatalogoPublicoItem } from '../types/domain'
 
 export function useCatalogoPublico(lojaId: string | undefined) {
@@ -25,7 +26,7 @@ export function useCatalogoPublico(lojaId: string | undefined) {
       .order('nome', { ascending: true })
       .then(({ data, error }) => {
         if (!ativo) return
-        if (error) setError(error.message)
+        if (error) setError(mensagemErroAmigavel(error))
         else setItens(data ?? [])
         setLoading(false)
       })

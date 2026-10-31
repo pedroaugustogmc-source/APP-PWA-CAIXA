@@ -39,7 +39,7 @@ export function useClientes() {
     const resultados: { index: number; error: string | null }[] = []
     for (const [i, input] of inputs.entries()) {
       const { error } = await supabase.from('clientes').insert(input)
-      resultados.push({ index: i, error: error?.message ?? null })
+      resultados.push({ index: i, error: mensagemErroAmigavel(error) })
     }
     await refetch()
     return resultados

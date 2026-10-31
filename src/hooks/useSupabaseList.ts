@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import type { PostgrestError } from '@supabase/supabase-js'
+import { mensagemErroAmigavel } from '../lib/erros'
 
 /**
  * Busca uma lista via Supabase e expõe loading/erro/refetch.
@@ -15,7 +16,7 @@ export function useSupabaseList<T>(fetcher: () => Promise<{ data: T[] | null; er
     setError(null)
     const { data: result, error: fetchError } = await fetcher()
     if (fetchError) {
-      setError(fetchError.message)
+      setError(mensagemErroAmigavel(fetchError))
       setData([])
     } else {
       setData(result ?? [])

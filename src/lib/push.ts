@@ -1,4 +1,5 @@
 import { supabase } from './supabase'
+import { mensagemErroAmigavel } from './erros'
 
 const VAPID_PUBLIC_KEY = import.meta.env.VITE_VAPID_PUBLIC_KEY
 
@@ -70,7 +71,7 @@ export async function ativarNotificacoes(): Promise<{ error: string | null }> {
     { onConflict: 'endpoint' },
   )
 
-  if (error) return { error: error.message }
+  if (error) return { error: mensagemErroAmigavel(error) }
   return { error: null }
 }
 
@@ -90,7 +91,7 @@ export async function desativarNotificacoes(): Promise<{ error: string | null }>
     return { error: 'Não foi possível desativar notificações neste dispositivo/navegador.' }
   }
   const { error } = await supabase.from('push_subscriptions').delete().eq('endpoint', endpoint)
-  if (error) return { error: error.message }
+  if (error) return { error: mensagemErroAmigavel(error) }
   return { error: null }
 }
 
@@ -98,6 +99,6 @@ export async function enviarNotificacaoTeste(): Promise<{ error: string | null }
   const { error } = await supabase.functions.invoke('send-push', {
     body: { title: 'PHONEITZ', body: 'Notificações ativadas com sucesso.', url: '/' },
   })
-  if (error) return { error: error.message }
+  if (error) return { error: mensagemErroAmigavel(error) }
   return { error: null }
 }
