@@ -184,7 +184,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         precisaConfirmarEmail: false,
       }
     }
-    const { data, error } = await supabase.auth.signUp({ email, password })
+    // Sem emailRedirectTo, o Supabase usa a Site URL configurada no painel —
+    // que aponta pra localhost (ambiente de desenvolvimento), então o link de
+    // confirmação no e-mail levava a pessoa pra uma página quebrada depois de
+    // confirmar (a conta ficava confirmada mesmo assim, mas parecia erro).
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { emailRedirectTo: window.location.origin },
+    })
     return { error: mensagemErroAuth(error), precisaConfirmarEmail: !error && !data.session }
   }
 
