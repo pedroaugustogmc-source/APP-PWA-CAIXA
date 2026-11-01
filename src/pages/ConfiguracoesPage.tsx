@@ -1,6 +1,7 @@
 import { useAuth } from '../hooks/useAuth'
 import { useLojaMembros } from '../hooks/useLojaMembros'
 import { AjustesForm } from '../components/AjustesForm'
+import { InstalarAppCard } from '../components/InstalarAppCard'
 import { CategoriasManager } from '../components/CategoriasManager'
 import { FornecedoresManager } from '../components/FornecedoresManager'
 import { DepreciacaoModelosManager } from '../components/DepreciacaoModelosManager'
@@ -26,6 +27,7 @@ export function ConfiguracoesPage() {
   return (
     <div className="space-y-5">
       <h2 className="text-lg font-bold text-slate-900">Ajustes</h2>
+      <InstalarAppCard />
       {souDono && <AjustesForm />}
       {souDono && <PessoalLinkCard />}
       {souDono && <NotificacoesPanel />}

@@ -120,3 +120,13 @@ export function IconTrash({ className }: IconProps) {
     </svg>
   )
 }
+
+export function IconDownload({ className }: IconProps) {
+  return (
+    <svg {...base} className={className} aria-hidden="true">
+      <path d="M12 3v12" />
+      <path d="M7 10l5 5 5-5" />
+      <path d="M4 19.5h16" />
+    </svg>
+  )
+}
