@@ -13,17 +13,34 @@ function isStandalone(): boolean {
 }
 
 /**
- * Chrome/Edge (Windows, Mac, Linux, Android) disparam beforeinstallprompt
- * quando o manifest cumpre os critérios de instalabilidade — a gente
- * intercepta pra oferecer um botão próprio em vez do ícone discreto da
- * barra de endereço, que muita gente nunca percebe que existe. Safari e
- * Firefox não disparam esse evento (Safari tem fluxo próprio via menu
- * Arquivo; Firefox desktop não suporta instalar PWA).
+ * Captado no escopo do módulo, não dentro do componente: beforeinstallprompt
+ * pode disparar assim que o navegador termina de avaliar a instalabilidade,
+ * o que às vezes acontece antes do React montar e o useEffect de um
+ * componente registrar seu listener — nesse caso o evento se perderia pra
+ * sempre (só dispara uma vez por carregamento de página) e a pessoa veria a
+ * instrução manual à toa, mesmo o navegador oferecendo o fluxo de um clique.
+ * Como este módulo roda assim que é importado — bem antes de qualquer
+ * efeito de componente — captura o evento o quanto antes der.
  */
+let eventoCapturado: BeforeInstallPromptEvent | null = null
+const ouvintes = new Set<(e: BeforeInstallPromptEvent | null) => void>()
+
+if (typeof window !== 'undefined') {
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault()
+    eventoCapturado = e as BeforeInstallPromptEvent
+    ouvintes.forEach((ouvinte) => ouvinte(eventoCapturado))
+  })
+  window.addEventListener('appinstalled', () => {
+    eventoCapturado = null
+    ouvintes.forEach((ouvinte) => ouvinte(null))
+  })
+}
+
 const ERRO_PADRAO = 'Não foi possível abrir a instalação. Tente de novo ou use o menu do navegador.'
 
 export function useInstallPrompt() {
-  const [promptEvent, setPromptEvent] = useState<BeforeInstallPromptEvent | null>(null)
+  const [promptEvent, setPromptEvent] = useState<BeforeInstallPromptEvent | null>(eventoCapturado)
   const [instalado, setInstalado] = useState(isStandalone())
   // Guarda contra clique duplo: prompt() só pode ser chamado uma vez por
   // evento — um 2º clique antes do re-render (que esconde o botão) rejeitaria
@@ -31,19 +48,17 @@ export function useInstallPrompt() {
   const emAndamento = useRef(false)
 
   useEffect(() => {
-    function aoFicarDisponivel(e: Event) {
-      e.preventDefault()
-      setPromptEvent(e as BeforeInstallPromptEvent)
+    // o módulo pode ter capturado o evento entre o render inicial deste
+    // componente e este efeito rodar — resincroniza pra não perder essa janela.
+    setPromptEvent(eventoCapturado)
+
+    function aoMudar(e: BeforeInstallPromptEvent | null) {
+      setPromptEvent(e)
+      if (e === null) setInstalado(true)
     }
-    function aoInstalar() {
-      setInstalado(true)
-      setPromptEvent(null)
-    }
-    window.addEventListener('beforeinstallprompt', aoFicarDisponivel)
-    window.addEventListener('appinstalled', aoInstalar)
+    ouvintes.add(aoMudar)
     return () => {
-      window.removeEventListener('beforeinstallprompt', aoFicarDisponivel)
-      window.removeEventListener('appinstalled', aoInstalar)
+      ouvintes.delete(aoMudar)
     }
   }, [])
 
@@ -54,6 +69,7 @@ export function useInstallPrompt() {
       await promptEvent.prompt()
       const { outcome } = await promptEvent.userChoice
       if (outcome === 'accepted') setInstalado(true)
+      eventoCapturado = null
       setPromptEvent(null)
       return { error: null }
     } catch {

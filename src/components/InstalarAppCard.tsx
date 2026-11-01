@@ -3,7 +3,15 @@ import { useInstallPrompt } from '../hooks/useInstallPrompt'
 import { Card, CardLabel } from './Card'
 import { Button } from './Button'
 import { ErrorMessage } from './ErrorMessage'
-import { IconDownload } from './icons'
+import { IconDownload, IconShare } from './icons'
+
+function isIos(): boolean {
+  return /iPad|iPhone|iPod/.test(navigator.userAgent) && !('MSStream' in window)
+}
+
+function isAndroid(): boolean {
+  return /Android/.test(navigator.userAgent)
+}
 
 export function InstalarAppCard() {
   const { disponivel, instalado, instalar } = useInstallPrompt()
@@ -26,14 +34,25 @@ export function InstalarAppCard() {
       ) : disponivel ? (
         <>
           <p className="mb-3 text-xs text-slate-500">
-            Instale o PHONEITZ como um app no seu computador — abre numa janela própria, sem a barra do navegador, e
-            fica fixado na tela inicial ou na barra de tarefas.
+            Instale o PHONEITZ como um app — abre numa janela própria, sem a barra do navegador, e fica fixado na
+            tela inicial ou na área de trabalho.
           </p>
           {erro && <ErrorMessage message={erro} />}
           <Button variant="primary" fullWidth onClick={handleInstalar}>
             <IconDownload className="h-3.5 w-3.5" /> Instalar PHONEITZ
           </Button>
         </>
+      ) : isIos() ? (
+        <p className="text-xs text-slate-500">
+          Toque em <strong className="text-slate-700">Compartilhar</strong>{' '}
+          <IconShare className="inline h-3 w-3 -translate-y-px align-middle" /> e depois em{' '}
+          <strong className="text-slate-700">Adicionar à Tela de Início</strong>.
+        </p>
+      ) : isAndroid() ? (
+        <p className="text-xs text-slate-500">
+          Toque no menu <strong className="text-slate-700">⋮</strong> do navegador e depois em{' '}
+          <strong className="text-slate-700">Instalar app</strong> (ou <strong>Adicionar à tela inicial</strong>).
+        </p>
       ) : (
         <div className="space-y-2 text-xs text-slate-500">
           <p>
