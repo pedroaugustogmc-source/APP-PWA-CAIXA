@@ -1,10 +1,19 @@
+import { useState } from 'react'
 import { useInstallPrompt } from '../hooks/useInstallPrompt'
 import { Card, CardLabel } from './Card'
 import { Button } from './Button'
+import { ErrorMessage } from './ErrorMessage'
 import { IconDownload } from './icons'
 
 export function InstalarAppCard() {
   const { disponivel, instalado, instalar } = useInstallPrompt()
+  const [erro, setErro] = useState<string | null>(null)
+
+  async function handleInstalar() {
+    setErro(null)
+    const { error } = await instalar()
+    if (error) setErro(error)
+  }
 
   return (
     <Card as="section">
@@ -20,7 +29,8 @@ export function InstalarAppCard() {
             Instale o PHONEITZ como um app no seu computador — abre numa janela própria, sem a barra do navegador, e
             fica fixado na tela inicial ou na barra de tarefas.
           </p>
-          <Button variant="primary" fullWidth onClick={instalar}>
+          {erro && <ErrorMessage message={erro} />}
+          <Button variant="primary" fullWidth onClick={handleInstalar}>
             <IconDownload className="h-3.5 w-3.5" /> Instalar PHONEITZ
           </Button>
         </>

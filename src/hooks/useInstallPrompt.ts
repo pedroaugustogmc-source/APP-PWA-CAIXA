@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 interface BeforeInstallPromptEvent extends Event {
   prompt(): Promise<void>
@@ -20,9 +20,15 @@ function isStandalone(): boolean {
  * Firefox não disparam esse evento (Safari tem fluxo próprio via menu
  * Arquivo; Firefox desktop não suporta instalar PWA).
  */
+const ERRO_PADRAO = 'Não foi possível abrir a instalação. Tente de novo ou use o menu do navegador.'
+
 export function useInstallPrompt() {
   const [promptEvent, setPromptEvent] = useState<BeforeInstallPromptEvent | null>(null)
   const [instalado, setInstalado] = useState(isStandalone())
+  // Guarda contra clique duplo: prompt() só pode ser chamado uma vez por
+  // evento — um 2º clique antes do re-render (que esconde o botão) rejeitaria
+  // com DOMException, e sem isso essa falha nunca chegaria no usuário.
+  const emAndamento = useRef(false)
 
   useEffect(() => {
     function aoFicarDisponivel(e: Event) {
@@ -41,12 +47,20 @@ export function useInstallPrompt() {
     }
   }, [])
 
-  async function instalar() {
-    if (!promptEvent) return
-    await promptEvent.prompt()
-    const { outcome } = await promptEvent.userChoice
-    if (outcome === 'accepted') setInstalado(true)
-    setPromptEvent(null)
+  async function instalar(): Promise<{ error: string | null }> {
+    if (!promptEvent || emAndamento.current) return { error: null }
+    emAndamento.current = true
+    try {
+      await promptEvent.prompt()
+      const { outcome } = await promptEvent.userChoice
+      if (outcome === 'accepted') setInstalado(true)
+      setPromptEvent(null)
+      return { error: null }
+    } catch {
+      return { error: ERRO_PADRAO }
+    } finally {
+      emAndamento.current = false
+    }
   }
 
   return { disponivel: promptEvent !== null && !instalado, instalado, instalar }
