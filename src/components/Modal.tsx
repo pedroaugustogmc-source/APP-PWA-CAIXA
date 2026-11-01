@@ -3,7 +3,12 @@ import type { ReactNode } from 'react'
 export function Modal({ title, onClose, children }: { title: string; onClose: () => void; children: ReactNode }) {
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 backdrop-blur-[2px] sm:items-center">
-      <div className="safe-bottom max-h-[90vh] w-full max-w-md overflow-y-auto rounded-t-2xl bg-white p-5 shadow-xl sm:rounded-2xl">
+      {/* dvh, não vh: no celular, vh é calculado pela altura com a barra de
+          endereço recolhida — maior que a área realmente visível na maior
+          parte do tempo. Isso faz o max-height "mentir" e o modal cortar
+          conteúdo fora da tela, mesmo funcionando certo ao redimensionar a
+          janela no computador (lá não existe barra de endereço dinâmica). */}
+      <div className="safe-bottom max-h-[90dvh] w-full max-w-md overflow-y-auto rounded-t-2xl bg-white p-5 shadow-xl sm:rounded-2xl">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-lg font-bold text-slate-900">{title}</h2>
           <button

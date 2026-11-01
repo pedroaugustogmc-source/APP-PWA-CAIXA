@@ -43,7 +43,7 @@ export function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
+    <div className="flex min-h-[100dvh] items-center justify-center bg-slate-50 px-4">
       <div className="w-full max-w-sm">
         <div className="mb-8 flex flex-col items-center">
           <img src="/logo-mark.png" alt="PHONEITZ" className="mb-4 h-14 w-14 rounded-xl border border-slate-200/70 object-cover shadow-sm" />

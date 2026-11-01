@@ -15,7 +15,7 @@ export function Layout() {
   const { signOut } = useAuth()
 
   return (
-    <div className="flex min-h-screen flex-col bg-slate-50">
+    <div className="flex min-h-[100dvh] flex-col bg-slate-50">
       <header className="sticky top-0 z-40 flex items-center justify-between border-b border-slate-200 bg-white/80 px-4 py-3 backdrop-blur-sm">
         <div className="flex items-center gap-2">
           <img src="/logo-mark.png" alt="PHONEITZ" className="h-7 w-7 rounded-lg border border-slate-200/70 object-cover" />

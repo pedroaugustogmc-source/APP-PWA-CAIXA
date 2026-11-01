@@ -9,7 +9,7 @@ export function ProtectedRoute() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-50">
+      <div className="flex min-h-[100dvh] items-center justify-center bg-slate-50">
         <LoadingSpinner label="Verificando sessão…" />
       </div>
     )
@@ -18,7 +18,7 @@ export function ProtectedRoute() {
 
   if (lojaStatus === 'preparando' || lojaStatus === 'ociosa') {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-50">
+      <div className="flex min-h-[100dvh] items-center justify-center bg-slate-50">
         <LoadingSpinner label="Preparando sua loja…" />
       </div>
     )
@@ -30,7 +30,7 @@ export function ProtectedRoute() {
 
   if (lojaStatus === 'erro') {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
+      <div className="flex min-h-[100dvh] items-center justify-center bg-slate-50 px-4">
         <div className="w-full max-w-sm rounded-xl border border-loss/25 bg-white p-6 text-center shadow-sm">
           <p className="text-sm font-medium text-loss">
             Não foi possível preparar sua loja agora. Verifique sua conexão e tente de novo.

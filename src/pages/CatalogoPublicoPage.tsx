@@ -17,7 +17,7 @@ export function CatalogoPublicoPage() {
   const lojaNome = itens[0]?.loja_nome
 
   return (
-    <div className="min-h-screen bg-slate-50 px-4 py-6">
+    <div className="min-h-[100dvh] bg-slate-50 px-4 py-6">
       <div className="mx-auto max-w-md">
         <div className="mb-6 flex flex-col items-center text-center">
           <img src="/logo-mark.png" alt="PHONEITZ" className="mb-3 h-11 w-11 rounded-xl border border-slate-200/70 object-cover shadow-sm" />
