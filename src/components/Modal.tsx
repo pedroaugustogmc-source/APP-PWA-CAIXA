@@ -1,8 +1,21 @@
-import type { ReactNode } from 'react'
+import { useEffect, type ReactNode } from 'react'
 
 export function Modal({ title, onClose, children }: { title: string; onClose: () => void; children: ReactNode }) {
+  useEffect(() => {
+    function aoApertarTecla(e: KeyboardEvent) {
+      if (e.key === 'Escape') onClose()
+    }
+    window.addEventListener('keydown', aoApertarTecla)
+    return () => window.removeEventListener('keydown', aoApertarTecla)
+  }, [onClose])
+
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 backdrop-blur-[2px] sm:items-center">
+    <div
+      className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 backdrop-blur-[2px] sm:items-center"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose()
+      }}
+    >
       {/* dvh, não vh: no celular, vh é calculado pela altura com a barra de
           endereço recolhida — maior que a área realmente visível na maior
           parte do tempo. Isso faz o max-height "mentir" e o modal cortar
