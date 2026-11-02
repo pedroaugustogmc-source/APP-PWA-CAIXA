@@ -212,7 +212,7 @@ export function NovaVendaWizard({
     if (tradeInAtivo) {
       if (!tradeInNome.trim()) return 'Informe o nome do aparelho recebido na troca.'
       if (!tradeInModelo.trim()) return 'Informe o modelo do aparelho recebido na troca.'
-      if (!imeiValido(tradeInImei.trim())) return 'IMEI do aparelho recebido na troca é inválido — confira os 15 dígitos.'
+      if (!imeiValido(tradeInImei.trim())) return 'IMEI do aparelho recebido na troca é inválido: confira os 15 dígitos.'
       if (tradeInValorAvaliacao <= 0) return 'Informe o valor de avaliação do trade-in.'
     }
     if (!margem.bateComReceita) {

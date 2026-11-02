@@ -28,7 +28,7 @@ export function CatalogoPublicoLink() {
         <IconShare className="h-4 w-4" /> Catálogo público
       </CardLabel>
       <p className="mb-3 text-xs text-slate-500">
-        Link de vitrine, sem login — mostra só os aparelhos com preço preenchido no cadastro. Compartilhe nas redes ou com clientes.
+        Link de vitrine, sem login: mostra só os aparelhos com preço preenchido no cadastro. Compartilhe nas redes ou com clientes.
       </p>
       <div className="flex gap-2">
         <input readOnly value={link} className="min-w-0 flex-1 truncate rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600" />

@@ -7,7 +7,7 @@ export function IntegracoesPanel() {
       <CardLabel>Integrações extras</CardLabel>
       <p className="mb-3 text-xs text-slate-500">
         Recursos opcionais que conectam o PHONEITZ a serviços externos (emissor de nota fiscal, bureau de crédito, etc.).
-        Tudo o que você precisa pra operar a loja — estoque, vendas, financeiro — já funciona sem nenhum deles. Ative só
+        Tudo o que você precisa pra operar a loja (estoque, vendas, financeiro) já funciona sem nenhum deles. Ative só
         quando fizer sentido pro seu negócio.
       </p>
       <ul className="space-y-2">

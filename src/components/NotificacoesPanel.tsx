@@ -11,7 +11,7 @@ export function NotificacoesPanel() {
   async function handleTeste() {
     setAvisoTeste(null)
     const { error } = await enviarTeste()
-    if (!error) setAvisoTeste('Notificação de teste enviada — confira em instantes.')
+    if (!error) setAvisoTeste('Notificação de teste enviada. Confira em instantes.')
   }
 
   if (carregando) return null

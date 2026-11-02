@@ -136,11 +136,11 @@ export function AparelhoFormModal({
       return
     }
     if (!imeiOk) {
-      setError('IMEI inválido — confira os 15 dígitos.')
+      setError('IMEI inválido: confira os 15 dígitos.')
       return
     }
     if (!imei2Ok) {
-      setError('IMEI 2 inválido — confira os 15 dígitos.')
+      setError('IMEI 2 inválido: confira os 15 dígitos.')
       return
     }
     setSubmitting(true)
@@ -242,7 +242,7 @@ export function AparelhoFormModal({
             className={`${inputClass} ${!imeiOk ? 'border-loss focus:border-loss focus:ring-loss/20' : ''}`}
           />
         </Field>
-        {!imeiOk && <p className="-mt-2 text-xs text-loss">IMEI inválido — confira os 15 dígitos.</p>}
+        {!imeiOk && <p className="-mt-2 text-xs text-loss">IMEI inválido: confira os 15 dígitos.</p>}
 
         <Field label="IMEI 2 (dual chip)">
           <input
@@ -254,7 +254,7 @@ export function AparelhoFormModal({
             className={`${inputClass} ${!imei2Ok ? 'border-loss focus:border-loss focus:ring-loss/20' : ''}`}
           />
         </Field>
-        {!imei2Ok && <p className="-mt-2 text-xs text-loss">IMEI 2 inválido — confira os 15 dígitos.</p>}
+        {!imei2Ok && <p className="-mt-2 text-xs text-loss">IMEI 2 inválido: confira os 15 dígitos.</p>}
 
         <div>
           <div className="mb-1 flex items-center justify-between">
@@ -387,7 +387,7 @@ export function AparelhoFormModal({
             </button>
           </div>
           {custosExtras.length === 0 && (
-            <p className="text-xs text-slate-400">Frete, embalagem, taxas — o que mais custou pra ter esse aparelho.</p>
+            <p className="text-xs text-slate-400">Frete, embalagem, taxas: o que mais custou pra ter esse aparelho.</p>
           )}
           <div className="space-y-2">
             {custosExtras.map((c, i) => (

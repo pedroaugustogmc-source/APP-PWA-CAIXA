@@ -12,7 +12,7 @@ export function mensagemErroAmigavel(error: { message: string; code?: string } |
   // 23505/23514 são erro de dado (duplicado ou fora do formato esperado), não
   // falha transitória — "tente novamente" seria enganoso e a pessoa ficaria
   // tentando de novo sem nunca funcionar.
-  if (error.code === '23505') return 'Já existe um registro com esse valor — confira se não é duplicado.'
+  if (error.code === '23505') return 'Já existe um registro com esse valor: confira se não é duplicado.'
   if (error.code === '23514') return 'Algum campo não está no formato esperado. Confira os dados e tente de novo.'
   return FALLBACK
 }
@@ -37,7 +37,7 @@ export function mensagemErroExclusao(error: { message: string; code?: string } |
 // em si pode mudar entre versões, então nunca é usada pra decidir o texto.
 const MENSAGENS_AUTH: Record<string, string> = {
   invalid_credentials: 'E-mail ou senha incorretos.',
-  email_not_confirmed: 'Confirme seu e-mail antes de entrar — veja sua caixa de entrada.',
+  email_not_confirmed: 'Confirme seu e-mail antes de entrar. Veja sua caixa de entrada.',
   user_already_exists: 'Já existe uma conta com esse e-mail. Tente entrar em vez de criar uma nova.',
   user_not_found: 'Não encontramos uma conta com esse e-mail.',
   weak_password: 'Senha muito fraca. Use pelo menos 6 caracteres.',

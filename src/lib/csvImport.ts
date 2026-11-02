@@ -42,20 +42,20 @@ export function validarLinhaAparelho(row: Record<string, string>, linha: number)
 
   const imei = campo(row, 'imei')
   if (!imei) return { linha, erro: 'IMEI é obrigatório.' }
-  if (!imeiValido(imei)) return { linha, erro: 'IMEI inválido — precisa ter 15 dígitos com dígito verificador Luhn correto.' }
+  if (!imeiValido(imei)) return { linha, erro: 'IMEI inválido: precisa ter 15 dígitos com dígito verificador Luhn correto.' }
 
   const imei2 = campo(row, 'imei2')
   if (imei2 && !imeiValido(imei2)) return { linha, erro: 'IMEI 2 inválido.' }
 
   const dataCompra = campo(row, 'data_compra')
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(dataCompra)) return { linha, erro: 'Data de compra inválida — use o formato AAAA-MM-DD.' }
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(dataCompra)) return { linha, erro: 'Data de compra inválida: use o formato AAAA-MM-DD.' }
 
   const custoCompra = numeroOuNulo(campo(row, 'custo_compra'))
   if (custoCompra === null || custoCompra < 0) return { linha, erro: 'Custo de compra inválido.' }
 
   const condicaoTexto = (campo(row, 'condicao') || 'seminovo').toLowerCase()
   if (!CONDICOES_VALIDAS.includes(condicaoTexto as CondicaoAparelho)) {
-    return { linha, erro: `Condição inválida — use um de: ${CONDICOES_VALIDAS.join(', ')}.` }
+    return { linha, erro: `Condição inválida. Use um de: ${CONDICOES_VALIDAS.join(', ')}.` }
   }
 
   const capacidadeTexto = campo(row, 'capacidade_gb')
@@ -65,7 +65,7 @@ export function validarLinhaAparelho(row: Record<string, string>, linha: number)
   const bateriaTexto = campo(row, 'bateria_saude')
   const bateriaSaude = bateriaTexto ? numeroOuNulo(bateriaTexto) : null
   if (bateriaTexto && (bateriaSaude === null || bateriaSaude < 0 || bateriaSaude > 100)) {
-    return { linha, erro: 'Saúde da bateria inválida — use um número de 0 a 100.' }
+    return { linha, erro: 'Saúde da bateria inválida: use um número de 0 a 100.' }
   }
 
   const precoSugeridoTexto = campo(row, 'preco_sugerido')
@@ -112,7 +112,7 @@ export function validarAparelhos(linhas: Record<string, string>[]): LinhaImporta
     if (!imei) return resultado
     const primeiraLinha = imeisVistos.get(imei)
     if (primeiraLinha !== undefined) {
-      return { linha: resultado.linha, erro: `IMEI duplicado — já aparece na linha ${primeiraLinha} deste arquivo.` }
+      return { linha: resultado.linha, erro: `IMEI duplicado: já aparece na linha ${primeiraLinha} deste arquivo.` }
     }
     imeisVistos.set(imei, resultado.linha)
     return resultado

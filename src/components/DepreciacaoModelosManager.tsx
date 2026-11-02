@@ -52,7 +52,7 @@ export function DepreciacaoModelosManager() {
     <Card as="section">
       <CardLabel>Depreciação de modelos</CardLabel>
       <p className="mb-3 text-xs text-slate-400">
-        Usada na sugestão de valor de trade-in ao registrar uma venda — quanto um modelo usado perde de valor por mês.
+        Usada na sugestão de valor de trade-in ao registrar uma venda: quanto um modelo usado perde de valor por mês.
       </p>
 
       <ul className="mb-3 space-y-2">

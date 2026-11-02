@@ -20,7 +20,7 @@ export default defineConfig({
       manifest: {
         name: 'PHONEITZ',
         short_name: 'PHONEITZ',
-        description: 'Gestão de loja de celulares — estoque por IMEI, vendas com margem real e trade-in, na palma da mão.',
+        description: 'Gestão de loja de celulares: estoque por IMEI, vendas com margem real e trade-in, na palma da mão.',
         lang: 'pt-BR',
         start_url: '/',
         scope: '/',

@@ -86,7 +86,7 @@ export function AparelhoCard({ aparelho, diasAlerta, onAlterarStatus, onEditar, 
 
       {parado && (
         <p className="mt-2 text-xs font-medium text-stale">
-          Parado {prazo ? `— passou do prazo de ${prazo} dias` : `há mais de ${diasAlerta} dias`}
+          Parado {prazo ? `, passou do prazo de ${prazo} dias` : `há mais de ${diasAlerta} dias`}
         </p>
       )}
 
@@ -117,7 +117,7 @@ export function AparelhoCard({ aparelho, diasAlerta, onAlterarStatus, onEditar, 
         )}
         {(aparelho.status === 'baixado' || aparelho.status === 'devolvido' || aparelho.status === 'perdido_danificado') && (
           <Button variant="secondary" size="sm" onClick={() => onAlterarStatus('em_estoque')}>
-            Desfazer — voltar ao estoque
+            Desfazer (voltar ao estoque)
           </Button>
         )}
       </div>

@@ -95,7 +95,7 @@ export function AjustesForm() {
             className={inputClass}
           />
         </Field>
-        <p className="-mt-2 text-xs text-slate-400">Sugerida ao abrir uma nova venda — pode ser ajustada venda a venda.</p>
+        <p className="-mt-2 text-xs text-slate-400">Sugerida ao abrir uma nova venda, pode ser ajustada venda a venda.</p>
 
         <Field label="Cashback padrão por venda (%)">
           <input
@@ -110,7 +110,7 @@ export function AjustesForm() {
           />
         </Field>
         <p className="-mt-2 text-xs text-slate-400">
-          Creditado automaticamente quando a venda tem contato do cliente — veja saldos em Financeiro › Cashback.
+          Creditado automaticamente quando a venda tem contato do cliente. Veja saldos em Financeiro › Cashback.
         </p>
 
         {error && <ErrorMessage message={error} />}

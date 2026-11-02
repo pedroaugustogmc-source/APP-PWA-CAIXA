@@ -17,7 +17,7 @@ export function PessoalLinkCard() {
         <IconWallet className="h-4 w-4" /> Minha vida financeira
       </CardLabel>
       <p className="mb-3 text-xs text-slate-500">
-        Fontes de renda, checklist de mesada e carteiras de investimento — à parte do financeiro da loja, só você vê.
+        Fontes de renda, checklist de mesada e carteiras de investimento. À parte do financeiro da loja, só você vê.
       </p>
       {!loading && fontes.length > 0 && (
         <p className="mb-3 text-sm text-slate-700">

@@ -55,7 +55,7 @@ export function InvestimentosPage() {
           <IconWallet className="h-4 w-4" /> Carteiras
         </CardLabel>
         <p className="mb-3 text-xs text-slate-500">
-          Lançamento de ativos e transações ainda não tem tela própria aqui — por enquanto é só o cadastro das carteiras.
+          Lançamento de ativos e transações ainda não tem tela própria aqui. Por enquanto é só o cadastro das carteiras.
         </p>
 
         {!loading && carteiras.length === 0 && <p className="mb-3 text-sm text-slate-400">Nenhuma carteira cadastrada ainda.</p>}

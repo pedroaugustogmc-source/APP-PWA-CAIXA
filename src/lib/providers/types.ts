@@ -20,6 +20,6 @@ export function naoConfigurado<T>(nomeProvider: string): ResultadoProvider<T> {
   return {
     ok: false,
     dados: null,
-    erro: `${nomeProvider} ainda não está configurado nesta loja — é uma integração paga com terceiros, fale com o suporte PHONEITZ para habilitar.`,
+    erro: `${nomeProvider} ainda não está configurado nesta loja. É uma integração paga com terceiros, fale com o suporte PHONEITZ para habilitar.`,
   }
 }

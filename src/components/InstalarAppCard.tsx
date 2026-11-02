@@ -34,7 +34,7 @@ export function InstalarAppCard() {
       ) : disponivel ? (
         <>
           <p className="mb-3 text-xs text-slate-500">
-            Instale o PHONEITZ como um app — abre numa janela própria, sem a barra do navegador, e fica fixado na
+            Instale o PHONEITZ como um app: abre numa janela própria, sem a barra do navegador, e fica fixado na
             tela inicial ou na área de trabalho.
           </p>
           {erro && <ErrorMessage message={erro} />}
@@ -66,7 +66,7 @@ export function InstalarAppCard() {
           </p>
           <p>
             <strong className="text-slate-700">Firefox:</strong> no computador, o Firefox ainda não tem suporte a
-            instalar apps — use Chrome, Edge ou Safari pra isso.
+            instalar apps. Use Chrome, Edge ou Safari pra isso.
           </p>
         </div>
       )}
