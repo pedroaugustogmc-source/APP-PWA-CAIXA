@@ -14,11 +14,14 @@ type Props = Omit<InputHTMLAttributes<HTMLInputElement>, 'type' | 'className'>
  */
 export function DateInput(props: Props) {
   return (
-    <div className="flex items-center overflow-hidden rounded-lg border border-slate-300 bg-white transition-colors focus-within:border-brand focus-within:ring-2 focus-within:ring-brand/15">
+    // min-h-11, igual ao inputClass (Field.tsx): mesma altura padrão de
+    // todo campo do app, não a que o <input type="date"> nativo decidir
+    // sozinho dependendo do navegador/sistema.
+    <div className="flex min-h-11 items-center overflow-hidden rounded-lg border border-slate-300 bg-white transition-colors focus-within:border-brand focus-within:ring-2 focus-within:ring-brand/15">
       <input
         type="date"
         {...props}
-        className="w-full border-0 bg-transparent px-3 py-2 text-base text-slate-900 placeholder:text-slate-400 focus:outline-none disabled:bg-slate-50 disabled:text-slate-400"
+        className="h-full w-full border-0 bg-transparent px-3 text-base text-slate-900 placeholder:text-slate-400 focus:outline-none disabled:bg-slate-50 disabled:text-slate-400"
       />
     </div>
   )
