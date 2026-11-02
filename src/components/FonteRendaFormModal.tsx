@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { Modal } from './Modal'
 import { Field, inputClass } from './Field'
+import { DateInput } from './DateInput'
 import { ErrorMessage } from './ErrorMessage'
 import { Button } from './Button'
 import { todayISO } from '../lib/calculations'
@@ -128,12 +129,12 @@ export function FonteRendaFormModal({ fonteInicial, onClose, onSubmit }: Props) 
             />
           </Field>
           <Field label="Início">
-            <input type="date" value={dataInicio} onChange={(e) => setDataInicio(e.target.value)} className={inputClass} />
+            <DateInput value={dataInicio} onChange={(e) => setDataInicio(e.target.value)} />
           </Field>
         </div>
 
         <Field label="Fim (se tiver prazo)">
-          <input type="date" value={dataFim} onChange={(e) => setDataFim(e.target.value)} className={inputClass} />
+          <DateInput value={dataFim} onChange={(e) => setDataFim(e.target.value)} />
         </Field>
 
         <Field label="Observações">

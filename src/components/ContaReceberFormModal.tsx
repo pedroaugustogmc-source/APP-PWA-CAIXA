@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { Modal } from './Modal'
 import { Field, inputClass } from './Field'
+import { DateInput } from './DateInput'
 import { ErrorMessage } from './ErrorMessage'
 import { Button } from './Button'
 import { todayISO } from '../lib/calculations'
@@ -95,7 +96,7 @@ export function ContaReceberFormModal({ contaInicial, onClose, onSubmit }: Props
             />
           </Field>
           <Field label="Vencimento">
-            <input type="date" required value={dataVencimento} onChange={(e) => setDataVencimento(e.target.value)} className={inputClass} />
+            <DateInput required value={dataVencimento} onChange={(e) => setDataVencimento(e.target.value)} />
           </Field>
         </div>
 

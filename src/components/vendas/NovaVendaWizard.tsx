@@ -1,6 +1,7 @@
 import { useMemo, useState, type FormEvent } from 'react'
 import { Card, CardLabel } from '../Card'
 import { Field, inputClass } from '../Field'
+import { DateInput } from '../DateInput'
 import { Button } from '../Button'
 import { ErrorMessage } from '../ErrorMessage'
 import { IconPlus } from '../icons'
@@ -281,7 +282,7 @@ export function NovaVendaWizard({
           </Field>
         </div>
         <Field label="Data da venda">
-          <input type="date" required value={dataVenda} onChange={(e) => setDataVenda(e.target.value)} className={inputClass} />
+          <DateInput required value={dataVenda} onChange={(e) => setDataVenda(e.target.value)} />
         </Field>
         <Field label="Observações">
           <textarea value={observacoes} onChange={(e) => setObservacoes(e.target.value)} className={inputClass} rows={2} />

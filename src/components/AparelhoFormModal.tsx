@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { Modal } from './Modal'
 import { Field, inputClass } from './Field'
+import { DateInput } from './DateInput'
 import { ErrorMessage } from './ErrorMessage'
 import { Button } from './Button'
 import { IconPlus } from './icons'
@@ -359,7 +360,7 @@ export function AparelhoFormModal({
 
         <div className="grid grid-cols-2 gap-2">
           <Field label="Data da compra">
-            <input type="date" required value={dataCompra} onChange={(e) => setDataCompra(e.target.value)} className={inputClass} />
+            <DateInput required value={dataCompra} onChange={(e) => setDataCompra(e.target.value)} />
           </Field>
           <Field label="Custo de compra (R$)">
             <input
