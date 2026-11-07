@@ -25,6 +25,15 @@ export function PwaUpdatePrompt() {
     onRegisteredSW(_url, registration) {
       if (!registration) return
       setInterval(() => void registration.update(), INTERVALO_VERIFICACAO_MS)
+
+      // Fechar e reabrir o app (ou só trocar de app e voltar) é exatamente o
+      // momento em que a pessoa espera ver a versão nova — não esperar até
+      // 60s de intervalo rodarem. iOS Safari em especial é conhecido por não
+      // confiar só na checagem automática de navegação; forçar aqui cobre
+      // esse caso igual Android/desktop.
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') void registration.update()
+      })
     },
   })
 
