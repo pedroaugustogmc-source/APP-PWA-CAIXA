@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useAparelhos } from '../hooks/useAparelhos'
 import { useCategorias } from '../hooks/useCategorias'
 import { useFornecedores } from '../hooks/useFornecedores'
@@ -26,6 +27,7 @@ const STATUS_OPTIONS: { value: StatusAparelho | 'todos'; label: string }[] = [
 ]
 
 export function EstoqueAparelhosPage() {
+  const navigate = useNavigate()
   const { aparelhos, loading, error, criar, editar, alterarStatus, remover, importarVarios } = useAparelhos()
   const { categorias, criar: criarCategoria } = useCategorias()
   const { fornecedores, criar: criarFornecedor } = useFornecedores()
@@ -110,6 +112,7 @@ export function EstoqueAparelhosPage() {
             aparelho={aparelho}
             diasAlerta={config.dias_estoque_parado_alerta}
             onAlterarStatus={(status) => alterarStatus(aparelho.id, status)}
+            onVender={() => navigate('/vendas/nova', { state: { aparelhoId: aparelho.id } })}
             onEditar={() => setAparelhoEditandoId(aparelho.id)}
             onExcluir={() => handleExcluir(aparelho.id, aparelho.nome)}
           />

@@ -56,8 +56,22 @@ interface Props {
   depreciacoes: DepreciacaoModelo[]
   comissaoPctPadrao: number
   cashbackPctPadrao: number
+  /** Veio do botão "Vendido" num card de aparelho (EstoqueAparelhosPage): já entra no carrinho, só falta o preço. */
+  aparelhoInicialId?: string
   onConcluir: (input: NovaVendaInput) => Promise<{ error: string | null; vendaId?: string }>
   onSucesso: () => void
+}
+
+function itemDoAparelho(aparelho: Aparelho): ItemCarrinho {
+  return {
+    key: `aparelho:${aparelho.id}`,
+    aparelhoId: aparelho.id,
+    nome: `${aparelho.nome} (IMEI ${aparelho.imei ?? 'não informado'})`,
+    quantidade: 1,
+    quantidadeDisponivel: 1,
+    precoUnitario: 0,
+    custoUnitario: custoTotalAparelho(aparelho).toNumber(),
+  }
 }
 
 export function NovaVendaWizard({
@@ -67,6 +81,7 @@ export function NovaVendaWizard({
   depreciacoes,
   comissaoPctPadrao,
   cashbackPctPadrao,
+  aparelhoInicialId,
   onConcluir,
   onSucesso,
 }: Props) {
@@ -77,7 +92,10 @@ export function NovaVendaWizard({
   const [comissaoPct, setComissaoPct] = useState(comissaoPctPadrao * 100)
   const [cashbackPct, setCashbackPct] = useState(cashbackPctPadrao * 100)
 
-  const [carrinho, setCarrinho] = useState<ItemCarrinho[]>([])
+  const [carrinho, setCarrinho] = useState<ItemCarrinho[]>(() => {
+    const aparelho = aparelhoInicialId ? aparelhosDisponiveis.find((a) => a.id === aparelhoInicialId) : undefined
+    return aparelho ? [itemDoAparelho(aparelho)] : []
+  })
   const [pagamentos, setPagamentos] = useState<PagamentoLinha[]>([])
 
   const [tradeInAtivo, setTradeInAtivo] = useState(false)
@@ -100,18 +118,7 @@ export function NovaVendaWizard({
   const aparelhosParaAdicionar = aparelhosDisponiveis.filter((a) => !idsNoCarrinho.has(a.id))
 
   function adicionarAparelho(aparelho: Aparelho) {
-    setCarrinho((prev) => [
-      ...prev,
-      {
-        key: `aparelho:${aparelho.id}`,
-        aparelhoId: aparelho.id,
-        nome: `${aparelho.nome} (IMEI ${aparelho.imei ?? 'não informado'})`,
-        quantidade: 1,
-        quantidadeDisponivel: 1,
-        precoUnitario: 0,
-        custoUnitario: custoTotalAparelho(aparelho).toNumber(),
-      },
-    ])
+    setCarrinho((prev) => [...prev, itemDoAparelho(aparelho)])
   }
 
   function adicionarAcessorio(acessorio: Acessorio) {
@@ -325,6 +332,7 @@ export function NovaVendaWizard({
                     min={0}
                     step={0.01}
                     inputMode="decimal"
+                    autoFocus={item.aparelhoId === aparelhoInicialId}
                     placeholder="Preço unitário (R$)"
                     value={item.precoUnitario || ''}
                     onChange={(e) => alterarPrecoItem(item.key, Number(e.target.value))}

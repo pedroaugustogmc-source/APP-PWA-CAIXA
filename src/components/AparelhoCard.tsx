@@ -16,11 +16,13 @@ interface Props {
   aparelho: Aparelho & { pendenteSync?: boolean }
   diasAlerta: number
   onAlterarStatus: (status: 'em_estoque' | 'reservado' | 'devolvido' | 'baixado' | 'perdido_danificado') => void
+  /** Abre Nova Venda com este aparelho já no carrinho — é como "Vendido" vira venda de verdade, com preço, margem e lucro no dashboard. */
+  onVender: () => void
   onEditar: () => void
   onExcluir: () => void
 }
 
-export function AparelhoCard({ aparelho, diasAlerta, onAlterarStatus, onEditar, onExcluir }: Props) {
+export function AparelhoCard({ aparelho, diasAlerta, onAlterarStatus, onVender, onEditar, onExcluir }: Props) {
   const emEstoqueOuReservado = aparelho.status === 'em_estoque' || aparelho.status === 'reservado'
   const dias = emEstoqueOuReservado ? diasEmEstoque(aparelho.data_compra, todayISO()) : null
   const prazo = aparelho.dias_planejados
@@ -102,11 +104,21 @@ export function AparelhoCard({ aparelho, diasAlerta, onAlterarStatus, onEditar, 
                 Voltar ao estoque
               </Button>
             )}
-            <Button variant="danger" size="sm" onClick={() => onAlterarStatus('baixado')}>
+            <Button variant="primary" size="sm" onClick={onVender}>
               Vendido
             </Button>
             <Button variant="danger" size="sm" onClick={() => onAlterarStatus('perdido_danificado')}>
               Perdido/danificado
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() =>
+                confirm('Baixar sem registrar uma venda? Isso tira do estoque sem lançar preço, margem ou lucro.') &&
+                onAlterarStatus('baixado')
+              }
+            >
+              Baixa manual
             </Button>
           </>
         )}
