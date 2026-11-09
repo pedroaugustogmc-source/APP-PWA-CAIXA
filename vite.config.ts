@@ -1,13 +1,36 @@
-import { defineConfig } from 'vite'
+import { writeFileSync } from 'node:fs'
+import { resolve } from 'node:path'
+import { defineConfig, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { VitePWA } from 'vite-plugin-pwa'
 
+// Identificador único de cada build, usado pelo check de versão em
+// PwaUpdatePrompt.tsx (ver comentário lá) — uma segunda trava independente
+// do ciclo de vida do service worker, pra quando ele sozinho não é
+// suficiente pra entregar a versão nova (relatado várias vezes por usuário
+// real em iOS Safari instalado).
+const BUILD_ID = String(Date.now())
+
+function versionJsonPlugin(): Plugin {
+  return {
+    name: 'phoneitz-version-json',
+    apply: 'build',
+    writeBundle(options) {
+      writeFileSync(resolve(options.dir ?? 'dist', 'version.json'), JSON.stringify({ buildId: BUILD_ID }))
+    },
+  }
+}
+
 // https://vite.dev/config/
 export default defineConfig({
+  define: {
+    __BUILD_ID__: JSON.stringify(BUILD_ID),
+  },
   plugins: [
     react(),
     tailwindcss(),
+    versionJsonPlugin(),
     VitePWA({
       registerType: 'autoUpdate',
       strategies: 'injectManifest',
