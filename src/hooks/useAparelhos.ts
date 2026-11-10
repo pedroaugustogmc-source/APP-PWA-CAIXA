@@ -5,7 +5,11 @@ import { enqueueMutation, listPendingMutations, type PendingMutation } from '../
 import type { Aparelho, Categoria, CondicaoAparelho, CustoExtra, Fornecedor, StatusAparelho } from '../types/domain'
 import { useSupabaseList } from './useSupabaseList'
 
-type AparelhoRow = Aparelho & { categoria: Categoria | null; fornecedor: Fornecedor | null }
+type AparelhoRow = Aparelho & {
+  categoria: Categoria | null
+  fornecedor: Fornecedor | null
+  venda_itens: { preco_unitario: number; created_at: string }[]
+}
 
 export interface AparelhoInput {
   nome: string
@@ -48,7 +52,7 @@ export function useAparelhos() {
   const { data, loading, error, refetch } = useSupabaseList<AparelhoRow>(async () =>
     supabase
       .from('aparelhos')
-      .select('*, categoria:categorias(*), fornecedor:fornecedores(*)')
+      .select('*, categoria:categorias(*), fornecedor:fornecedores(*), venda_itens(preco_unitario, created_at)')
       .order('created_at', { ascending: false }),
   )
 
@@ -68,9 +72,15 @@ export function useAparelhos() {
       p.kind === 'criar_aparelho' && !idsExistentes.has(p.id),
   )
 
-  const aparelhos: (Aparelho & { pendenteSync?: boolean })[] = [
+  /** Preço real de venda (registrado em venda_itens pelo RPC concluir_venda) — pega o mais recente se o aparelho já foi vendido mais de uma vez (ex.: devolvido e revendido). */
+  function precoVendaMaisRecente(vendaItens: AparelhoRow['venda_itens']): number | null {
+    const maisRecente = [...vendaItens].sort((a, b) => b.created_at.localeCompare(a.created_at)).at(0)
+    return maisRecente?.preco_unitario ?? null
+  }
+
+  const aparelhos: (Aparelho & { pendenteSync?: boolean; precoVenda?: number | null })[] = [
     ...criacoesPendentes.map((p) => aparelhoDePendenciaCriada(p)),
-    ...data,
+    ...data.map(({ venda_itens, ...a }) => ({ ...a, precoVenda: precoVendaMaisRecente(venda_itens) })),
   ]
 
   async function criar(

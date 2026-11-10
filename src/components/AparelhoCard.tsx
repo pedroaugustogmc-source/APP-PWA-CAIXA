@@ -13,7 +13,7 @@ const CONDICAO_LABELS: Record<Aparelho['condicao'], string> = {
 }
 
 interface Props {
-  aparelho: Aparelho & { pendenteSync?: boolean }
+  aparelho: Aparelho & { pendenteSync?: boolean; precoVenda?: number | null }
   diasAlerta: number
   onAlterarStatus: (status: 'em_estoque' | 'reservado' | 'devolvido' | 'baixado' | 'perdido_danificado') => void
   /** Abre Nova Venda com este aparelho já no carrinho — é como "Vendido" vira venda de verdade, com preço, margem e lucro no dashboard. */
@@ -83,6 +83,13 @@ export function AparelhoCard({ aparelho, diasAlerta, onAlterarStatus, onVender, 
             {formatDias(dias)}
             {prazo ? ` de ${prazo}` : ''}
           </p>
+        </div>
+      )}
+
+      {(aparelho.status === 'vendido' || aparelho.status === 'devolvido') && aparelho.precoVenda != null && (
+        <div className="mt-3 border-t border-slate-100 pt-3 text-sm">
+          <p className="text-xs text-slate-400">Vendido por</p>
+          <p className="font-medium tabular-nums text-profit">{formatBRL(aparelho.precoVenda)}</p>
         </div>
       )}
 
