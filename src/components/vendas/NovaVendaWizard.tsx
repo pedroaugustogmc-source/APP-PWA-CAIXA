@@ -69,7 +69,10 @@ function itemDoAparelho(aparelho: Aparelho): ItemCarrinho {
     nome: `${aparelho.nome} (IMEI ${aparelho.imei ?? 'não informado'})`,
     quantidade: 1,
     quantidadeDisponivel: 1,
-    precoUnitario: 0,
+    // Já vem preenchido com o preço de catálogo (quando cadastrado no
+    // estoque) — a pessoa não precisa digitar de novo um preço que já
+    // informou antes; se vendeu por outro valor, é só editar o campo.
+    precoUnitario: aparelho.preco_sugerido ?? 0,
     custoUnitario: custoTotalAparelho(aparelho).toNumber(),
   }
 }
@@ -364,6 +367,7 @@ export function NovaVendaWizard({
                     step={0.01}
                     inputMode="decimal"
                     autoFocus={item.aparelhoId === aparelhoInicialId}
+                    onFocus={(e) => e.target.select()}
                     placeholder="Preço unitário (R$)"
                     value={item.precoUnitario || ''}
                     onChange={(e) => alterarPrecoItem(item.key, Number(e.target.value))}
