@@ -1,4 +1,4 @@
-import { useMemo, useState, type FormEvent } from 'react'
+import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react'
 import { Card, CardLabel } from '../Card'
 import { Field, inputClass } from '../Field'
 import { DateInput } from '../DateInput'
@@ -176,6 +176,37 @@ export function NovaVendaWizard({
   )
 
   const tradeInValor = tradeInAtivo ? toMoney(tradeInValorAvaliacao) : toMoney(0)
+
+  // Preenche sozinho o pagamento (dinheiro, valor = total menos trade-in)
+  // assim que a pessoa informa o preço — o caso mais comum é venda à vista
+  // num pagamento só, e sem isso dava a entender que só faltava o preço pra
+  // confirmar, quando na real a validação também exige uma forma de
+  // pagamento que bata com o total, passo que não tinha nenhuma pista
+  // visual. Continua ressincronizando esse valor em qualquer mudança no
+  // total (novo item, preço editado, trade-in ligado/desligado) enquanto
+  // for a única linha e a pessoa não tiver editado o valor dela na mão — a
+  // partir do momento que ela edita, some o controle e não brigamos mais
+  // com a escolha dela.
+  const autoPagamentoRef = useRef<{ id: string; valor: number } | null>(null)
+  useEffect(() => {
+    const faltante = receitaTotal.minus(tradeInValor)
+    const faltanteValor = faltante.greaterThan(0) ? faltante.toNumber() : 0
+
+    if (pagamentos.length === 0) {
+      if (faltanteValor <= 0) return
+      const id = crypto.randomUUID()
+      autoPagamentoRef.current = { id, valor: faltanteValor }
+      setPagamentos([{ id, forma: 'dinheiro', valor: faltanteValor, parcelas: 1, taxaPct: 0 }])
+      return
+    }
+
+    const unico = pagamentos.length === 1 ? pagamentos[0] : null
+    const aindaNaoEditado = unico && autoPagamentoRef.current?.id === unico.id && unico.valor === autoPagamentoRef.current.valor
+    if (unico && aindaNaoEditado && unico.valor !== faltanteValor) {
+      autoPagamentoRef.current = { id: unico.id, valor: faltanteValor }
+      setPagamentos([{ ...unico, valor: faltanteValor }])
+    }
+  }, [receitaTotal, tradeInValor, pagamentos])
 
   function restanteParaPagamento(pagamentoId: string) {
     const somaOutros = somar(pagamentos.filter((p) => p.id !== pagamentoId).map((p) => p.valor))
