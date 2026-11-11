@@ -1,0 +1,16 @@
+-- O índice único de 0018 impedia pra sempre um segundo registro em
+-- venda_itens pro mesmo aparelho_id, com a intenção de nunca deixar vender
+-- o mesmo aparelho duas vezes. Só que "Registrar devolução" (status vira
+-- 'devolvido') + "Desfazer" (status volta a 'em_estoque') existem
+-- justamente pra permitir vender de novo um aparelho que voltou — um fluxo
+-- legítimo (cliente devolveu, loja repõe no estoque, vende pra outro
+-- cliente depois). Com o índice antigo, essa segunda venda sempre falhava
+-- com "Já existe um registro com esse valor", mesmo sendo uma operação
+-- válida.
+--
+-- A proteção real contra vender o mesmo aparelho duas vezes AO MESMO TEMPO
+-- já existe em phoneitz_concluir_venda (0019/0025): o UPDATE só marca
+-- status = 'vendido' se o status atual for 'em_estoque'/'reservado', e
+-- lança exceção se não achar nenhuma linha. Esse índice único era proteção
+-- redundante e, na prática, impedia um fluxo que o restante do app sustenta.
+drop index if exists venda_itens_aparelho_unico_idx;
